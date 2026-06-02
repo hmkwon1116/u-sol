@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="U-SOL 게임 — 짬 날 때 한 판, 혼자서도 즐기는 미니 게임 모음.">
+<meta name="theme-color" content="#fbfaf7">
+<title>게임 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 80px; }
+  .crumb { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .crumb a { color: var(--accent); text-decoration: none; }
+  .crumb a:hover { text-decoration: underline; }
+  header { margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .h-title {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(28px, 6vw, 42px); letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .h-desc { color: var(--muted); margin-top: 8px; font-size: 15px; }
+  .games { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  @media (min-width: 680px) { .games { grid-template-columns: repeat(3, 1fr); } }
+  .game {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px; text-decoration: none; color: inherit; box-shadow: var(--shadow);
+    transition: transform .15s, box-shadow .15s, border-color .15s; display: block;
+    position: relative; overflow: hidden;
+  }
+  .game:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 14px 34px rgba(26,25,22,0.1); border-color: #d8d2c6; }
+  .game .emoji { font-size: 32px; display: block; margin-bottom: 12px; }
+  .game .nm { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; }
+  .game .desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .game.soon { opacity: 0.6; }
+  .game.soon::before {
+    content: "준비중"; position: absolute; top: 14px; right: 14px;
+    font-size: 10px; font-weight: 600; color: var(--muted);
+    background: #f2efe8; padding: 3px 8px; border-radius: 6px;
+  }
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="/">U-SOL</a> · 게임</div>
+  <header>
+    <div class="h-title">🎮 게임</div>
+    <p class="h-desc">짬 날 때 한 판. 혼자서도 즐기는 미니 게임 모음이에요. 하나씩 늘려갈 예정입니다.</p>
+  </header>
+
+  <div class="games">
+    <a class="game" href="/game/tetris/">
+      <span class="emoji">🟦</span>
+      <div class="nm">네온 테트리스</div>
+      <div class="desc">키보드·터치로 즐기는 클래식 테트리스</div>
+    </a>
+    <a class="game soon" href="#">
+      <span class="emoji">🐍</span>
+      <div class="nm">스네이크</div>
+      <div class="desc">곧 추가됩니다</div>
+    </a>
+    <a class="game soon" href="#">
+      <span class="emoji">🧩</span>
+      <div class="nm">2048</div>
+      <div class="desc">곧 추가됩니다</div>
+    </a>
+  </div>
+
+  <footer>© 2026 U-SOL · <a href="/" style="color:var(--accent);text-decoration:none;">메인으로</a></footer>
+</div>
+</body>
+</html>

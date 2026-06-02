@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="네온 아케이드 스타일 테트리스. 키보드와 터치로 즐기는 한국어 웹 테트리스.">
+<meta name="theme-color" content="#0a0a12">
+<title>NEON TETRIS · 네온 테트리스</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@500;700;900&display=swap');
+
+  :root {
+    --bg: #0a0a12;
+    --panel: #12121f;
+    --grid-line: rgba(120,130,200,0.08);
+    --accent: #00f0ff;
+    --accent-2: #ff2d95;
+    --text: #e8ecff;
+    --muted: #7a82b8;
+    --cell: 28px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(0,240,255,0.12), transparent 55%),
+      radial-gradient(ellipse at 80% 120%, rgba(255,45,149,0.12), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Orbitron', sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* scanline overlay for CRT feel */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.18) 3px,
+      rgba(0,0,0,0) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+    mix-blend-mode: multiply;
+  }
+
+  .wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 12px;
+  }
+
+  .title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(14px, 4vw, 24px);
+    letter-spacing: 1px;
+    text-align: center;
+    line-height: 1.6;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 24px rgba(0,240,255,0.35);
+  }
+
+  .stage {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .board-frame {
+    position: relative;
+    padding: 6px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, rgba(0,240,255,0.5), rgba(255,45,149,0.5));
+    box-shadow: 0 0 40px rgba(0,240,255,0.25), inset 0 0 20px rgba(0,0,0,0.6);
+  }
+
+  canvas#board {
+    display: block;
+    background: var(--panel);
+    border-radius: 6px;
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 120px;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid rgba(120,130,200,0.18);
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: inset 0 0 16px rgba(0,0,0,0.4);
+  }
+
+  .card h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 12px rgba(0,240,255,0.5);
+  }
+
+  canvas#next {
+    display: block;
+    background: #0c0c16;
+    border-radius: 6px;
+    margin: 0 auto;
+  }
+
+  /* mobile controls */
+  .touch {
+    display: none;
+    width: 100%;
+    max-width: 360px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .touch button {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid rgba(0,240,255,0.35);
+    border-radius: 12px;
+    padding: 16px 0;
+    box-shadow: 0 0 14px rgba(0,240,255,0.12);
+    transition: transform .05s, background .1s;
+  }
+  .touch button:active { transform: scale(0.94); background: rgba(0,240,255,0.15); }
+  .touch .wide { grid-column: span 1; }
+
+  .controls-hint {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.7;
+    letter-spacing: .5px;
+  }
+
+  /* overlay (start / game over) */
+  .overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 18px;
+    background: rgba(10,10,18,0.88);
+    backdrop-filter: blur(4px);
+    border-radius: 6px;
+    z-index: 10;
+    text-align: center;
+    padding: 20px;
+  }
+  .overlay.hidden { display: none; }
+  .overlay .big {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--accent-2);
+    text-shadow: 0 0 18px rgba(255,45,149,0.5);
+  }
+  .overlay .sub { font-size: 13px; color: var(--muted); line-height: 1.8; }
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: #061015;
+    background: linear-gradient(90deg, var(--accent), #6ef0ff);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 22px;
+    cursor: pointer;
+    box-shadow: 0 0 22px rgba(0,240,255,0.5);
+    transition: transform .06s;
+  }
+  .btn:active { transform: scale(0.96); }
+
+  @media (max-width: 620px) {
+    :root { --cell: 9vw; }
+    .stage { flex-direction: column; align-items: center; }
+    .side { flex-direction: row; min-width: 0; width: 100%; max-width: 360px; justify-content: space-between; }
+    .card { flex: 1; }
+    .touch { display: grid; }
+    .controls-hint { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="/game/" style="position:fixed;top:14px;left:16px;z-index:200;color:#7a82b8;text-decoration:none;font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:1px;">← 게임</a>
+  <div class="title">NEON TETRIS</div>
+
+  <div class="stage">
+    <div class="board-frame">
+      <canvas id="board"></canvas>
+      <div class="overlay" id="overlay">
+        <div class="big" id="ov-title">READY?</div>
+        <div class="sub" id="ov-sub">블록을 쌓아 줄을 없애세요</div>
+        <button class="btn" id="startBtn">START</button>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <h2>Next</h2>
+        <canvas id="next" width="96" height="96"></canvas>
+      </div>
+      <div class="card">
+        <h2>Score</h2>
+        <div class="stat-value" id="score">0</div>
+      </div>
+      <div class="card">
+        <h2>Lines</h2>
+        <div class="stat-value" id="lines">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="touch" id="touch">
+    <button data-act="left">◀</button>
+    <button data-act="rotate">⟳</button>
+    <button data-act="right">▶</button>
+    <button data-act="down">▼</button>
+    <button data-act="drop">⤓</button>
+    <button data-act="pause">⏸</button>
+  </div>
+
+  <div class="controls-hint">
+    ← → 이동 &nbsp;·&nbsp; ↑ 회전 &nbsp;·&nbsp; ↓ 소프트드롭 &nbsp;·&nbsp; SPACE 하드드롭 &nbsp;·&nbsp; P 일시정지
+  </div>
+</div>
+
+<script>
+(function () {
+  const COLS = 10, ROWS = 20;
+  const board = document.getElementById('board');
+  const ctx = board.getContext('2d');
+  const nextCv = document.getElementById('next');
+  const nctx = nextCv.getContext('2d');
+
+  const scoreEl = document.getElementById('score');
+  const linesEl = document.getElementById('lines');
+  const overlay = document.getElementById('overlay');
+  const ovTitle = document.getElementById('ov-title');
+  const ovSub = document.getElementById('ov-sub');
+  const startBtn = document.getElementById('startBtn');
+
+  let CELL = 28;
+
+  function sizeCanvas() {
+    const cssCell = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cell'));
+    CELL = Math.floor(cssCell);
+    const dpr = window.devicePixelRatio || 1;
+    board.style.width = (COLS * CELL) + 'px';
+    board.style.height = (ROWS * CELL) + 'px';
+    board.width = COLS * CELL * dpr;
+    board.height = ROWS * CELL * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  // Tetromino definitions with neon colors
+  const PIECES = {
+    I: { color: '#00f0ff', cells: [[0,1],[1,1],[2,1],[3,1]] },
+    O: { color: '#ffd500', cells: [[1,0],[2,0],[1,1],[2,1]] },
+    T: { color: '#bf5cff', cells: [[1,0],[0,1],[1,1],[2,1]] },
+    S: { color: '#3dff7a', cells: [[1,0],[2,0],[0,1],[1,1]] },
+    Z: { color: '#ff4d6d', cells: [[0,0],[1,0],[1,1],[2,1]] },
+    J: { color: '#4d7dff', cells: [[0,0],[0,1],[1,1],[2,1]] },
+    L: { color: '#ff9f1c', cells: [[2,0],[0,1],[1,1],[2,1]] },
+  };
+  const KEYS = Object.keys(PIECES);
+
+  let grid, cur, nextPiece, score, lines, dropInterval, dropTimer, running, paused, over, raf;
+
+  function emptyGrid() {
+    return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+  }
+
+  function randPiece() {
+    const k = KEYS[(Math.random() * KEYS.length) | 0];
+    return { type: k, color: PIECES[k].color, cells: PIECES[k].cells.map(c => c.slice()), x: 3, y: 0 };
+  }
+
+  function rotate(piece) {
+    // rotate cells around a 0..3 box center; use bounding rotation
+    const rotated = piece.cells.map(([x, y]) => [y, -x]);
+    // normalize to >=0
+    let minX = Math.min(...rotated.map(c => c[0]));
+    let minY = Math.min(...rotated.map(c => c[1]));
+    return rotated.map(([x, y]) => [x - minX, y - minY]);
+  }
+
+  function collide(cells, ox, oy) {
+    for (const [cx, cy] of cells) {
+      const x = ox + cx, y = oy + cy;
+      if (x < 0 || x >= COLS || y >= ROWS) return true;
+      if (y >= 0 && grid[y][x]) return true;
+    }
+    return false;
+  }
+
+  function merge() {
+    for (const [cx, cy] of cur.cells) {
+      const x = cur.x + cx, y = cur.y + cy;
+      if (y >= 0) grid[y][x] = cur.color;
+    }
+  }
+
+  function clearLines() {
+    let cleared = 0;
+    for (let y = ROWS - 1; y >= 0; y--) {
+      if (grid[y].every(c => c)) {
+        grid.splice(y, 1);
+        grid.unshift(Array(COLS).fill(null));
+        cleared++;
+        y++;
+      }
+    }
+    if (cleared) {
+      const pts = [0, 100, 300, 500, 800][cleared] || 800;
+      score += pts;
+      lines += cleared;
+      scoreEl.textContent = score;
+      linesEl.textContent = lines;
+      // speed up gradually
+      dropInterval = Math.max(120, 800 - Math.floor(lines / 10) * 70);
+    }
+  }
+
+  function spawn() {
+    cur = nextPiece || randPiece();
+    cur.x = 3; cur.y = 0;
+    nextPiece = randPiece();
+    drawNext();
+    if (collide(cur.cells, cur.x, cur.y)) {
+      gameOver();
+    }
+  }
+
+  function move(dx, dy) {
+    if (!running || paused || over) return false;
+    if (!collide(cur.cells, cur.x + dx, cur.y + dy)) {
+      cur.x += dx; cur.y += dy;
+      return true;
+    }
+    return false;
+  }
+
+  function softLand() {
+    merge();
+    clearLines();
+    spawn();
+    dropTimer = 0;
+  }
+
+  function step() {
+    if (!move(0, 1)) {
+      softLand();
+    }
+  }
+
+  function hardDrop() {
+    if (!running || paused || over) return;
+    let d = 0;
+    while (!collide(cur.cells, cur.x, cur.y + 1)) { cur.y++; d++; }
+    score += d * 2;
+    scoreEl.textContent = score;
+    softLand();
+  }
+
+  function tryRotate() {
+    if (!running || paused || over) return;
+    const r = rotate(cur);
+    // wall kicks: try offsets
+    for (const kick of [0, -1, 1, -2, 2]) {
+      if (!collide(r, cur.x + kick, cur.y)) {
+        cur.cells = r; cur.x += kick;
+        return;
+      }
+    }
+  }
+
+  // rendering
+  function drawCell(c, x, y, size, glow) {
+    const px = x * size, py = y * size;
+    c.fillStyle = color => color;
+    // base
+    ctx.save();
+  }
+
+  function paintCell(context, color, px, py, size) {
+    context.fillStyle = color;
+    context.fillRect(px + 1, py + 1, size - 2, size - 2);
+    // inner highlight
+    const grad = context.createLinearGradient(px, py, px, py + size);
+    grad.addColorStop(0, 'rgba(255,255,255,0.35)');
+    grad.addColorStop(0.5, 'rgba(255,255,255,0.05)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.25)');
+    context.fillStyle = grad;
+    context.fillRect(px + 1, py + 1, size - 2, size - 2);
+  }
+
+  function render() {
+    // background grid
+    ctx.clearRect(0, 0, COLS * CELL, ROWS * CELL);
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--grid-line');
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= COLS; x++) {
+      ctx.beginPath(); ctx.moveTo(x * CELL, 0); ctx.lineTo(x * CELL, ROWS * CELL); ctx.stroke();
+    }
+    for (let y = 0; y <= ROWS; y++) {
+      ctx.beginPath(); ctx.moveTo(0, y * CELL); ctx.lineTo(COLS * CELL, y * CELL); ctx.stroke();
+    }
+    // settled blocks
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        if (grid[y][x]) paintCell(ctx, grid[y][x], x * CELL, y * CELL, CELL);
+      }
+    }
+    // ghost piece
+    if (cur && running && !over) {
+      let gy = cur.y;
+      while (!collide(cur.cells, cur.x, gy + 1)) gy++;
+      ctx.globalAlpha = 0.18;
+      for (const [cx, cy] of cur.cells) {
+        const x = cur.x + cx, y = gy + cy;
+        if (y >= 0) paintCell(ctx, cur.color, x * CELL, y * CELL, CELL);
+      }
+      ctx.globalAlpha = 1;
+      // active piece
+      for (const [cx, cy] of cur.cells) {
+        const x = cur.x + cx, y = cur.y + cy;
+        if (y >= 0) paintCell(ctx, cur.color, x * CELL, y * CELL, CELL);
+      }
+    }
+  }
+
+  function drawNext() {
+    nctx.clearRect(0, 0, nextCv.width, nextCv.height);
+    if (!nextPiece) return;
+    const cells = nextPiece.cells;
+    const xs = cells.map(c => c[0]), ys = cells.map(c => c[1]);
+    const w = Math.max(...xs) - Math.min(...xs) + 1;
+    const h = Math.max(...ys) - Math.min(...ys) + 1;
+    const s = 20;
+    const offX = (nextCv.width - w * s) / 2 - Math.min(...xs) * s;
+    const offY = (nextCv.height - h * s) / 2 - Math.min(...ys) * s;
+    for (const [cx, cy] of cells) {
+      paintCell(nctx, nextPiece.color, offX + cx * s, offY + cy * s, s);
+    }
+  }
+
+  let lastTime = 0;
+  function loop(t) {
+    if (!running) return;
+    raf = requestAnimationFrame(loop);
+    if (paused || over) { render(); return; }
+    const dt = t - lastTime;
+    lastTime = t;
+    dropTimer += dt;
+    if (dropTimer >= dropInterval) {
+      step();
+      dropTimer = 0;
+    }
+    render();
+  }
+
+  function startGame() {
+    grid = emptyGrid();
+    score = 0; lines = 0;
+    scoreEl.textContent = '0';
+    linesEl.textContent = '0';
+    dropInterval = 800;
+    dropTimer = 0;
+    nextPiece = randPiece();
+    spawn();
+    running = true; paused = false; over = false;
+    overlay.classList.add('hidden');
+    lastTime = performance.now();
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
+  }
+
+  function gameOver() {
+    over = true; running = false;
+    ovTitle.textContent = 'GAME OVER';
+    ovSub.innerHTML = '점수 ' + score + ' · 줄 ' + lines + '<br>다시 도전해보세요';
+    startBtn.textContent = 'RETRY';
+    overlay.classList.remove('hidden');
+  }
+
+  function togglePause() {
+    if (!running || over) return;
+    paused = !paused;
+    if (paused) {
+      ovTitle.textContent = 'PAUSED';
+      ovSub.textContent = '계속하려면 누르세요';
+      startBtn.textContent = 'RESUME';
+      overlay.classList.remove('hidden');
+    } else {
+      overlay.classList.add('hidden');
+      lastTime = performance.now();
+    }
+  }
+
+  // input
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key)) e.preventDefault();
+    if (!running && !over && e.key !== 'Enter') return;
+    switch (e.key) {
+      case 'ArrowLeft': move(-1, 0); break;
+      case 'ArrowRight': move(1, 0); break;
+      case 'ArrowDown': if (move(0,1)) { score += 1; scoreEl.textContent = score; } break;
+      case 'ArrowUp': tryRotate(); break;
+      case ' ': hardDrop(); break;
+      case 'p': case 'P': togglePause(); break;
+    }
+    render();
+  });
+
+  startBtn.addEventListener('click', () => {
+    if (paused && !over) { togglePause(); return; }
+    startGame();
+  });
+
+  // touch controls
+  document.getElementById('touch').addEventListener('click', (e) => {
+    const act = e.target.getAttribute('data-act');
+    if (!act) return;
+    switch (act) {
+      case 'left': move(-1,0); break;
+      case 'right': move(1,0); break;
+      case 'down': if (move(0,1)) { score += 1; scoreEl.textContent = score; } break;
+      case 'rotate': tryRotate(); break;
+      case 'drop': hardDrop(); break;
+      case 'pause': togglePause(); break;
+    }
+    render();
+  });
+
+  // init
+  sizeCanvas();
+  grid = emptyGrid();
+  render();
+  window.addEventListener('resize', () => { sizeCanvas(); render(); drawNext(); });
+})();
+</script>
+</body>
+</html>
