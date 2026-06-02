@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="다양한 아이디어를 만들고 실험하는 공간. 날씨·환율·증시 한눈에, 그리고 직접 만든 도구와 게임까지.">
+<meta name="description" content="다양한 아이디어를 만들고 실험하는 공간. 날씨·환율·오늘의 말씀 한눈에, 그리고 직접 만든 도구와 게임까지.">
 <meta name="theme-color" content="#fbfaf7">
 <title>U-SOL · 다양한 아이디어를 만들고 실험하는 공간</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,262 +11,126 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #fbfaf7;
-    --ink: #1a1916;
-    --muted: #7c776c;
-    --line: #e8e4db;
-    --card: #ffffff;
-    --accent: #d6452a;       /* warm vermilion */
-    --accent-soft: #fbeae5;
-    --green: #2e7d52;
-    --red: #c0392b;
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --green: #2e7d52; --red: #c0392b;
     --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Spline Sans', system-ui, sans-serif;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
   }
   .wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 80px; }
-
-  /* ---------- header ---------- */
   header { margin-bottom: 28px; }
-  .brand {
-    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-  }
-  .logo {
-    font-family: 'Fraunces', serif;
-    font-weight: 900;
-    font-size: clamp(34px, 7vw, 54px);
-    letter-spacing: -0.02em;
-    line-height: 1;
-  }
+  .brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .logo { font-family: 'Fraunces', serif; font-weight: 900; font-size: clamp(34px, 7vw, 54px); letter-spacing: -0.02em; line-height: 1; }
   .logo .dot { color: var(--accent); }
-  .tagline {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(15px, 3vw, 19px);
-    font-style: italic;
-    color: var(--muted);
-    font-weight: 400;
-  }
-  .intro {
-    margin-top: 14px;
-    max-width: 600px;
-    color: var(--muted);
-    font-size: 15px;
-  }
-
-  /* ---------- date strip ---------- */
-  .topline {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 22px; padding-bottom: 14px;
-    border-bottom: 1px solid var(--line);
-    flex-wrap: wrap; gap: 8px;
-  }
+  .tagline { font-family: 'Fraunces', serif; font-size: clamp(15px, 3vw, 19px); font-style: italic; color: var(--muted); font-weight: 400; }
+  .intro { margin-top: 14px; max-width: 600px; color: var(--muted); font-size: 15px; }
+  .topline { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 8px; }
   .date-now { font-size: 14px; color: var(--muted); }
   .date-now strong { color: var(--ink); font-weight: 600; }
   .clock { font-variant-numeric: tabular-nums; }
-
-  /* ---------- dashboard grid ---------- */
-  .dash {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    margin-bottom: 36px;
-  }
+  .dash { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 36px; }
   @media (min-width: 680px) { .dash { grid-template-columns: repeat(4, 1fr); } }
-
-  .tile {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: var(--shadow);
-    min-height: 116px;
-    display: flex; flex-direction: column; justify-content: space-between;
-  }
-  .tile .label {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--muted); font-weight: 600;
-  }
-  .tile .big {
-    font-family: 'Fraunces', serif;
-    font-size: 26px; font-weight: 600; line-height: 1.1;
-    font-variant-numeric: tabular-nums;
-  }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); min-height: 116px; display: flex; flex-direction: column; justify-content: space-between; }
+  .tile .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+  .tile .big { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
   .tile .sub { font-size: 12px; color: var(--muted); }
   .weather-tile .big { display: flex; align-items: baseline; gap: 4px; }
-  .delta { font-size: 13px; font-weight: 600; }
-  .delta.up { color: var(--green); }
-  .delta.down { color: var(--red); }
-  .market-row {
-    display: flex; justify-content: space-between; align-items: baseline;
-    font-size: 13px; padding: 2px 0;
-  }
-  .market-row .nm { color: var(--muted); }
-  .market-row .vl { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .verse-mini { font-family: 'Fraunces', serif; font-size: 14px; line-height: 1.45; font-weight: 400; }
   .loading { color: var(--muted); font-size: 13px; font-style: italic; }
-
-  /* ---------- categories ---------- */
-  .section-title {
-    font-family: 'Fraunces', serif;
-    font-size: 22px; font-weight: 600;
-    margin-bottom: 16px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-title::after {
-    content: ""; flex: 1; height: 1px; background: var(--line);
-  }
-  .cats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
+  .section-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
   @media (min-width: 680px) { .cats { grid-template-columns: repeat(3, 1fr); } }
-
-  .cat {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 20px;
-    text-decoration: none;
-    color: inherit;
-    box-shadow: var(--shadow);
-    transition: transform .15s ease, box-shadow .15s ease, border-color .15s;
-    position: relative;
-    overflow: hidden;
-    display: block;
-  }
-  .cat:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 14px 34px rgba(26,25,22,0.1);
-    border-color: #d8d2c6;
-  }
-  .cat.live::before {
-    content: "LIVE";
-    position: absolute; top: 14px; right: 14px;
-    font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
-    color: var(--accent); background: var(--accent-soft);
-    padding: 3px 7px; border-radius: 6px;
-  }
+  .cat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; box-shadow: var(--shadow); transition: transform .15s ease, box-shadow .15s ease, border-color .15s; position: relative; overflow: hidden; display: block; }
+  .cat:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 14px 34px rgba(26,25,22,0.1); border-color: #d8d2c6; }
+  .cat.live::before { content: "LIVE"; position: absolute; top: 14px; right: 14px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); background: var(--accent-soft); padding: 3px 7px; border-radius: 6px; }
   .cat.soon { opacity: 0.62; }
-  .cat.soon::before {
-    content: "준비중";
-    position: absolute; top: 14px; right: 14px;
-    font-size: 10px; font-weight: 600;
-    color: var(--muted); background: #f2efe8;
-    padding: 3px 8px; border-radius: 6px;
-  }
+  .cat.soon::before { content: "준비중"; position: absolute; top: 14px; right: 14px; font-size: 10px; font-weight: 600; color: var(--muted); background: #f2efe8; padding: 3px 8px; border-radius: 6px; }
   .cat .emoji { font-size: 30px; display: block; margin-bottom: 12px; }
   .cat .nm { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; }
   .cat .desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
   .cat .count { font-size: 12px; color: var(--accent); margin-top: 10px; font-weight: 600; }
-
-  footer {
-    margin-top: 48px; padding-top: 20px;
-    border-top: 1px solid var(--line);
-    font-size: 12px; color: var(--muted);
-    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
-  }
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   footer a { color: var(--muted); }
-
   .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
   @keyframes rise { to { opacity: 1; transform: none; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="topline reveal">
     <div class="date-now" id="dateNow">불러오는 중…</div>
     <div class="date-now clock" id="clock"></div>
   </div>
-
   <header class="reveal" style="animation-delay:.05s">
     <div class="brand">
       <div class="logo">U-SOL<span class="dot">.</span></div>
       <div class="tagline">다양한 아이디어를 만들고 실험하는 공간</div>
     </div>
-    <p class="intro">
-      떠오른 아이디어를 작은 도구와 서비스로 직접 만들고, 여기에 올려 실험합니다.
-      투자·금융 판단을 돕는 것부터 가볍게 즐기는 게임까지 — 하나씩 쌓아가는 중이에요.
-    </p>
+    <p class="intro">떠오른 아이디어를 작은 도구와 서비스로 직접 만들고, 여기에 올려 실험합니다. 투자·금융 판단을 돕는 것부터 가볍게 즐기는 게임까지 — 하나씩 쌓아가는 중이에요.</p>
   </header>
 
-  <!-- dashboard -->
   <div class="dash">
     <div class="tile weather-tile reveal" style="animation-delay:.1s">
       <div class="label">서울 날씨</div>
       <div class="big" id="wxTemp"><span class="loading">…</span></div>
       <div class="sub" id="wxDesc">현재 기온</div>
     </div>
-
     <div class="tile reveal" style="animation-delay:.15s">
       <div class="label">원/캐나다달러</div>
       <div class="big" id="fxCad"><span class="loading">…</span></div>
       <div class="sub" id="fxCadRange">1 CAD 기준</div>
     </div>
-
     <div class="tile reveal" style="animation-delay:.2s">
-      <div class="label">원/달러</div>
-      <div class="big" id="fxUsd"><span class="loading">…</span></div>
-      <div class="sub">1 USD 기준</div>
+      <div class="label">오늘 비올 확률</div>
+      <div class="big" id="wxRain"><span class="loading">…</span></div>
+      <div class="sub" id="wxRainSub">서울 기준</div>
     </div>
-
-    <div class="tile reveal" style="animation-delay:.25s">
-      <div class="label">국내·해외 증시</div>
-      <div id="markets">
-        <div class="market-row"><span class="nm">코스피</span><span class="vl loading">…</span></div>
-        <div class="market-row"><span class="nm">코스닥</span><span class="vl loading">…</span></div>
-        <div class="market-row"><span class="nm">나스닥</span><span class="vl loading">…</span></div>
-        <div class="market-row"><span class="nm">S&P 500</span><span class="vl loading">…</span></div>
-      </div>
-    </div>
+    <a class="tile reveal" id="verseTile" style="animation-delay:.25s; text-decoration:none; color:inherit; cursor:pointer;" href="/verse/">
+      <div class="label">오늘의 말씀</div>
+      <div class="big" id="vText" style="font-size:15px; line-height:1.5; font-weight:400;">…</div>
+      <div class="sub" id="vRef">매일 새 구절 →</div>
+    </a>
   </div>
 
-  <!-- categories -->
   <h2 class="section-title reveal" style="animation-delay:.3s">카테고리</h2>
   <div class="cats">
     <a class="cat live reveal" style="animation-delay:.35s" href="/game/">
       <span class="emoji">🎮</span>
       <div class="nm">게임</div>
       <div class="desc">짬 날 때 한 판, 혼자서도 즐기는 미니 게임</div>
-      <div class="count">테트리스 외 추가 예정 →</div>
+      <div class="count">테트리스 · 갤러그 →</div>
     </a>
-
     <a class="cat soon reveal" style="animation-delay:.4s" href="#">
       <span class="emoji">📈</span>
       <div class="nm">투자</div>
-      <div class="desc">환율·증시 추적부터 투자 판단을 돕는 도구</div>
+      <div class="desc">환율 추적부터 투자 판단을 돕는 도구</div>
       <div class="count">기획 중</div>
     </a>
-
     <a class="cat soon reveal" style="animation-delay:.45s" href="#">
       <span class="emoji">🏦</span>
       <div class="nm">금융</div>
       <div class="desc">복리·대출·예적금 계산 등 금융 생활 도우미</div>
       <div class="count">기획 중</div>
     </a>
-
     <a class="cat soon reveal" style="animation-delay:.5s" href="#">
       <span class="emoji">🧪</span>
       <div class="nm">실험실</div>
       <div class="desc">아이디어 단계의 프로토타입을 먼저 올려보는 곳</div>
       <div class="count">기획 중</div>
     </a>
-
     <a class="cat live reveal" style="animation-delay:.55s" href="/verse/">
       <span class="emoji">🕊️</span>
       <div class="nm">오늘의 말씀</div>
       <div class="desc">매일 한 구절, 잠잠히 마음에 새기는 시간</div>
       <div class="count">날마다 새롭게 →</div>
     </a>
-
     <a class="cat soon reveal" style="animation-delay:.6s" href="#">
       <span class="emoji">💡</span>
       <div class="nm">더보기</div>
@@ -282,7 +146,6 @@
 </div>
 
 <script>
-  // ---------- date & clock ----------
   function updateClock() {
     const now = new Date();
     const days = ['일','월','화','수','목','금','토'];
@@ -296,57 +159,49 @@
   updateClock();
   setInterval(updateClock, 1000);
 
-  // ---------- weather (Open-Meteo, no key) ----------
-  // 서울 좌표
   async function loadWeather() {
     try {
-      const url = 'https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,relative_humidity_2m,weather_code';
+      const url = 'https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,relative_humidity_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=1';
       const res = await fetch(url);
       const data = await res.json();
       const c = data.current;
-      const codeMap = {
-        0:'맑음', 1:'대체로 맑음', 2:'구름 조금', 3:'흐림',
-        45:'안개', 48:'짙은 안개', 51:'약한 이슬비', 53:'이슬비', 55:'강한 이슬비',
-        61:'약한 비', 63:'비', 65:'강한 비', 71:'약한 눈', 73:'눈', 75:'강한 눈',
-        80:'소나기', 81:'소나기', 82:'강한 소나기', 95:'천둥번개'
-      };
+      const d = data.daily;
+      const codeMap = { 0:'맑음', 1:'대체로 맑음', 2:'구름 조금', 3:'흐림', 45:'안개', 48:'짙은 안개', 51:'약한 이슬비', 53:'이슬비', 55:'강한 이슬비', 61:'약한 비', 63:'비', 65:'강한 비', 71:'약한 눈', 73:'눈', 75:'강한 눈', 80:'소나기', 81:'소나기', 82:'강한 소나기', 95:'천둥번개' };
       document.getElementById('wxTemp').textContent = `${Math.round(c.temperature_2m)}℃`;
       const desc = codeMap[c.weather_code] || '—';
-      document.getElementById('wxDesc').textContent = `${desc} · 습도 ${c.relative_humidity_2m}%`;
+      const hi = Math.round(d.temperature_2m_max[0]);
+      const lo = Math.round(d.temperature_2m_min[0]);
+      document.getElementById('wxDesc').textContent = `${desc} · 최고 ${hi}° 최저 ${lo}°`;
+      const rain = d.precipitation_probability_max[0];
+      document.getElementById('wxRain').textContent = (rain != null ? `${rain}%` : '—');
+      document.getElementById('wxRainSub').textContent = rain >= 60 ? '우산 챙기세요 ☔' : (rain >= 30 ? '혹시 모르니 대비' : '서울 기준');
     } catch (e) {
       document.getElementById('wxTemp').textContent = '—';
       document.getElementById('wxDesc').textContent = '날씨 정보를 불러오지 못했어요';
+      document.getElementById('wxRain').textContent = '—';
     }
   }
   loadWeather();
 
-  // ---------- exchange rates (Frankfurter, no key) ----------
-  function fmtWon(v) {
-    return v.toLocaleString('ko-KR', { maximumFractionDigits: 1 });
-  }
+  function fmtWon(v) { return v.toLocaleString('ko-KR', { maximumFractionDigits: 1 }); }
 
   async function loadFx() {
-    // 현재 환율 (KRW 기준 USD, CAD)
     try {
-      const res = await fetch('https://api.frankfurter.dev/v1/latest?base=KRW&symbols=USD,CAD');
+      const res = await fetch('https://api.frankfurter.dev/v1/latest?base=KRW&symbols=CAD');
       const data = await res.json();
-      const krwPerUsd = 1 / data.rates.USD;
       const krwPerCad = 1 / data.rates.CAD;
       document.getElementById('fxCad').textContent = `${fmtWon(krwPerCad)}원`;
-      document.getElementById('fxUsd').textContent = `${fmtWon(krwPerUsd)}원`;
     } catch (e) {
       document.getElementById('fxCad').textContent = '—';
-      document.getElementById('fxUsd').textContent = '—';
     }
   }
   loadFx();
 
-  // 최근 7일 CAD 최저·최고 (ECB 일별 종가 기준)
   async function loadCadRange() {
     try {
       const today = new Date();
       const past = new Date();
-      past.setDate(today.getDate() - 9); // 주말·공휴일 감안해 넉넉히 9일
+      past.setDate(today.getDate() - 9);
       const fmt = d => d.toISOString().slice(0, 10);
       const url = `https://api.frankfurter.dev/v1/${fmt(past)}..${fmt(today)}?base=CAD&symbols=KRW`;
       const res = await fetch(url);
@@ -355,22 +210,28 @@
       if (vals.length === 0) return;
       const min = Math.min(...vals);
       const max = Math.max(...vals);
-      document.getElementById('fxCadRange').textContent =
-        `최근 최저 ${fmtWon(min)} · 최고 ${fmtWon(max)}원`;
-    } catch (e) {
-      // 실패 시 기본 문구 유지
-    }
+      document.getElementById('fxCadRange').textContent = `최근 최저 ${fmtWon(min)} · 최고 ${fmtWon(max)}원`;
+    } catch (e) {}
   }
   loadCadRange();
 
-  // ---------- markets ----------
-  // 참고: 코스피/코스닥/나스닥/S&P500 실시간 지수는 키 없는 무료 공개 API가 제한적이라
-  // 여기서는 자리만 잡아두고, 실제 연동은 별도 데이터 소스가 필요합니다 (아래 설명 참고).
-  function setMarketsPlaceholder() {
-    const rows = document.querySelectorAll('#markets .vl');
-    rows.forEach(el => { el.classList.remove('loading'); el.textContent = '연동 예정'; el.style.color = 'var(--muted)'; el.style.fontWeight='500'; });
+  const MINI_VERSES = [
+    { t: "여호와는 나의 목자시니 내게 부족함이 없으리로다", r: "시편 23:1" },
+    { t: "수고하고 무거운 짐 진 자들아 다 내게로 오라", r: "마태복음 11:28" },
+    { t: "두려워하지 말라 내가 너와 함께 함이라", r: "이사야 41:10" },
+    { t: "범사에 감사하라", r: "데살로니가전서 5:18" },
+    { t: "내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라", r: "빌립보서 4:13" },
+    { t: "너희 염려를 다 주께 맡기라", r: "베드로전서 5:7" }
+  ];
+  function loadMiniVerse() {
+    const days = Math.floor(Date.now() / 86400000);
+    const v = MINI_VERSES[((days % MINI_VERSES.length) + MINI_VERSES.length) % MINI_VERSES.length];
+    const tEl = document.getElementById('vText');
+    const rEl = document.getElementById('vRef');
+    if (tEl) tEl.textContent = `"${v.t}"`;
+    if (rEl) rEl.textContent = `${v.r} · 자세히 →`;
   }
-  setMarketsPlaceholder();
+  loadMiniVerse();
 </script>
 </body>
 </html>
