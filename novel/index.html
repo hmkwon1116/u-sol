@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="직장 성장 웹소설 — 팀장이 된 어느 날. 일과 사람, 그리고 나에 대한 이야기.">
+<meta name="theme-color" content="#1a1a22">
+<title>팀장이 된 어느 날 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #16161d; --bg2: #1c1c26; --ink: #e8e6e0; --soft: #b8b4ad;
+    --muted: #74716c; --accent: #d8a35b; --line: #2c2c38; --card: #1f1f2a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif; line-height: 1.6;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+    transition: background .3s, color .3s;
+  }
+  body.light { --bg:#f7f4ee; --bg2:#fff; --ink:#2a2722; --soft:#5c574e; --muted:#9a948a; --accent:#b07d2e; --line:#e6e0d4; --card:#fff; }
+  .back { position: fixed; top: 16px; left: 18px; color: var(--muted); text-decoration: none; font-size: 13px; letter-spacing: .04em; z-index: 20; }
+  .back:hover { color: var(--accent); }
+  .toolbar { position: fixed; top: 12px; right: 16px; z-index: 20; display: flex; gap: 8px; }
+  .toolbar button {
+    font-family: 'Noto Sans KR', sans-serif; font-size: 13px; color: var(--soft);
+    background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+    padding: 7px 12px; cursor: pointer; transition: all .15s;
+  }
+  .toolbar button:hover { color: var(--accent); border-color: var(--accent); }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 72px 24px 80px; }
+  .series { font-size: 13px; color: var(--accent); letter-spacing: .15em; text-transform: uppercase; margin-bottom: 12px; }
+  h1 { font-family: 'Nanum Myeongjo', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 800; line-height: 1.25; letter-spacing: -0.01em; margin-bottom: 10px; }
+  .ep { font-family: 'Nanum Myeongjo', serif; font-size: 18px; color: var(--soft); margin-bottom: 8px; }
+  .meta { font-size: 13px; color: var(--muted); padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .story { font-size: var(--fs, 17px); line-height: 2.0; color: var(--ink); transition: font-size .2s; }
+  .story p { margin-bottom: 1.5em; word-break: keep-all; }
+  .story .dia { color: var(--ink); }
+  .story .scene { text-align: center; color: var(--muted); margin: 2.4em 0; letter-spacing: .3em; }
+  .story em { color: var(--accent); font-style: normal; font-weight: 500; }
+  .nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .nav a, .nav span { flex: 1; text-align: center; padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--soft); text-decoration: none; font-size: 14px; transition: all .15s; }
+  .nav a:hover { color: var(--accent); border-color: var(--accent); }
+  .nav .off { opacity: .35; }
+  .endnote { margin-top: 40px; padding: 20px; background: var(--bg2); border: 1px solid var(--line); border-radius: 14px; font-size: 13.5px; color: var(--muted); line-height: 1.8; }
+  footer { text-align: center; padding: 28px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/">← U-SOL</a>
+  <div class="toolbar">
+    <button id="fsBtn">가 +</button>
+    <button id="fsBtnM">가 −</button>
+    <button id="themeBtn">☀︎</button>
+  </div>
+
+  <div class="wrap">
+    <div class="series">직장 성장 소설</div>
+    <h1>팀장이 된 어느 날</h1>
+    <div class="ep">제1화 — 빈 의자</div>
+    <div class="meta">연재 · 1화 · 읽는 데 약 6분</div>
+
+    <div class="story" id="story">
+      <p>월요일 아침, 서진우는 자기 자리가 아닌 곳에 앉아 있었다.</p>
+
+      <p>창가 쪽, 파티션이 한 뼘 더 높은 자리. 지난주까지 김 팀장이 쓰던 책상이었다. 김 팀장은 갑작스럽게 다른 본부로 옮겨갔고, 인사 발령 메일 한 통과 함께 진우는 '플랫폼개발팀 팀장'이 되었다. 입사 7년 차, 서른넷. 누군가에겐 늦었고 누군가에겐 일렀다.</p>
+
+      <p>의자는 그대로인데 등받이가 낯설었다. 진우는 모니터를 켜며 생각했다. <em>나는 어제까지 코드를 짜던 사람인데, 오늘부터는 무엇을 짜는 사람이지.</em></p>
+
+      <p class="scene">· · ·</p>
+
+      <p>첫 주는 조용히 지나가지 않았다.</p>
+
+      <p>수요일 오후, 운영 중인 추천 서비스에서 장애가 터졌다. 신규 모델을 배포한 직후였고, 하필 진우가 팀장이 되기 전 마지막으로 리뷰했던 코드였다. 응답 지연이 치솟았고, 고객사 세 곳에서 연달아 항의가 들어왔다.</p>
+
+      <p>팀원 다섯 명의 시선이 일제히 진우에게 모였다. 그 시선에는 질문이 담겨 있었다. <em>이제 당신이 결정하는 사람이잖아요. 어떻게 할 거예요?</em></p>
+
+      <p>진우의 손은 무의식적으로 키보드로 향했다. 직접 로그를 뒤지고, 직접 롤백 명령을 치고 싶었다. 그게 7년간 그가 가장 잘해온 일이었으니까. 하지만 손끝이 키보드에 닿기 직전, 그는 멈췄다.</p>
+
+      <p>지금 자기가 코드를 잡으면, 다섯 명은 그저 그가 고치는 걸 지켜보게 된다. 오늘은 넘어가겠지. 그러나 다음 장애 때도, 그다음에도, 팀은 그의 손만 바라볼 것이다.</p>
+
+      <p class="dia">"민호 씨, 지금 트래픽 로그부터 봐주세요. 수정 씨는 이전 버전으로 롤백 준비. 저는 고객사에 상황 공유하겠습니다."</p>
+
+      <p>말해놓고 진우는 속으로 놀랐다. 목소리가 생각보다 차분했다. 사실은 심장이 빠르게 뛰고 있었는데도.</p>
+
+      <p class="scene">· · ·</p>
+
+      <p>장애는 한 시간 만에 잡혔다. 롤백이 깔끔하게 먹혔고, 원인은 예상보다 단순한 설정 값 하나였다.</p>
+
+      <p>문제는 그 뒤였다. 막내 민호가 회의실에 남아 고개를 떨구고 있었다. 배포 전 점검을 맡았던 게 그였다.</p>
+
+      <p class="dia">"제가 그 설정을 놓쳤어요. 죄송합니다. 팀장님이 마지막으로 리뷰하신 코드였는데… 제가 망쳤습니다."</p>
+
+      <p>진우는 잠시 말이 없었다. 예전의 그였다면, 어디서 무엇을 놓쳤는지 정확히 짚어주고 다음엔 이렇게 하라고 했을 것이다. 그게 친절이라고 믿었으니까.</p>
+
+      <p>하지만 빈 의자에 앉은 지 사흘. 그는 다른 걸 보기 시작했다. 민호가 지금 필요한 건 정답이 아니라, 다시 해볼 수 있다는 감각이라는 걸.</p>
+
+      <p class="dia">"민호 씨. 그 코드, 마지막으로 리뷰한 건 나예요. 놓친 사람은 둘이고요."</p>
+
+      <p>민호가 고개를 들었다.</p>
+
+      <p class="dia">"그리고 오늘 장애를 가장 먼저 잡은 로그도 민호 씨가 찾았잖아요. 망친 사람이 어떻게 가장 먼저 찾아요. 우리 다음 배포 점검 체크리스트, 민호 씨가 한번 만들어볼래요? 오늘 놓친 그거, 제일 잘 아는 사람이 만들어야 하니까."</p>
+
+      <p>민호는 한참을 가만히 있다가, 작게 고개를 끄덕였다. 그 끄덕임 속에 무언가가 다시 켜지는 게 보였다.</p>
+
+      <p class="scene">· · ·</p>
+
+      <p>그날 밤, 진우는 가장 늦게 사무실을 나섰다. 불을 끄기 전, 자기 책상을 한 번 돌아봤다.</p>
+
+      <p>여전히 등받이가 낯설었다. 아마 한동안은 그럴 것이다. 하지만 한 가지는 알 것 같았다. 팀장이 짜야 하는 건 코드가 아니라, <em>사람들이 다시 일어설 수 있는 자리</em>라는 것.</p>
+
+      <p>그는 불을 껐다. 빈 의자 다섯 개가 어둠 속에 가지런했다. 내일이면 다시 채워질 자리들이었다.</p>
+    </div>
+
+    <div class="endnote">
+      이 소설은 신수정 작가가 여러 글과 강연에서 나눠온 <em>일과 리더십에 대한 통찰</em> — 사람을 남기는 일, 회복탄력성, 리더의 그릇 — 에서 영감을 받아 창작한 오리지널 이야기입니다. 특정 인물이나 실제 사건과는 무관합니다.
+    </div>
+
+    <div class="nav">
+      <span class="off">◀ 이전화</span>
+      <span class="off">다음화 ▶<br><span style="font-size:11px;">곧 연재</span></span>
+    </div>
+  </div>
+
+  <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
+
+<script>
+  let fs = 17;
+  const story = document.getElementById('story');
+  function applyFs() { story.style.setProperty('--fs', fs + 'px'); }
+  document.getElementById('fsBtn').addEventListener('click', () => { fs = Math.min(24, fs + 1); applyFs(); });
+  document.getElementById('fsBtnM').addEventListener('click', () => { fs = Math.max(14, fs - 1); applyFs(); });
+  const themeBtn = document.getElementById('themeBtn');
+  themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    themeBtn.textContent = document.body.classList.contains('light') ? '☾' : '☀︎';
+  });
+</script>
+</body>
+</html>
