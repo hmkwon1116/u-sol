@@ -61,37 +61,46 @@
   <div class="wrap">
     <div class="date" id="date">—</div>
     <div class="eyebrow">오늘의 추천 밥상</div>
-
     <div class="tray" id="tray"></div>
-
     <div class="actions">
       <button id="todayBtn">오늘의 밥상</button>
       <button id="nextBtn">다른 밥상 보기</button>
     </div>
-
     <p class="tip">매일 날짜에 따라 밥상이 바뀝니다. 균형 잡힌 한 상을 가볍게 제안할 뿐, 개인의 건강 상태나 식이 제한은 고려하지 않았으니 참고용으로만 봐주세요.</p>
   </div>
   <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
-
 <script>
   const TRAYS = [
-    { name: "된장찌개 한 상", tag: "구수하고 든든하게",
-      main: { e:"🍲", name:"된장찌개" },
-      sides: [ {e:"🐟",name:"고등어구이"}, {e:"🥬",name:"시금치나물"}, {e:"🥚",name:"계란말이"}, {e:"🍚",name:"잡곡밥"} ],
-      note: "된장찌개에 생선구이를 곁들이면 <strong>단백질과 발효식품</strong>을 함께 챙길 수 있어요. 잡곡밥으로 바꾸면 식이섬유도 더해져요." },
-    { name: "비빔밥 한 상", tag: "채소를 골고루",
-      main: { e:"🥗", name:"나물 비빔밥" },
-      sides: [ {e:"🍳",name:"계란후라이"}, {e:"🍲",name:"미역국"}, {e:"🌶️",name:"고추장"}, {e:"🥒",name:"오이무침"} ],
-      note: "여러 색의 나물을 한 그릇에 담는 비빔밥은 <strong>다양한 채소</strong>를 손쉽게 먹는 방법이에요. 참기름은 적당히만." },
-    { name: "닭가슴살 한 상", tag: "가볍고 단백하게",
-      main: { e:"🍗", name:"닭가슴살 구이" },
-      sides: [ {e:"🥦",name:"브로콜리"}, {e:"🍠",name:"고구마"}, {e:"🥗",name:"양배추샐러드"}, {e:"🍚",name:"현미밥"} ],
-      note: "<strong>고단백 저지방</strong> 구성이에요. 고구마와 현미로 천천히 흡수되는 탄수화물을 더하면 포만감이 오래가요." },
-    { name: "두부 한 상", tag: "담백하고 부드럽게",
-      main: { e:"🍱", name:"두부조림" },
-      sides: [ {e:"🥬",name:"배추된장국"}, {e:"🥕",name:"당근볶음"}, {e:"🌿",name:"취나물"}, {e:"🍚",name:"보리밥"} ],
-      note: "두부는 <strong>식물성 단백질</strong>이 풍부해요. 조림 양념은 짜지 않게, 국은 슴슴하게 끓이면 더 좋아요." },
-    { name: "생선구이 한 상", tag: "오메가-3 가득",
-      main: { e:"🐟", name:"삼치구이" },
-      sides: [ {e:"🍲",name:"콩나물국"}, {e:"🥬",name:"열무무침"}, {e:"🧄",name:"마늘종볶음"}, {e:"🍚",name:"잡곡밥"} ],
-      note: "
+    { name: "된장찌개 한 상", tag: "구수하고 든든하게", main: { e:"🍲", name:"된장찌개" }, sides: [ {e:"🐟",name:"고등어구이"}, {e:"🥬",name:"시금치나물"}, {e:"🥚",name:"계란말이"}, {e:"🍚",name:"잡곡밥"} ], note: "된장찌개에 생선구이를 곁들이면 <strong>단백질과 발효식품</strong>을 함께 챙길 수 있어요. 잡곡밥으로 바꾸면 식이섬유도 더해져요." },
+    { name: "비빔밥 한 상", tag: "채소를 골고루", main: { e:"🥗", name:"나물 비빔밥" }, sides: [ {e:"🍳",name:"계란후라이"}, {e:"🍲",name:"미역국"}, {e:"🌶️",name:"고추장"}, {e:"🥒",name:"오이무침"} ], note: "여러 색의 나물을 한 그릇에 담는 비빔밥은 <strong>다양한 채소</strong>를 손쉽게 먹는 방법이에요. 참기름은 적당히만." },
+    { name: "닭가슴살 한 상", tag: "가볍고 단백하게", main: { e:"🍗", name:"닭가슴살 구이" }, sides: [ {e:"🥦",name:"브로콜리"}, {e:"🍠",name:"고구마"}, {e:"🥗",name:"양배추샐러드"}, {e:"🍚",name:"현미밥"} ], note: "<strong>고단백 저지방</strong> 구성이에요. 고구마와 현미로 천천히 흡수되는 탄수화물을 더하면 포만감이 오래가요." },
+    { name: "두부 한 상", tag: "담백하고 부드럽게", main: { e:"🍱", name:"두부조림" }, sides: [ {e:"🥬",name:"배추된장국"}, {e:"🥕",name:"당근볶음"}, {e:"🌿",name:"취나물"}, {e:"🍚",name:"보리밥"} ], note: "두부는 <strong>식물성 단백질</strong>이 풍부해요. 조림 양념은 짜지 않게, 국은 슴슴하게 끓이면 더 좋아요." },
+    { name: "생선구이 한 상", tag: "오메가-3 가득", main: { e:"🐟", name:"삼치구이" }, sides: [ {e:"🍲",name:"콩나물국"}, {e:"🥬",name:"열무무침"}, {e:"🧄",name:"마늘종볶음"}, {e:"🍚",name:"잡곡밥"} ], note: "등푸른 생선엔 <strong>오메가-3 지방산</strong>이 많아요. 기름에 튀기기보다 굽거나 쪄서 먹으면 더 좋아요." },
+    { name: "채소쌈 한 상", tag: "씹을수록 건강하게", main: { e:"🥬", name:"제육볶음 & 쌈채소" }, sides: [ {e:"🍲",name:"된장국"}, {e:"🧅",name:"양파절임"}, {e:"🌶️",name:"풋고추"}, {e:"🍚",name:"현미밥"} ], note: "고기를 <strong>쌈채소에 싸서</strong> 먹으면 채소 섭취가 늘고 포만감도 높아져요. 쌈장은 조금만 곁들이세요." },
+    { name: "콩국수 한 상", tag: "여름엔 시원하게", main: { e:"🍜", name:"콩국수" }, sides: [ {e:"🥒",name:"오이채"}, {e:"🍅",name:"방울토마토"}, {e:"🥗",name:"겉절이"}, {e:"🧊",name:"시원한 물"} ], note: "콩국물은 <strong>식물성 단백질</strong>이 풍부해요. 면을 줄이고 오이를 넉넉히 올리면 더 가벼운 한 끼가 돼요." },
+    { name: "버섯전골 한 상", tag: "따뜻하고 든든하게", main: { e:"🍲", name:"버섯전골" }, sides: [ {e:"🍙",name:"주먹밥"}, {e:"🥬",name:"부추무침"}, {e:"🥕",name:"단호박찜"}, {e:"🧄",name:"마늘장아찌"} ], note: "여러 버섯을 넣은 전골은 <strong>식이섬유와 감칠맛</strong>이 가득해요. 국물은 너무 짜지 않게 간을 맞춰보세요." }
+  ];
+  const dateEl = document.getElementById('date');
+  const tray = document.getElementById('tray');
+  function dayIndex(d) {
+    const days = Math.floor(d.getTime() / 86400000);
+    return ((days % TRAYS.length) + TRAYS.length) % TRAYS.length;
+  }
+  function render(i) {
+    const t = TRAYS[i];
+    let sides = t.sides.map(s => `<div class="dish"><span class="emoji">${s.e}</span><div><div class="d-role">반찬</div><div class="d-name">${s.name}</div></div></div>`).join('');
+    tray.style.animation = 'none'; void tray.offsetWidth; tray.style.animation = '';
+    tray.innerHTML = `<div class="tray-name">${t.name}</div><div class="tray-tag">${t.tag}</div><div class="dishes"><div class="dish main"><span class="emoji">${t.main.e}</span><div><div class="d-role">메인</div><div class="d-name">${t.main.name}</div></div></div>${sides}</div><p class="note">${t.note}</p>`;
+  }
+  function showToday() {
+    const now = new Date();
+    const days = ['일','월','화','수','목','금','토'];
+    dateEl.textContent = `${now.getFullYear()}. ${now.getMonth()+1}. ${now.getDate()}. (${days[now.getDay()]})`;
+    render(dayIndex(now));
+  }
+  document.getElementById('todayBtn').addEventListener('click', showToday);
+  document.getElementById('nextBtn').addEventListener('click', () => render(Math.floor(Math.random() * TRAYS.length)));
+  showToday();
+</script>
+</body>
+</html>
