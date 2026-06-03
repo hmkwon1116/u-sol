@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="분야별 주요 뉴스 — AI·인터넷은행·연예·여행·투자·경제 최신 뉴스를 한곳에서.">
+<meta name="theme-color" content="#fbfaf7">
+<title>주요 뉴스 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .back { position: fixed; top: 16px; left: 18px; color: var(--muted); text-decoration: none; font-size: 13px; letter-spacing: .04em; }
+  .back:hover { color: var(--accent); }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 64px 22px 70px; }
+  .crumb { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .crumb a { color: var(--accent); text-decoration: none; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+  .desc { color: var(--muted); margin-top: 8px; font-size: 15px; padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 600px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  .topic { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); }
+  .topic-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; cursor: pointer; }
+  .topic-head .emoji { font-size: 24px; }
+  .topic-head .nm { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; }
+  .topic-head .go { margin-left: auto; font-size: 12px; color: var(--accent); font-weight: 600; white-space: nowrap; }
+  .topic .tip { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .keys { display: flex; flex-wrap: wrap; gap: 7px; }
+  .key {
+    font-size: 13px; color: var(--ink); background: #f5f2ec; border: 1px solid var(--line);
+    border-radius: 999px; padding: 7px 13px; cursor: pointer; transition: all .14s; user-select: none;
+  }
+  .key:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .key:active { transform: scale(0.96); }
+  .source-row { margin-top: 26px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .source-row span { font-size: 13px; color: var(--muted); }
+  .src-btn { font-size: 13px; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 13px; cursor: pointer; }
+  .src-btn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .note { margin-top: 24px; font-size: 12.5px; color: var(--muted); line-height: 1.8; }
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 30px; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/">← U-SOL</a>
+  <div class="wrap">
+    <div class="crumb"><a href="/">U-SOL</a> · 주요 뉴스</div>
+    <h1>📰 주요 뉴스</h1>
+    <p class="desc">관심 분야를 누르면 그 주제의 최신 뉴스가 열려요. 분야 제목을 누르면 전체 뉴스, 키워드를 누르면 더 좁혀서 볼 수 있어요.</p>
+
+    <div class="source-row">
+      <span>뉴스 출처</span>
+      <button class="src-btn on" data-src="google">구글 뉴스</button>
+      <button class="src-btn" data-src="naver">네이버 뉴스</button>
+    </div>
+
+    <div class="grid" id="grid" style="margin-top:20px;">
+      <div class="topic" data-topic="AI 인공지능">
+        <div class="topic-head"><span class="emoji">🤖</span><span class="nm">AI</span><span class="go">전체 뉴스 →</span></div>
+        <div class="tip">인공지능 분야 최신 소식</div>
+        <div class="keys">
+          <span class="key">생성형 AI</span><span class="key">오픈AI</span><span class="key">AI 규제</span>
+        </div>
+      </div>
+
+      <div class="topic" data-topic="인터넷은행">
+        <div class="topic-head"><span class="emoji">🏦</span><span class="nm">인터넷은행</span><span class="go">전체 뉴스 →</span></div>
+        <div class="tip">케이뱅크·카카오뱅크·토스뱅크 동향</div>
+        <div class="keys">
+          <span class="key">케이뱅크</span><span class="key">카카오뱅크</span><span class="key">토스뱅크</span>
+        </div>
+      </div>
+
+      <div class="topic" data-topic="연예">
+        <div class="topic-head"><span class="emoji">🎬</span><span class="nm">연예계</span><span class="go">전체 뉴스 →</span></div>
+        <div class="tip">방송·음악·드라마 소식</div>
+        <div class="keys">
+          <span class="key">K팝</span><span class="key">드라마</span><span class="key">영화</span>
+        </div>
+      </div>
+
+      <div class="topic" data-topic="여행">
+        <div class="topic-head"><span class="emoji">✈️</span><span class="nm">여행</span><span class="go">전체 뉴스 →</span></div>
+        <div class="tip">국내외 여행 트렌드와 정보</div>
+        <div class="keys">
+          <span class="key">해외여행</span><span class="key">국내여행</span><span class="key">항공권</span>
+        </div>
+      </div>
+
+      <div class="topic" data-topic="투자">
+        <div class="topic-head"><span class="emoji">📈</span><span class="nm">투자</span><span class="go">전체 뉴스 →</span></div>
+        <div class="tip">증시·부동산·자산 시장 흐름</div>
+        <div class="keys">
+          <span class="key">코스피</span><span class="key">금리</span><span class="key">부동산</span>
+        </div>
+      </div>
+
+      <div class="topic" data-topic="경제">
+        <div class="topic-head"><span class="emoji">💰</span><span class="nm">경제</span><span class="go">전체 뉴스 →</span></div>
+        <div class="tip">국내외 경제 주요 이슈</div>
+        <div class="keys">
+          <span class="key">환율</span><span class="key">물가</span><span class="key">고용</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="note">뉴스는 누르는 순간의 최신 검색 결과로 열려서 항상 새로워요. 출처를 구글/네이버 중에 고를 수 있어요.</p>
+  </div>
+  <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
+
+<script>
+  let source = 'google';
+  document.querySelector('.source-row').addEventListener('click', (e) => {
+    const b = e.target.closest('.src-btn');
+    if (!b) return;
+    source = b.getAttribute('data-src');
+    document.querySelectorAll('.src-btn').forEach(x => x.classList.toggle('on', x === b));
+  });
+
+  function openNews(query) {
+    let url;
+    if (source === 'naver') {
+      url = `https://search.naver.com/search.naver?where=news&query=${encodeURIComponent(query)}&sort=1`;
+    } else {
+      url = `https://news.google.com/search?q=${encodeURIComponent(query)}%20when%3A7d&hl=ko&gl=KR&ceid=KR%3Ako`;
+    }
+    window.open(url, '_blank');
+  }
+
+  document.getElementById('grid').addEventListener('click', (e) => {
+    const key = e.target.closest('.key');
+    const head = e.target.closest('.topic-head');
+    const topic = e.target.closest('.topic');
+    if (!topic) return;
+    const base = topic.getAttribute('data-topic');
+    if (key) { openNews(key.textContent.trim()); }
+    else if (head) { openNews(base); }
+  });
+</script>
+</body>
+</html>
