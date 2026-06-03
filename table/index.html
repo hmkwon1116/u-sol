@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="오늘의 추천 밥상 — 매일 바뀌는 균형 잡힌 한 상 차림.">
+<meta name="theme-color" content="#f6f1e7">
+<title>오늘의 추천 밥상 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f1e7; --bg2: #efe7d6; --ink: #3a342a; --muted: #8a8270;
+    --accent: #c2702f; --accent-soft: #f6e4d2; --line: #e3d9c5; --card: #fffdf8;
+    --green: #5a7d3c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 50% 0%, #fdf9f0, transparent 60%), linear-gradient(180deg, var(--bg), var(--bg2));
+    color: var(--ink); font-family: 'Noto Sans KR', sans-serif; line-height: 1.6;
+    -webkit-font-smoothing: antialiased; display: flex; flex-direction: column;
+  }
+  .back { position: fixed; top: 16px; left: 18px; color: var(--muted); text-decoration: none; font-size: 13px; z-index: 5; }
+  .back:hover { color: var(--accent); }
+  .wrap { flex: 1; max-width: 600px; margin: 0 auto; width: 100%; padding: 70px 22px 60px; text-align: center; }
+  .date { font-size: 14px; color: var(--muted); letter-spacing: .08em; margin-bottom: 6px; }
+  .eyebrow { font-family: 'Gowun Batang', serif; font-size: 15px; color: var(--accent); letter-spacing: .2em; margin-bottom: 30px; }
+  .tray {
+    background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+    padding: 30px 22px; box-shadow: 0 8px 30px rgba(120,90,40,0.1); margin-bottom: 22px;
+    animation: fade .8s ease both;
+  }
+  @keyframes fade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .tray-name { font-family: 'Gowun Batang', serif; font-size: 25px; font-weight: 700; margin-bottom: 4px; }
+  .tray-tag { display: inline-block; font-size: 12px; color: var(--green); background: #eef3e6; border-radius: 999px; padding: 4px 12px; margin-bottom: 22px; }
+  .dishes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
+  .dish { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 10px; }
+  .dish.main { grid-column: 1 / -1; background: var(--accent-soft); border-color: #ecc9a6; }
+  .dish .emoji { font-size: 26px; }
+  .dish .d-role { font-size: 11px; color: var(--muted); }
+  .dish .d-name { font-size: 15px; font-weight: 600; }
+  .note { font-size: 14px; color: var(--muted); line-height: 1.85; margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line); word-break: keep-all; }
+  .note strong { color: var(--accent); font-weight: 600; }
+  .actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+  button {
+    font-family: 'Noto Sans KR', sans-serif; font-size: 14px; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    padding: 12px 22px; cursor: pointer; transition: all .15s; box-shadow: 0 2px 10px rgba(120,90,40,0.06);
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  .tip { margin-top: 30px; font-size: 12.5px; color: var(--muted); line-height: 1.8; }
+  footer { text-align: center; padding: 22px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/">← U-SOL</a>
+  <div class="wrap">
+    <div class="date" id="date">—</div>
+    <div class="eyebrow">오늘의 추천 밥상</div>
+
+    <div class="tray" id="tray"></div>
+
+    <div class="actions">
+      <button id="todayBtn">오늘의 밥상</button>
+      <button id="nextBtn">다른 밥상 보기</button>
+    </div>
+
+    <p class="tip">매일 날짜에 따라 밥상이 바뀝니다. 균형 잡힌 한 상을 가볍게 제안할 뿐, 개인의 건강 상태나 식이 제한은 고려하지 않았으니 참고용으로만 봐주세요.</p>
+  </div>
+  <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
+
+<script>
+  const TRAYS = [
+    { name: "된장찌개 한 상", tag: "구수하고 든든하게",
+      main: { e:"🍲", name:"된장찌개" },
+      sides: [ {e:"🐟",name:"고등어구이"}, {e:"🥬",name:"시금치나물"}, {e:"🥚",name:"계란말이"}, {e:"🍚",name:"잡곡밥"} ],
+      note: "된장찌개에 생선구이를 곁들이면 <strong>단백질과 발효식품</strong>을 함께 챙길 수 있어요. 잡곡밥으로 바꾸면 식이섬유도 더해져요." },
+    { name: "비빔밥 한 상", tag: "채소를 골고루",
+      main: { e:"🥗", name:"나물 비빔밥" },
+      sides: [ {e:"🍳",name:"계란후라이"}, {e:"🍲",name:"미역국"}, {e:"🌶️",name:"고추장"}, {e:"🥒",name:"오이무침"} ],
+      note: "여러 색의 나물을 한 그릇에 담는 비빔밥은 <strong>다양한 채소</strong>를 손쉽게 먹는 방법이에요. 참기름은 적당히만." },
+    { name: "닭가슴살 한 상", tag: "가볍고 단백하게",
+      main: { e:"🍗", name:"닭가슴살 구이" },
+      sides: [ {e:"🥦",name:"브로콜리"}, {e:"🍠",name:"고구마"}, {e:"🥗",name:"양배추샐러드"}, {e:"🍚",name:"현미밥"} ],
+      note: "<strong>고단백 저지방</strong> 구성이에요. 고구마와 현미로 천천히 흡수되는 탄수화물을 더하면 포만감이 오래가요." },
+    { name: "두부 한 상", tag: "담백하고 부드럽게",
+      main: { e:"🍱", name:"두부조림" },
+      sides: [ {e:"🥬",name:"배추된장국"}, {e:"🥕",name:"당근볶음"}, {e:"🌿",name:"취나물"}, {e:"🍚",name:"보리밥"} ],
+      note: "두부는 <strong>식물성 단백질</strong>이 풍부해요. 조림 양념은 짜지 않게, 국은 슴슴하게 끓이면 더 좋아요." },
+    { name: "생선구이 한 상", tag: "오메가-3 가득",
+      main: { e:"🐟", name:"삼치구이" },
+      sides: [ {e:"🍲",name:"콩나물국"}, {e:"🥬",name:"열무무침"}, {e:"🧄",name:"마늘종볶음"}, {e:"🍚",name:"잡곡밥"} ],
+      note: "
