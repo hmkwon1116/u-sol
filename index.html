@@ -32,16 +32,13 @@
   }
   .wrap { max-width: 920px; margin: 0 auto; padding: 14px 16px 32px; }
 
-  /* compact widget stripe — single horizontal row */
+  /* compact widget stripe — wraps to multiple rows */
   .stripe {
-    display: flex; gap: 6px; align-items: stretch; overflow-x: auto;
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: stretch;
     padding: 2px 2px 6px; margin-bottom: 12px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
   }
-  .stripe::-webkit-scrollbar { display: none; }
   .pill {
-    flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
+    display: inline-flex; align-items: center; gap: 5px;
     background: var(--card); border: 1px solid var(--line);
     border-radius: 999px; padding: 6px 11px; font-size: 12px;
     text-decoration: none; color: var(--ink); white-space: nowrap;
@@ -52,10 +49,6 @@
   .pill .ic { font-size: 13px; }
   .pill .k { color: var(--muted); font-weight: 500; font-size: 11px; }
   .pill .v { font-weight: 600; font-variant-numeric: tabular-nums; }
-  .pill.verse-pill .v {
-    overflow: hidden; text-overflow: ellipsis; max-width: 240px;
-    display: inline-block; font-weight: 500; font-style: italic;
-  }
   .pill.clock-pill .v { font-variant-numeric: tabular-nums; }
 
   /* header */
@@ -178,9 +171,6 @@
     <span class="pill" id="fxPill">
       <span class="ic">🇨🇦</span><span class="k">CAD</span><span class="v" id="fxCad">…</span>
     </span>
-    <a class="pill verse-pill" href="/verse/" id="vPill">
-      <span class="ic">🕊️</span><span class="v" id="vText">오늘의 말씀…</span>
-    </a>
   </div>
 
   <header class="reveal" style="animation-delay:.05s">
@@ -328,22 +318,6 @@
     }
   }
   loadFx();
-
-  const MINI_VERSES = [
-    { t: "여호와는 나의 목자시니 내게 부족함이 없으리로다", r: "시편 23:1" },
-    { t: "수고하고 무거운 짐 진 자들아 다 내게로 오라", r: "마태복음 11:28" },
-    { t: "두려워하지 말라 내가 너와 함께 함이라", r: "이사야 41:10" },
-    { t: "범사에 감사하라", r: "데살로니가전서 5:18" },
-    { t: "내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라", r: "빌립보서 4:13" },
-    { t: "너희 염려를 다 주께 맡기라", r: "베드로전서 5:7" }
-  ];
-  function loadMiniVerse() {
-    const days = Math.floor(Date.now() / 86400000);
-    const v = MINI_VERSES[((days % MINI_VERSES.length) + MINI_VERSES.length) % MINI_VERSES.length];
-    const el = document.getElementById('vText');
-    if (el) el.textContent = v.t;
-  }
-  loadMiniVerse();
 
   (function setupTabs() {
     const tabs = document.querySelectorAll('.tab');
