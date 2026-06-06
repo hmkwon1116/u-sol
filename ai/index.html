@@ -170,6 +170,7 @@
   <div class="tabs reveal" role="tablist" style="animation-delay:.08s">
     <button class="tab active" data-mode="concept" role="tab">오늘의 개념</button>
     <button class="tab" data-mode="resources" role="tab">무료 자료</button>
+    <a class="tab" href="/ai/terms/" role="tab" style="text-decoration:none;display:inline-flex;align-items:center;">주요 용어 →</a>
   </div>
 
   <div class="pane active" data-pane="concept">
@@ -679,7 +680,7 @@
     render(currentIdx, currentIdx === todayIndex());
   });
 
-  const tabs = document.querySelectorAll('.tab');
+  const tabs = document.querySelectorAll('.tab[data-mode]');
   const panes = document.querySelectorAll('.pane');
   tabs.forEach(t => {
     t.addEventListener('click', () => {
