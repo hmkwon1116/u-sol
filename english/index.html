@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="매일 하나씩, 일상에서 자주 쓰는 영어 표현. 발음과 예문까지 함께 익혀요.">
+<meta name="description" content="매일 하나씩, 일상에서 자주 쓰는 영어 표현과 단어. 실제 원어민 발음과 예문까지.">
 <meta name="theme-color" content="#fbfaf7">
 <title>오늘의 영어 한마디 · U-SOL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,10 +27,22 @@
   .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
   .back:hover { color: var(--accent); }
   .today { font-size: 13px; color: var(--muted); }
-  header { margin-bottom: 28px; }
+  header { margin-bottom: 22px; }
   h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
   h1 .dot { color: var(--accent); }
   .subtitle { font-family: 'Fraunces', serif; font-style: italic; color: var(--muted); margin-top: 6px; font-size: 16px; }
+
+  .tabs {
+    display: inline-flex; gap: 4px; padding: 4px;
+    background: #efece4; border-radius: 999px; margin-bottom: 18px;
+  }
+  .tab {
+    border: none; background: transparent; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    padding: 8px 18px; border-radius: 999px; color: var(--muted);
+    transition: background .15s, color .15s;
+  }
+  .tab.active { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 
   .card {
     background: var(--card); border: 1px solid var(--line); border-radius: 20px;
@@ -39,24 +51,34 @@
   }
   .card.swap { opacity: 0; transform: translateY(6px); }
 
-  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 14px; }
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .label .src { background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 999px; font-size: 10px; letter-spacing: 0.05em; }
   .phrase { font-family: 'Fraunces', serif; font-size: clamp(26px, 5.5vw, 36px); font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
-  .pron { color: var(--muted); font-style: italic; margin-top: 10px; font-size: 15px; font-family: 'Fraunces', serif; }
+  .pron { color: var(--muted); font-style: italic; margin-top: 10px; font-size: 15px; font-family: 'Fraunces', serif; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
   .pron .speak {
     display: inline-flex; align-items: center; gap: 5px;
-    margin-left: 10px; padding: 4px 10px; border-radius: 999px;
+    padding: 4px 10px; border-radius: 999px;
     background: var(--accent-soft); color: var(--accent);
     font-style: normal; font-family: 'Spline Sans', sans-serif; font-size: 12px; font-weight: 600;
     cursor: pointer; border: none; transition: transform .1s;
   }
   .pron .speak:hover { transform: scale(1.05); }
   .pron .speak:active { transform: scale(0.96); }
+  .pron .speak[disabled] { opacity: 0.5; cursor: wait; }
+  .pron .badge { background: #eef4ec; color: #4a7c3a; padding: 2px 8px; border-radius: 999px; font-style: normal; font-family: 'Spline Sans', sans-serif; font-size: 11px; font-weight: 600; }
 
   .meaning {
     margin-top: 22px; padding-top: 20px; border-top: 1px dashed var(--line);
     font-size: 18px; font-weight: 500;
   }
   .meaning .ko-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; display: block; margin-bottom: 6px; }
+
+  .pos { display: inline-block; font-size: 11px; color: var(--muted); font-style: italic; margin-right: 6px; }
+
+  .def-list { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line); }
+  .def-list .def-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; display: block; margin-bottom: 8px; }
+  .def-item { font-size: 14px; margin-bottom: 8px; line-height: 1.5; }
+  .def-item .pos { display: inline; }
 
   .example {
     margin-top: 20px; padding: 16px 18px; background: #f7f4ec;
@@ -65,6 +87,9 @@
   .example .ex-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
   .example .en { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500; margin-bottom: 6px; }
   .example .ko { font-size: 14px; color: var(--muted); }
+
+  .syn { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .syn-chip { background: #f1eee5; color: var(--muted); font-size: 12px; padding: 4px 10px; border-radius: 999px; }
 
   .actions { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
   .btn {
@@ -78,13 +103,17 @@
   .btn:active { transform: scale(0.98); }
   .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
   .btn.primary:hover { background: #c03d24; }
+  .btn[disabled] { opacity: 0.5; cursor: wait; }
 
   .progress { margin-top: 8px; font-size: 12px; color: var(--muted); text-align: center; }
+  .loading { color: var(--muted); font-size: 13px; font-style: italic; }
 
   footer { margin-top: 40px; font-size: 12px; color: var(--muted); text-align: center; padding-top: 20px; border-top: 1px solid var(--line); }
+  footer .api-credit { display: block; margin-top: 4px; font-size: 11px; }
 
   .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
   @keyframes rise { to { opacity: 1; transform: none; } }
+  .hidden { display: none; }
 </style>
 </head>
 <body>
@@ -96,41 +125,75 @@
 
   <header class="reveal" style="animation-delay:.05s">
     <h1>오늘의 영어 한마디<span class="dot">.</span></h1>
-    <p class="subtitle">매일 하나씩, 입에 붙는 표현을 익혀요</p>
+    <p class="subtitle">매일 하나씩, 입에 붙는 표현과 단어를 익혀요</p>
   </header>
 
-  <div class="card reveal" id="card" style="animation-delay:.1s">
-    <div class="label" id="modeLabel">오늘의 표현</div>
+  <div class="tabs reveal" role="tablist" style="animation-delay:.08s">
+    <button class="tab active" data-mode="phrase" role="tab">표현</button>
+    <button class="tab" data-mode="word" role="tab">단어</button>
+  </div>
+
+  <!-- 표현 카드 (curated) -->
+  <div class="card reveal" id="phraseCard" style="animation-delay:.1s">
+    <div class="label">오늘의 표현<span class="src" id="phraseMode">매일</span></div>
     <div class="phrase" id="phrase">—</div>
     <div class="pron">
       <span id="pron">—</span>
-      <button class="speak" id="speak" type="button" aria-label="발음 듣기">🔊 듣기</button>
+      <button class="speak" id="phraseSpeak" type="button" aria-label="발음 듣기">🔊 듣기</button>
     </div>
-
     <div class="meaning">
       <span class="ko-label">뜻</span>
       <span id="meaning">—</span>
     </div>
-
     <div class="example">
       <div class="ex-label">예문</div>
       <div class="en" id="exEn">—</div>
       <div class="ko" id="exKo">—</div>
     </div>
-
     <div class="actions">
-      <button class="btn" id="todayBtn" type="button">오늘의 표현</button>
-      <button class="btn primary" id="nextBtn" type="button">다른 표현 보기 →</button>
+      <button class="btn" id="phraseTodayBtn" type="button">오늘의 표현</button>
+      <button class="btn primary" id="phraseNextBtn" type="button">다른 표현 보기 →</button>
     </div>
-    <div class="progress" id="progress">1 / 20</div>
+    <div class="progress" id="phraseProgress">1 / 20</div>
+  </div>
+
+  <!-- 단어 카드 (Free Dictionary API) -->
+  <div class="card reveal hidden" id="wordCard" style="animation-delay:.1s">
+    <div class="label">오늘의 단어<span class="src" id="wordSrc">사전 API</span></div>
+    <div class="phrase" id="wordEn">—</div>
+    <div class="pron">
+      <span id="wordPron">—</span>
+      <span class="badge hidden" id="wordAudioBadge">원어민 발음</span>
+      <button class="speak" id="wordSpeak" type="button" aria-label="발음 듣기">🔊 듣기</button>
+    </div>
+    <div class="meaning">
+      <span class="ko-label">뜻 (한국어)</span>
+      <span id="wordKo">—</span>
+    </div>
+    <div class="def-list" id="wordDefs">
+      <span class="def-label">영영 정의</span>
+      <div class="loading">불러오는 중…</div>
+    </div>
+    <div class="example hidden" id="wordExBox">
+      <div class="ex-label">예문 (사전)</div>
+      <div class="en" id="wordEx">—</div>
+    </div>
+    <div class="syn hidden" id="wordSyn"></div>
+    <div class="actions">
+      <button class="btn" id="wordTodayBtn" type="button">오늘의 단어</button>
+      <button class="btn primary" id="wordNextBtn" type="button">다른 단어 →</button>
+    </div>
+    <div class="progress" id="wordProgress">1 / 40</div>
   </div>
 
   <footer class="reveal" style="animation-delay:.2s">
     © 2026 U-SOL · 다양한 아이디어를 만들고 실험하는 공간
+    <span class="api-credit">단어 데이터: <a href="https://dictionaryapi.dev/" target="_blank" rel="noopener" style="color:inherit;">Free Dictionary API</a></span>
   </footer>
 </div>
 
 <script>
+  // ---------- 표현 (기존 curated) ----------
   const PHRASES = [
     { en: "It is what it is.", pron: "잇 이즈 왓 잇 이즈", ko: "어쩔 수 없지 뭐. / 그게 현실이지.", exEn: "We missed the flight, but it is what it is.", exKo: "비행기를 놓쳤지만, 어쩔 수 없지 뭐." },
     { en: "Long time no see.", pron: "롱 타임 노 씨", ko: "오랜만이야.", exEn: "Hey, long time no see! How have you been?", exKo: "야, 오랜만이야! 어떻게 지냈어?" },
@@ -154,73 +217,318 @@
     { en: "I'll get back to you.", pron: "아일 겟 백 투 유", ko: "다시 연락드릴게요.", exEn: "Let me check the schedule and I'll get back to you.", exKo: "일정 확인하고 다시 연락드릴게요." }
   ];
 
-  const card = document.getElementById('card');
-  const modeLabel = document.getElementById('modeLabel');
+  // ---------- 단어 (Free Dictionary API용 큐레이션) ----------
+  // 영영 정의/예문/오디오는 API에서, 한국어 뜻은 큐레이션
+  const WORDS = [
+    { en: "serendipity", ko: "뜻밖의 행운, 우연한 발견" },
+    { en: "ephemeral", ko: "덧없는, 단명한" },
+    { en: "resilient", ko: "회복력 있는, 잘 견디는" },
+    { en: "nostalgia", ko: "향수, 옛 추억에 대한 그리움" },
+    { en: "wanderlust", ko: "여행에 대한 강한 열망" },
+    { en: "ambiguous", ko: "모호한, 불분명한" },
+    { en: "candid", ko: "솔직한, 진솔한" },
+    { en: "diligent", ko: "근면한, 부지런한" },
+    { en: "eloquent", ko: "유창한, 능변의" },
+    { en: "frugal", ko: "검소한, 알뜰한" },
+    { en: "gratitude", ko: "감사, 고마움" },
+    { en: "humble", ko: "겸손한" },
+    { en: "intuition", ko: "직관, 직감" },
+    { en: "jovial", ko: "쾌활한, 즐거운" },
+    { en: "kindle", ko: "(불을) 붙이다, (감정을) 불러일으키다" },
+    { en: "linger", ko: "오래 머물다, 남아 있다" },
+    { en: "meticulous", ko: "꼼꼼한, 세심한" },
+    { en: "novel", ko: "새로운, 참신한" },
+    { en: "obstinate", ko: "고집 센, 완고한" },
+    { en: "pristine", ko: "깨끗한, 손때 묻지 않은" },
+    { en: "quaint", ko: "아담하고 예스러운" },
+    { en: "rigorous", ko: "엄격한, 철저한" },
+    { en: "solitude", ko: "고독, 혼자 있음" },
+    { en: "tranquil", ko: "고요한, 평온한" },
+    { en: "ubiquitous", ko: "어디에나 있는, 흔한" },
+    { en: "vivid", ko: "생생한, 선명한" },
+    { en: "whimsical", ko: "엉뚱한, 변덕스러운" },
+    { en: "zealous", ko: "열성적인, 열심인" },
+    { en: "benevolent", ko: "자비로운, 인자한" },
+    { en: "concise", ko: "간결한, 함축적인" },
+    { en: "deliberate", ko: "의도적인 / 신중한" },
+    { en: "endeavor", ko: "노력, 시도; 노력하다" },
+    { en: "fluent", ko: "유창한" },
+    { en: "genuine", ko: "진짜의, 진실한" },
+    { en: "hesitate", ko: "주저하다, 망설이다" },
+    { en: "inevitable", ko: "피할 수 없는, 필연적인" },
+    { en: "lucid", ko: "명쾌한, 알기 쉬운" },
+    { en: "mundane", ko: "평범한, 일상적인" },
+    { en: "profound", ko: "깊은, 심오한" },
+    { en: "vibrant", ko: "활기찬, 강렬한" }
+  ];
+
+  // ---------- 공통 ----------
+  const days = ['일','월','화','수','목','금','토'];
+  const now = new Date();
+  document.getElementById('today').textContent =
+    `${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+
+  function todayIndex(len) {
+    const d = Math.floor(Date.now() / 86400000);
+    return ((d % len) + len) % len;
+  }
+
+  function speakTTS(text) {
+    if (!('speechSynthesis' in window)) return false;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    u.rate = 0.92;
+    window.speechSynthesis.speak(u);
+    return true;
+  }
+
+  // ---------- 표현 로직 ----------
+  const phraseCard = document.getElementById('phraseCard');
   const phraseEl = document.getElementById('phrase');
   const pronEl = document.getElementById('pron');
   const meaningEl = document.getElementById('meaning');
   const exEnEl = document.getElementById('exEn');
   const exKoEl = document.getElementById('exKo');
-  const progressEl = document.getElementById('progress');
-  const todayBtn = document.getElementById('todayBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const speakBtn = document.getElementById('speak');
-  const todayEl = document.getElementById('today');
+  const phraseModeEl = document.getElementById('phraseMode');
+  const phraseProgressEl = document.getElementById('phraseProgress');
+  let phraseIdx = todayIndex(PHRASES.length);
 
-  const days = ['일','월','화','수','목','금','토'];
-  const now = new Date();
-  todayEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
-
-  function todayIndex() {
-    const d = Math.floor(Date.now() / 86400000);
-    return ((d % PHRASES.length) + PHRASES.length) % PHRASES.length;
-  }
-
-  let currentIdx = todayIndex();
-  let isTodayView = true;
-
-  function render(idx, today) {
-    card.classList.add('swap');
+  function renderPhrase(idx, today) {
+    phraseCard.classList.add('swap');
     setTimeout(() => {
       const p = PHRASES[idx];
-      modeLabel.textContent = today ? '오늘의 표현' : '다른 표현';
+      phraseModeEl.textContent = today ? '매일' : '랜덤';
       phraseEl.textContent = p.en;
       pronEl.textContent = `[${p.pron}]`;
       meaningEl.textContent = p.ko;
       exEnEl.textContent = p.exEn;
       exKoEl.textContent = p.exKo;
-      progressEl.textContent = `${idx + 1} / ${PHRASES.length}`;
-      card.classList.remove('swap');
+      phraseProgressEl.textContent = `${idx + 1} / ${PHRASES.length}`;
+      phraseCard.classList.remove('swap');
     }, 180);
   }
+  renderPhrase(phraseIdx, true);
 
-  render(currentIdx, true);
-
-  todayBtn.addEventListener('click', () => {
-    currentIdx = todayIndex();
-    isTodayView = true;
-    render(currentIdx, true);
+  document.getElementById('phraseTodayBtn').addEventListener('click', () => {
+    phraseIdx = todayIndex(PHRASES.length);
+    renderPhrase(phraseIdx, true);
   });
-
-  nextBtn.addEventListener('click', () => {
+  document.getElementById('phraseNextBtn').addEventListener('click', () => {
     let next;
     do { next = Math.floor(Math.random() * PHRASES.length); }
-    while (next === currentIdx && PHRASES.length > 1);
-    currentIdx = next;
-    isTodayView = (currentIdx === todayIndex());
-    render(currentIdx, isTodayView);
+    while (next === phraseIdx && PHRASES.length > 1);
+    phraseIdx = next;
+    renderPhrase(phraseIdx, phraseIdx === todayIndex(PHRASES.length));
+  });
+  document.getElementById('phraseSpeak').addEventListener('click', () => {
+    if (!speakTTS(PHRASES[phraseIdx].en)) {
+      document.getElementById('phraseSpeak').textContent = '미지원';
+    }
   });
 
-  speakBtn.addEventListener('click', () => {
-    if (!('speechSynthesis' in window)) {
-      speakBtn.textContent = '미지원';
+  // ---------- 단어 로직 (Free Dictionary API) ----------
+  const wordCard = document.getElementById('wordCard');
+  const wordEnEl = document.getElementById('wordEn');
+  const wordPronEl = document.getElementById('wordPron');
+  const wordAudioBadge = document.getElementById('wordAudioBadge');
+  const wordKoEl = document.getElementById('wordKo');
+  const wordDefsEl = document.getElementById('wordDefs');
+  const wordExBox = document.getElementById('wordExBox');
+  const wordExEl = document.getElementById('wordEx');
+  const wordSynEl = document.getElementById('wordSyn');
+  const wordProgressEl = document.getElementById('wordProgress');
+  const wordSpeakBtn = document.getElementById('wordSpeak');
+  const wordTodayBtn = document.getElementById('wordTodayBtn');
+  const wordNextBtn = document.getElementById('wordNextBtn');
+  const wordSrcEl = document.getElementById('wordSrc');
+
+  let wordIdx = todayIndex(WORDS.length);
+  let wordLoaded = false;
+  let currentAudioUrl = null;
+  const apiCache = new Map();
+
+  async function fetchWord(word) {
+    if (apiCache.has(word)) return apiCache.get(word);
+    try {
+      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+      if (!res.ok) throw new Error('not found');
+      const data = await res.json();
+      apiCache.set(word, data);
+      return data;
+    } catch (e) {
+      apiCache.set(word, null);
+      return null;
+    }
+  }
+
+  function pickAudio(entry) {
+    if (!entry || !entry.phonetics) return null;
+    const withAudio = entry.phonetics.find(p => p.audio && p.audio.length > 0);
+    return withAudio ? withAudio.audio : null;
+  }
+
+  function pickPhonetic(entry) {
+    if (!entry) return null;
+    if (entry.phonetic) return entry.phonetic;
+    if (entry.phonetics) {
+      const t = entry.phonetics.find(p => p.text);
+      if (t) return t.text;
+    }
+    return null;
+  }
+
+  function collectDefs(entry, max = 3) {
+    const out = [];
+    if (!entry || !entry.meanings) return out;
+    for (const m of entry.meanings) {
+      for (const d of (m.definitions || [])) {
+        out.push({ pos: m.partOfSpeech, def: d.definition, ex: d.example });
+        if (out.length >= max) return out;
+      }
+    }
+    return out;
+  }
+
+  function collectSynonyms(entry, max = 6) {
+    const set = new Set();
+    if (!entry || !entry.meanings) return [];
+    for (const m of entry.meanings) {
+      (m.synonyms || []).forEach(s => set.add(s));
+      for (const d of (m.definitions || [])) {
+        (d.synonyms || []).forEach(s => set.add(s));
+      }
+      if (set.size >= max) break;
+    }
+    return Array.from(set).slice(0, max);
+  }
+
+  async function renderWord(idx, today) {
+    wordCard.classList.add('swap');
+    const w = WORDS[idx];
+
+    // 즉시 표시할 수 있는 것부터
+    setTimeout(() => {
+      wordEnEl.textContent = w.en;
+      wordKoEl.textContent = w.ko;
+      wordPronEl.textContent = '/…/';
+      wordAudioBadge.classList.add('hidden');
+      wordSrcEl.textContent = today ? '매일 · 사전 API' : '랜덤 · 사전 API';
+      wordProgressEl.textContent = `${idx + 1} / ${WORDS.length}`;
+      wordDefsEl.innerHTML = '<span class="def-label">영영 정의</span><div class="loading">사전 API에서 불러오는 중…</div>';
+      wordExBox.classList.add('hidden');
+      wordSynEl.classList.add('hidden');
+      wordSynEl.innerHTML = '';
+      wordCard.classList.remove('swap');
+    }, 180);
+
+    // API 호출
+    const arr = await fetchWord(w.en);
+    if (!arr || !arr.length) {
+      wordPronEl.textContent = '[발음 정보 없음]';
+      wordDefsEl.innerHTML = '<span class="def-label">영영 정의</span><div class="def-item" style="color:var(--muted)">사전 정보를 불러오지 못했어요. 다른 단어를 시도해 보세요.</div>';
+      currentAudioUrl = null;
       return;
     }
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(PHRASES[currentIdx].en);
-    u.lang = 'en-US';
-    u.rate = 0.92;
-    window.speechSynthesis.speak(u);
+
+    const entry = arr[0];
+    const phon = pickPhonetic(entry);
+    wordPronEl.textContent = phon ? phon : '[발음 표기 없음]';
+
+    currentAudioUrl = pickAudio(entry);
+    if (currentAudioUrl) {
+      wordAudioBadge.classList.remove('hidden');
+    } else {
+      wordAudioBadge.classList.add('hidden');
+    }
+
+    const defs = collectDefs(entry, 3);
+    if (defs.length === 0) {
+      wordDefsEl.innerHTML = '<span class="def-label">영영 정의</span><div class="def-item" style="color:var(--muted)">정의를 찾지 못했어요.</div>';
+    } else {
+      let html = '<span class="def-label">영영 정의</span>';
+      defs.forEach((d, i) => {
+        html += `<div class="def-item"><span class="pos">${d.pos || ''}</span>${i+1}. ${escapeHtml(d.def)}</div>`;
+      });
+      wordDefsEl.innerHTML = html;
+    }
+
+    const exampleDef = defs.find(d => d.ex);
+    if (exampleDef && exampleDef.ex) {
+      wordExEl.textContent = `"${exampleDef.ex}"`;
+      wordExBox.classList.remove('hidden');
+    } else {
+      wordExBox.classList.add('hidden');
+    }
+
+    const syns = collectSynonyms(entry, 6);
+    if (syns.length > 0) {
+      wordSynEl.innerHTML = syns.map(s => `<span class="syn-chip">${escapeHtml(s)}</span>`).join('');
+      wordSynEl.classList.remove('hidden');
+    } else {
+      wordSynEl.classList.add('hidden');
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  wordTodayBtn.addEventListener('click', () => {
+    wordIdx = todayIndex(WORDS.length);
+    renderWord(wordIdx, true);
+  });
+  wordNextBtn.addEventListener('click', () => {
+    let next;
+    do { next = Math.floor(Math.random() * WORDS.length); }
+    while (next === wordIdx && WORDS.length > 1);
+    wordIdx = next;
+    renderWord(wordIdx, wordIdx === todayIndex(WORDS.length));
+  });
+
+  wordSpeakBtn.addEventListener('click', () => {
+    if (currentAudioUrl) {
+      try {
+        wordSpeakBtn.disabled = true;
+        const url = currentAudioUrl.startsWith('//') ? 'https:' + currentAudioUrl : currentAudioUrl;
+        const audio = new Audio(url);
+        audio.addEventListener('ended', () => { wordSpeakBtn.disabled = false; });
+        audio.addEventListener('error', () => {
+          wordSpeakBtn.disabled = false;
+          speakTTS(WORDS[wordIdx].en);
+        });
+        audio.play().catch(() => {
+          wordSpeakBtn.disabled = false;
+          speakTTS(WORDS[wordIdx].en);
+        });
+      } catch (e) {
+        wordSpeakBtn.disabled = false;
+        speakTTS(WORDS[wordIdx].en);
+      }
+    } else {
+      speakTTS(WORDS[wordIdx].en);
+    }
+  });
+
+  // ---------- 탭 전환 ----------
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const mode = t.dataset.mode;
+      if (mode === 'phrase') {
+        phraseCard.classList.remove('hidden');
+        wordCard.classList.add('hidden');
+      } else {
+        phraseCard.classList.add('hidden');
+        wordCard.classList.remove('hidden');
+        if (!wordLoaded) {
+          wordLoaded = true;
+          renderWord(wordIdx, true);
+        }
+      }
+    });
   });
 </script>
 </body>
