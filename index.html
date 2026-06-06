@@ -28,7 +28,19 @@
   .logo { font-family: 'Fraunces', serif; font-weight: 900; font-size: clamp(34px, 7vw, 54px); letter-spacing: -0.02em; line-height: 1; }
   .logo .dot { color: var(--accent); }
   .tagline { font-family: 'Fraunces', serif; font-size: clamp(15px, 3vw, 19px); font-style: italic; color: var(--muted); font-weight: 400; }
-  .intro { margin-top: 14px; max-width: 600px; color: var(--muted); font-size: 15px; }
+  .pick-wrap { margin-top: 16px; }
+  .pick-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: #fff; border: none; font-family: 'Spline Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; padding: 11px 18px; border-radius: 999px; cursor: pointer; transition: transform .15s ease, background .15s; box-shadow: var(--shadow); }
+  .pick-btn:hover { background: var(--accent); transform: translateY(-1px); }
+  .pick-btn .ic { font-size: 16px; }
+  .pick-card { margin-top: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); display: none; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s ease; animation: rise .35s ease forwards; }
+  .pick-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .pick-card.show { display: flex; }
+  .pick-card .emoji { font-size: 30px; flex-shrink: 0; }
+  .pick-card .body { flex: 1; min-width: 0; }
+  .pick-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+  .pick-card .nm { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; line-height: 1.25; }
+  .pick-card .desc { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .pick-card .arrow { font-size: 20px; color: var(--muted); flex-shrink: 0; }
   .topline { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 8px; }
   .date-now { font-size: 14px; color: var(--muted); }
   .date-now strong { color: var(--ink); font-weight: 600; }
@@ -72,7 +84,20 @@
       <div class="logo">U-SOL<span class="dot">.</span></div>
       <div class="tagline">다양한 아이디어를 만들고 실험하는 공간</div>
     </div>
-    <p class="intro">떠오른 아이디어를 작은 도구와 서비스로 직접 만들고, 여기에 올려 실험합니다. 투자·금융 판단을 돕는 것부터 가볍게 즐기는 게임까지 — 하나씩 쌓아가는 중이에요.</p>
+    <div class="pick-wrap">
+      <button type="button" class="pick-btn" id="pickBtn">
+        <span class="ic">🎲</span><span>오늘의 추천</span>
+      </button>
+      <a class="pick-card" id="pickCard" href="#">
+        <span class="emoji" id="pickEmoji">✨</span>
+        <div class="body">
+          <div class="label">오늘의 추천</div>
+          <div class="nm" id="pickName"></div>
+          <div class="desc" id="pickDesc"></div>
+        </div>
+        <span class="arrow">→</span>
+      </a>
+    </div>
   </header>
 
   <div class="dash">
@@ -261,6 +286,33 @@
     if (rEl) rEl.textContent = `${v.r} · 자세히 →`;
   }
   loadMiniVerse();
+
+  (function setupPick() {
+    const btn = document.getElementById('pickBtn');
+    const card = document.getElementById('pickCard');
+    if (!btn || !card) return;
+    const items = Array.from(document.querySelectorAll('.cats .cat.live')).map(el => ({
+      href: el.getAttribute('href'),
+      emoji: el.querySelector('.emoji')?.textContent || '✨',
+      name: el.querySelector('.nm')?.textContent || '',
+      desc: el.querySelector('.desc')?.textContent || ''
+    })).filter(it => it.href && it.href !== '#');
+    if (!items.length) { btn.style.display = 'none'; return; }
+    let lastIdx = -1;
+    btn.addEventListener('click', () => {
+      let idx = Math.floor(Math.random() * items.length);
+      if (items.length > 1 && idx === lastIdx) idx = (idx + 1) % items.length;
+      lastIdx = idx;
+      const pick = items[idx];
+      document.getElementById('pickEmoji').textContent = pick.emoji;
+      document.getElementById('pickName').textContent = pick.name;
+      document.getElementById('pickDesc').textContent = pick.desc;
+      card.setAttribute('href', pick.href);
+      card.classList.remove('show');
+      void card.offsetWidth;
+      card.classList.add('show');
+    });
+  })();
 </script>
 </body>
 </html>
