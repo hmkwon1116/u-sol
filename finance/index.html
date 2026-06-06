@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="복리·대출·예적금을 직접 계산. 월 납입금, 만기 수령액, 총 이자를 바로 확인하는 금융 생활 계산기.">
+<meta name="theme-color" content="#fbfaf7">
+<title>금융 계산기 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #2f8a4f; --accent-soft: #e4f3ea;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.55;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 22px 20px 80px; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+  .today { font-size: 13px; color: var(--muted); }
+  header { margin-bottom: 24px; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+  h1 .dot { color: var(--accent); }
+  .subtitle { font-family: 'Fraunces', serif; font-style: italic; color: var(--muted); margin-top: 6px; font-size: 16px; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 18px; background: #f1ede4; padding: 5px; border-radius: 14px; }
+  .tab {
+    flex: 1; padding: 11px 8px; border-radius: 10px; border: none; background: transparent;
+    color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+    transition: background .15s, color .15s;
+  }
+  .tab.active { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 24px 22px; box-shadow: var(--shadow); margin-bottom: 18px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 6px;
+  }
+  .field .hint { font-size: 11px; color: var(--muted); font-weight: 400; }
+  .input-row { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 12px; background: #fafaf6; overflow: hidden; transition: border-color .15s; }
+  .input-row:focus-within { border-color: var(--accent); }
+  .input-row input {
+    flex: 1; border: none; background: transparent; padding: 13px 14px;
+    font-size: 16px; font-family: inherit; font-variant-numeric: tabular-nums; color: var(--ink);
+    outline: none; min-width: 0;
+  }
+  .input-row .unit { padding: 13px 14px; font-size: 14px; color: var(--muted); border-left: 1px solid var(--line); background: #f4f1e9; font-weight: 500; }
+  .input-row select { border: none; background: #f4f1e9; padding: 0 14px; font-size: 14px; font-family: inherit; color: var(--ink); cursor: pointer; border-left: 1px solid var(--line); }
+
+  .result {
+    margin-top: 22px; padding: 20px; border-radius: 14px;
+    background: var(--accent-soft); border: 1px solid #cde6d4;
+  }
+  .result .res-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  .result .res-main { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 38px); font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .result .res-sub { font-size: 13.5px; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+  .result .res-sub strong { color: var(--ink); font-weight: 600; }
+
+  .breakdown { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .breakdown .b-item { background: rgba(255,255,255,0.6); padding: 10px 12px; border-radius: 10px; }
+  .breakdown .b-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .breakdown .b-val { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+  .note { margin-top: 14px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  footer { margin-top: 40px; font-size: 12px; color: var(--muted); text-align: center; padding-top: 20px; border-top: 1px solid var(--line); }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top reveal">
+    <a class="back" href="/">← U-SOL</a>
+    <span class="today" id="today">—</span>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <h1>금융 계산기<span class="dot">.</span></h1>
+    <p class="subtitle">복리·대출·예적금 — 숫자만 입력하면 바로 결과까지</p>
+  </header>
+
+  <div class="tabs reveal" style="animation-delay:.1s" role="tablist">
+    <button class="tab active" data-panel="compound" role="tab">복리</button>
+    <button class="tab" data-panel="loan" role="tab">대출</button>
+    <button class="tab" data-panel="savings" role="tab">예적금</button>
+  </div>
+
+  <section class="card panel active reveal" id="panel-compound" style="animation-delay:.15s">
+    <div class="field">
+      <label>초기 원금 <span class="hint">처음 넣어둘 돈</span></label>
+      <div class="input-row">
+        <input type="number" id="cp-principal" value="1000000" min="0" inputmode="numeric">
+        <span class="unit">원</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>매월 추가 납입 <span class="hint">없으면 0</span></label>
+      <div class="input-row">
+        <input type="number" id="cp-monthly" value="100000" min="0" inputmode="numeric">
+        <span class="unit">원</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>연 이자율</label>
+      <div class="input-row">
+        <input type="number" id="cp-rate" value="5" step="0.1" min="0" inputmode="decimal">
+        <span class="unit">%</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>운용 기간</label>
+      <div class="input-row">
+        <input type="number" id="cp-years" value="10" min="0" inputmode="numeric">
+        <span class="unit">년</span>
+      </div>
+    </div>
+    <div class="result">
+      <div class="res-label">예상 만기 금액</div>
+      <div class="res-main" id="cp-final">—</div>
+      <div class="breakdown">
+        <div class="b-item"><div class="b-label">총 납입 원금</div><div class="b-val" id="cp-paid">—</div></div>
+        <div class="b-item"><div class="b-label">이자 수익</div><div class="b-val" id="cp-interest">—</div></div>
+      </div>
+      <div class="note">월 복리 기준. 매월 말 납입·이자 계산을 가정한 단순 모형입니다. 세금·수수료는 반영하지 않았어요.</div>
+    </div>
+  </section>
+
+  <section class="card panel reveal" id="panel-loan" style="animation-delay:.15s">
+    <div class="field">
+      <label>대출 원금</label>
+      <div class="input-row">
+        <input type="number" id="ln-principal" value="100000000" min="0" inputmode="numeric">
+        <span class="unit">원</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>연 이자율</label>
+      <div class="input-row">
+        <input type="number" id="ln-rate" value="4.5" step="0.1" min="0" inputmode="decimal">
+        <span class="unit">%</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>대출 기간</label>
+      <div class="input-row">
+        <input type="number" id="ln-years" value="30" min="1" inputmode="numeric">
+        <span class="unit">년</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>상환 방식</label>
+      <div class="input-row">
+        <select id="ln-type">
+          <option value="equal-payment">원리금균등</option>
+          <option value="equal-principal">원금균등</option>
+          <option value="bullet">만기일시</option>
+        </select>
+      </div>
+    </div>
+    <div class="result">
+      <div class="res-label" id="ln-res-label">월 상환액</div>
+      <div class="res-main" id="ln-monthly">—</div>
+      <div class="breakdown">
+        <div class="b-item"><div class="b-label">총 이자</div><div class="b-val" id="ln-interest">—</div></div>
+        <div class="b-item"><div class="b-label">총 상환액</div><div class="b-val" id="ln-total">—</div></div>
+      </div>
+      <div class="note" id="ln-note">원리금균등: 매월 같은 금액. 원금균등: 매월 원금 동일·이자 감소. 만기일시: 매월 이자만, 만기에 원금.</div>
+    </div>
+  </section>
+
+  <section class="card panel reveal" id="panel-savings" style="animation-delay:.15s">
+    <div class="field">
+      <label>상품 유형</label>
+      <div class="input-row">
+        <select id="sv-type">
+          <option value="installment">적금 (매월 납입)</option>
+          <option value="deposit">예금 (목돈 거치)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" id="sv-monthly-field">
+      <label>매월 납입액</label>
+      <div class="input-row">
+        <input type="number" id="sv-monthly" value="300000" min="0" inputmode="numeric">
+        <span class="unit">원</span>
+      </div>
+    </div>
+    <div class="field" id="sv-lump-field" style="display:none">
+      <label>예치 원금</label>
+      <div class="input-row">
+        <input type="number" id="sv-lump" value="10000000" min="0" inputmode="numeric">
+        <span class="unit">원</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>연 이자율 <span class="hint">세전</span></label>
+      <div class="input-row">
+        <input type="number" id="sv-rate" value="3.5" step="0.1" min="0" inputmode="decimal">
+        <span class="unit">%</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>기간</label>
+      <div class="input-row">
+        <input type="number" id="sv-months" value="12" min="1" inputmode="numeric">
+        <span class="unit">개월</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>이자 과세</label>
+      <div class="input-row">
+        <select id="sv-tax">
+          <option value="15.4">일반과세 (15.4%)</option>
+          <option value="9.5">세금우대 (9.5%)</option>
+          <option value="0">비과세 (0%)</option>
+        </select>
+      </div>
+    </div>
+    <div class="result">
+      <div class="res-label">세후 수령액</div>
+      <div class="res-main" id="sv-final">—</div>
+      <div class="breakdown">
+        <div class="b-item"><div class="b-label">납입 원금</div><div class="b-val" id="sv-paid">—</div></div>
+        <div class="b-item"><div class="b-label">세후 이자</div><div class="b-val" id="sv-net-interest">—</div></div>
+      </div>
+      <div class="note">적금은 단리 기준(시중 일반 적금 방식), 예금은 만기일시 단리 기준입니다. 우대금리·중도해지 등은 반영되지 않아요.</div>
+    </div>
+  </section>
+
+  <footer class="reveal" style="animation-delay:.3s">
+    실제 금융상품의 조건·세금·우대금리에 따라 결과가 달라질 수 있어요. 참고용 계산기입니다.
+  </footer>
+</div>
+
+<script>
+  function setToday() {
+    const now = new Date();
+    const days = ['일','월','화','수','목','금','토'];
+    document.getElementById('today').textContent =
+      `${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+  }
+  setToday();
+
+  const fmt = v => {
+    if (!isFinite(v)) return '—';
+    return Math.round(v).toLocaleString('ko-KR') + '원';
+  };
+
+  // 탭 전환
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+    });
+  });
+
+  // 복리 계산
+  function calcCompound() {
+    const P = +document.getElementById('cp-principal').value || 0;
+    const M = +document.getElementById('cp-monthly').value || 0;
+    const r = (+document.getElementById('cp-rate').value || 0) / 100;
+    const y = +document.getElementById('cp-years').value || 0;
+    const months = y * 12;
+    const mr = r / 12;
+    let bal = P;
+    for (let i = 0; i < months; i++) {
+      bal = bal * (1 + mr) + M;
+    }
+    const paid = P + M * months;
+    document.getElementById('cp-final').textContent = fmt(bal);
+    document.getElementById('cp-paid').textContent = fmt(paid);
+    document.getElementById('cp-interest').textContent = fmt(bal - paid);
+  }
+  ['cp-principal','cp-monthly','cp-rate','cp-years'].forEach(id =>
+    document.getElementById(id).addEventListener('input', calcCompound));
+  calcCompound();
+
+  // 대출 계산
+  function calcLoan() {
+    const P = +document.getElementById('ln-principal').value || 0;
+    const r = (+document.getElementById('ln-rate').value || 0) / 100;
+    const y = +document.getElementById('ln-years').value || 0;
+    const type = document.getElementById('ln-type').value;
+    const n = y * 12;
+    const mr = r / 12;
+    const labelEl = document.getElementById('ln-res-label');
+    const monthlyEl = document.getElementById('ln-monthly');
+
+    let totalInterest = 0, monthlyText = '—';
+    if (n === 0 || P === 0) {
+      monthlyEl.textContent = '—';
+      document.getElementById('ln-interest').textContent = '—';
+      document.getElementById('ln-total').textContent = '—';
+      return;
+    }
+    if (type === 'equal-payment') {
+      labelEl.textContent = '월 상환액';
+      const m = mr === 0 ? P / n : P * mr * Math.pow(1+mr, n) / (Math.pow(1+mr, n) - 1);
+      totalInterest = m * n - P;
+      monthlyText = fmt(m);
+    } else if (type === 'equal-principal') {
+      labelEl.textContent = '첫 달 상환액 (이후 감소)';
+      const principalPart = P / n;
+      const firstInterest = P * mr;
+      monthlyText = fmt(principalPart + firstInterest);
+      // 총이자: 매월 잔액에 대한 이자 합
+      let bal = P;
+      for (let i = 0; i < n; i++) {
+        totalInterest += bal * mr;
+        bal -= principalPart;
+      }
+    } else {
+      labelEl.textContent = '월 이자 (만기에 원금 일시 상환)';
+      monthlyText = fmt(P * mr);
+      totalInterest = P * mr * n;
+    }
+    monthlyEl.textContent = monthlyText;
+    document.getElementById('ln-interest').textContent = fmt(totalInterest);
+    document.getElementById('ln-total').textContent = fmt(P + totalInterest);
+  }
+  ['ln-principal','ln-rate','ln-years','ln-type'].forEach(id =>
+    document.getElementById(id).addEventListener('input', calcLoan));
+  document.getElementById('ln-type').addEventListener('change', calcLoan);
+  calcLoan();
+
+  // 예적금 계산
+  function calcSavings() {
+    const type = document.getElementById('sv-type').value;
+    const r = (+document.getElementById('sv-rate').value || 0) / 100;
+    const n = +document.getElementById('sv-months').value || 0;
+    const tax = (+document.getElementById('sv-tax').value || 0) / 100;
+    document.getElementById('sv-monthly-field').style.display = type === 'installment' ? '' : 'none';
+    document.getElementById('sv-lump-field').style.display = type === 'deposit' ? '' : 'none';
+
+    let principal = 0, interest = 0;
+    if (type === 'installment') {
+      const M = +document.getElementById('sv-monthly').value || 0;
+      principal = M * n;
+      // 시중 적금 단리 공식: M * r/12 * n*(n+1)/2
+      interest = M * (r / 12) * n * (n + 1) / 2;
+    } else {
+      const L = +document.getElementById('sv-lump').value || 0;
+      principal = L;
+      interest = L * r * (n / 12);
+    }
+    const netInterest = interest * (1 - tax);
+    document.getElementById('sv-final').textContent = fmt(principal + netInterest);
+    document.getElementById('sv-paid').textContent = fmt(principal);
+    document.getElementById('sv-net-interest').textContent = fmt(netInterest);
+  }
+  ['sv-type','sv-monthly','sv-lump','sv-rate','sv-months','sv-tax'].forEach(id =>
+    document.getElementById(id).addEventListener('input', calcSavings));
+  document.getElementById('sv-type').addEventListener('change', calcSavings);
+  document.getElementById('sv-tax').addEventListener('change', calcSavings);
+  calcSavings();
+</script>
+</body>
+</html>
