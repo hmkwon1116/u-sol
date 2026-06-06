@@ -163,7 +163,7 @@
       <span class="ic">⏰</span><span class="v" id="clock">--:--</span>
     </span>
     <a class="pill" id="wxPill" href="/weather/">
-      <span class="ic">🌡️</span><span class="k">서울</span><span class="v" id="wxTemp">…</span>
+      <span class="ic">🌡️</span><span class="k" id="wxPlace">내 위치</span><span class="v" id="wxTemp">…</span>
     </a>
     <a class="pill" id="rainPill" href="/weather/">
       <span class="ic">☔</span><span class="k">비</span><span class="v" id="wxRain">…</span>
@@ -246,8 +246,8 @@
     <div class="cats">
       <a class="cat" href="/weather/">
         <span class="emoji">🌤️</span>
-        <div class="nm">서울 날씨</div>
-        <div class="desc">오늘 기온·강수, 7일 예보 한눈에</div>
+        <div class="nm">현재 위치 날씨</div>
+        <div class="desc">내 위치 기준 기온·강수, 7일 예보 한눈에</div>
         <div class="count">지금 날씨 →</div>
       </a>
       <a class="cat" href="/food/">
@@ -295,9 +295,27 @@
   updateClock();
   setInterval(updateClock, 30000);
 
+  function getQuickPosition() {
+    return new Promise(resolve => {
+      if (!navigator.geolocation) { resolve(null); return; }
+      let done = false;
+      const finish = v => { if (!done) { done = true; resolve(v); } };
+      navigator.geolocation.getCurrentPosition(
+        p => finish({ lat: p.coords.latitude, lon: p.coords.longitude }),
+        () => finish(null),
+        { enableHighAccuracy: false, timeout: 4000, maximumAge: 10 * 60 * 1000 }
+      );
+      setTimeout(() => finish(null), 4500);
+    });
+  }
+
   async function loadWeather() {
+    let lat = 37.5665, lon = 126.9780, label = '서울', tz = 'Asia%2FSeoul';
+    const pos = await getQuickPosition();
+    if (pos) { lat = pos.lat; lon = pos.lon; label = '내 위치'; tz = 'auto'; }
+    document.getElementById('wxPlace').textContent = label;
     try {
-      const url = 'https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,weather_code&daily=precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=1';
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=precipitation_probability_max&timezone=${tz}&forecast_days=1`;
       const res = await fetch(url);
       const data = await res.json();
       const c = data.current;
