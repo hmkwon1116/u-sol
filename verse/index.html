@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="오늘의 성경 말씀과 실생활 네 컷 만화 — 매일 한 구절, 삶으로 새기는 시간.">
+<meta name="description" content="오늘의 말씀과 상황별 맞춤 말씀, 그리고 6구절 모음 — 매일 다른 말씀을 외부 성경 API로 신선하게.">
 <meta name="theme-color" content="#f4efe6">
 <title>오늘의 말씀 · U-SOL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@300;400;600&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://bible.helloao.org">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f4efe6; --bg2: #efe8da; --ink: #3a352c; --muted: #8c8472;
-    --accent: #9a7b4f; --line: #e0d7c6; --card: #fffdf8;
+    --accent: #9a7b4f; --accent-soft: #efe1c8;
+    --line: #e0d7c6; --card: #fffdf8;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -24,46 +26,108 @@
   .back { position: fixed; top: 18px; left: 20px; color: var(--muted); text-decoration: none; font-size: 14px; letter-spacing: .04em; z-index: 5; }
   .back:hover { color: var(--accent); }
   .wrap {
-    flex: 1; max-width: 640px; margin: 0 auto; width: 100%;
-    padding: 76px 22px 60px; display: flex; flex-direction: column;
-    align-items: center; text-align: center;
+    flex: 1; max-width: 680px; margin: 0 auto; width: 100%;
+    padding: 76px 22px 60px; display: flex; flex-direction: column; align-items: center; text-align: center;
   }
   .date { font-size: 14px; color: var(--muted); letter-spacing: .1em; margin-bottom: 8px; }
   .eyebrow {
     font-family: 'Gowun Batang', serif; font-size: 15px; color: var(--accent);
-    letter-spacing: .25em; margin-bottom: 36px; position: relative;
+    letter-spacing: .25em; margin-bottom: 30px; position: relative;
   }
-  .eyebrow::after { content: ""; display: block; width: 40px; height: 1px; background: var(--accent); margin: 18px auto 0; opacity: .5; }
+  .eyebrow::after { content: ""; display: block; width: 40px; height: 1px; background: var(--accent); margin: 16px auto 0; opacity: .5; }
+
+  /* hero: today's verse */
+  .hero {
+    width: 100%; display: flex; flex-direction: column; align-items: center;
+    margin-bottom: 8px;
+  }
   .verse {
-    font-family: 'Gowun Batang', serif; font-size: clamp(21px, 5vw, 30px);
+    font-family: 'Gowun Batang', serif; font-size: clamp(20px, 4.8vw, 28px);
     line-height: 1.85; font-weight: 400; letter-spacing: -0.01em;
-    margin-bottom: 30px; word-break: keep-all; animation: fade 1.1s ease both;
+    margin-bottom: 22px; word-break: keep-all; min-height: 60px;
+    animation: fade .9s ease both;
   }
-  .ref { font-size: 16px; color: var(--accent); font-weight: 600; letter-spacing: .06em; margin-bottom: 40px; animation: fade 1.1s ease .25s both; }
-  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  .comic-label { font-family: 'Gaegu', cursive; font-size: 17px; color: var(--accent); margin-bottom: 14px; letter-spacing: .05em; }
-  .comic { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 460px; margin: 0 auto 16px; animation: fade 1.1s ease .4s both; }
-  .panel {
-    position: relative; aspect-ratio: 1 / 1; border-radius: 14px;
-    border: 2px solid #d8cdb8; background: var(--card); overflow: hidden;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 12px; box-shadow: 0 4px 14px rgba(120,100,60,0.08);
-  }
-  .panel .num { position: absolute; top: 8px; left: 10px; font-family: 'Gaegu', cursive; font-size: 15px; font-weight: 700; color: #c4b89c; }
-  .panel .scene { font-size: clamp(34px, 11vw, 50px); line-height: 1; margin-bottom: 8px; }
-  .panel .bubble { font-family: 'Gaegu', cursive; font-size: 14.5px; line-height: 1.35; color: var(--ink); background: #fff; border: 1.5px solid #e3dac6; border-radius: 12px; padding: 7px 10px; max-width: 95%; word-break: keep-all; }
-  .panel .cap { font-family: 'Gaegu', cursive; font-size: 13px; color: var(--muted); margin-top: 6px; word-break: keep-all; }
-  .comic-none { font-size: 13px; color: var(--muted); margin: 6px 0 24px; opacity: .8; font-family: 'Gaegu', cursive; }
-  .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 26px; }
-  button {
-    font-family: 'Noto Serif KR', serif; font-size: 14px; color: var(--ink);
+  .ref { font-size: 16px; color: var(--accent); font-weight: 600; letter-spacing: .06em; margin-bottom: 24px; min-height: 22px; animation: fade .9s ease .2s both; }
+  .loading { font-size: 14px; color: var(--muted); opacity: .7; font-family: 'Noto Serif KR', serif; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 8px; }
+  button, .btn {
+    font-family: 'Noto Serif KR', serif; font-size: 13.5px; color: var(--ink);
     background: var(--card); border: 1px solid var(--line); border-radius: 999px;
-    padding: 12px 22px; cursor: pointer; letter-spacing: .04em; transition: all .15s;
-    box-shadow: 0 2px 10px rgba(120,100,60,0.06);
+    padding: 10px 18px; cursor: pointer; letter-spacing: .04em;
+    transition: all .15s; box-shadow: 0 2px 10px rgba(120,100,60,0.06);
   }
-  button:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  button:hover, .btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
   button:active { transform: translateY(0); }
-  .note { margin-top: 36px; font-size: 12.5px; color: var(--muted); line-height: 1.8; max-width: 400px; opacity: .85; }
+
+  /* divider */
+  .divider {
+    width: 100%; display: flex; align-items: center; gap: 14px;
+    color: var(--muted); margin: 44px 0 22px;
+    font-family: 'Gowun Batang', serif; font-size: 14px; letter-spacing: .2em;
+  }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  /* situation chips */
+  .chips {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin-bottom: 18px; width: 100%;
+  }
+  .chip {
+    font-family: 'Noto Serif KR', serif; font-size: 13.5px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    padding: 9px 16px; cursor: pointer; color: var(--ink); letter-spacing: .02em;
+    transition: all .15s; box-shadow: 0 2px 8px rgba(120,100,60,0.05);
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .chip:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .chip.active {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+    box-shadow: 0 4px 12px rgba(154,123,79,0.25);
+  }
+  .chip .ic { font-size: 14px; }
+
+  .situation-card {
+    width: 100%; background: var(--card); border: 1px solid var(--line);
+    border-radius: 18px; padding: 24px 22px 22px; min-height: 110px;
+    box-shadow: 0 4px 16px rgba(120,100,60,0.06);
+    text-align: left; opacity: 0; transform: translateY(8px);
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  .situation-card.show { opacity: 1; transform: none; }
+  .situation-card .placeholder {
+    color: var(--muted); font-size: 14px; text-align: center; padding: 12px 0;
+    font-family: 'Gowun Batang', serif; letter-spacing: .04em;
+  }
+  .situation-card .stag { font-family: 'Gowun Batang', serif; font-size: 12px; color: var(--accent); letter-spacing: .2em; margin-bottom: 10px; }
+  .situation-card .st {
+    font-family: 'Gowun Batang', serif; font-size: clamp(17px, 4.2vw, 21px);
+    line-height: 1.85; font-weight: 400; word-break: keep-all; margin-bottom: 12px;
+  }
+  .situation-card .sr { font-size: 14px; color: var(--accent); font-weight: 600; letter-spacing: .05em; margin-bottom: 12px; }
+  .situation-card .srow { display: flex; gap: 8px; flex-wrap: wrap; }
+  .situation-card .srow button { font-size: 12.5px; padding: 7px 14px; }
+
+  /* collection */
+  .list { width: 100%; display: flex; flex-direction: column; gap: 14px; margin-bottom: 8px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 22px 20px 20px; text-align: left;
+    box-shadow: 0 4px 14px rgba(120,100,60,0.06);
+    opacity: 0; transform: translateY(8px);
+    animation: rise .55s ease forwards;
+  }
+  .card .idx { font-family: 'Gowun Batang', serif; font-size: 11.5px; color: var(--accent); letter-spacing: .2em; margin-bottom: 9px; }
+  .card .t {
+    font-family: 'Gowun Batang', serif; font-size: clamp(16px, 4vw, 19px);
+    line-height: 1.85; font-weight: 400; word-break: keep-all; margin-bottom: 12px;
+  }
+  .card .r { font-size: 13.5px; color: var(--accent); font-weight: 600; letter-spacing: .05em; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  .note { margin-top: 22px; font-size: 12px; color: var(--muted); line-height: 1.7; max-width: 460px; opacity: .8; }
+  .note a { color: var(--accent); text-decoration: none; }
   footer { text-align: center; padding: 22px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); }
   footer a { color: var(--accent); text-decoration: none; }
 </style>
@@ -73,97 +137,317 @@
   <div class="wrap">
     <div class="date" id="date">—</div>
     <div class="eyebrow">오늘의 말씀</div>
-    <blockquote class="verse" id="verse">…</blockquote>
-    <div class="ref" id="ref"></div>
-    <div id="comicWrap" style="width:100%;"></div>
-    <div class="actions">
-      <button id="todayBtn">오늘의 말씀</button>
-      <button id="nextBtn">다른 말씀 보기</button>
-      <button id="copyBtn">복사하기</button>
+
+    <section class="hero">
+      <blockquote class="verse" id="verse"><span class="loading">말씀을 불러오는 중…</span></blockquote>
+      <div class="ref" id="ref"></div>
+      <div class="actions">
+        <button id="todayBtn">오늘의 말씀</button>
+        <button id="nextBtn">다른 말씀 보기</button>
+        <button id="copyBtn">복사하기</button>
+      </div>
+    </section>
+
+    <div class="divider">상황별 맞춤 말씀</div>
+    <div class="chips" id="chips"></div>
+    <div class="situation-card" id="situationCard">
+      <div class="placeholder">지금 마음을 누르는 한 가지를 골라보세요</div>
     </div>
-    <p class="note">매일 한 구절이 날짜에 따라 잠잠히 바뀝니다. 어떤 말씀에는 실생활 네 컷 만화가 함께해요.</p>
+
+    <div class="divider">오늘의 말씀 모음</div>
+    <div class="list" id="list"></div>
+    <div class="actions">
+      <button id="shuffleBtn">다른 묶음 보기</button>
+      <button id="copyAllBtn">모두 복사</button>
+    </div>
+
+    <p class="note">
+      말씀 본문은 <a href="https://bible.helloao.org/" target="_blank" rel="noopener">helloao.org</a>의
+      한국어 성경(1910 개역) 무료 API로 매번 새로 불러옵니다.
+      오프라인이거나 응답이 늦으면 캐시된 본문이 잠시 표시될 수 있어요.
+    </p>
   </div>
   <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
+
 <script>
+  // -------- verse pool (id, ko ref, fallback text, categories) --------
   const VERSES = [
-    { t: "여호와는 나의 목자시니 내게 부족함이 없으리로다", r: "시편 23:1",
-      comic: [
-        { e: "😟", b: "또 옆집은 새 차 샀네…", c: "남과 비교하던 아침" },
-        { e: "📱", b: "부럽다 부러워", c: "끝없는 스크롤" },
-        { e: "☕", b: "어? 나도 가진 게 많잖아", c: "문득 둘러보니" },
-        { e: "😌", b: "부족함이 없네, 정말", c: "마음이 채워진 저녁" }
-      ] },
-    { t: "수고하고 무거운 짐 진 자들아 다 내게로 오라 내가 너희를 쉬게 하리라", r: "마태복음 11:28",
-      comic: [
-        { e: "😮‍💨", b: "할 일이 산더미야…", c: "야근하는 밤" },
-        { e: "🎒", b: "어깨가 너무 무거워", c: "혼자 짊어진 짐" },
-        { e: "🙏", b: "잠깐 내려놓자", c: "잠시 멈춰서" },
-        { e: "😴", b: "이제야 좀 쉬겠다", c: "맡기고 나니 평안" }
-      ] },
-    { t: "두려워하지 말라 내가 너와 함께 함이라 놀라지 말라 나는 네 하나님이 됨이라", r: "이사야 41:10",
-      comic: [
-        { e: "😰", b: "내일 발표 망치면 어쩌지", c: "불안한 마음" },
-        { e: "🌙", b: "잠도 안 와…", c: "뒤척이는 밤" },
-        { e: "💪", b: "혼자가 아니야", c: "함께하심을 떠올리며" },
-        { e: "🌅", b: "할 수 있어!", c: "용기를 얻은 아침" }
-      ] },
-    { t: "범사에 감사하라 이것이 그리스도 예수 안에서 너희를 향하신 하나님의 뜻이니라", r: "데살로니가전서 5:18",
-      comic: [
-        { e: "😤", b: "버스도 놓치고 최악이야", c: "꼬인 출근길" },
-        { e: "☔", b: "비까지 오네…", c: "설상가상" },
-        { e: "🤝", b: "우산 같이 쓰실래요?", c: "낯선 이의 친절" },
-        { e: "😊", b: "오늘도 감사한 일이 있네", c: "마음이 따뜻해진 하루" }
-      ] },
-    { t: "내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라", r: "빌립보서 4:13",
-      comic: [
-        { e: "😣", b: "이건 도저히 못 하겠어", c: "벽에 부딪힌 날" },
-        { e: "📚", b: "포기할까…", c: "흔들리는 마음" },
-        { e: "🔥", b: "다시 한 번 해보자", c: "힘을 내어" },
-        { e: "🎉", b: "결국 해냈다!", c: "끝까지 간 보람" }
-      ] },
-    { t: "너희 염려를 다 주께 맡기라 이는 그가 너희를 돌보심이라", r: "베드로전서 5:7",
-      comic: [
-        { e: "🤔", b: "이것도 걱정 저것도 걱정", c: "생각이 많은 밤" },
-        { e: "🌀", b: "머릿속이 빙글빙글", c: "끝없는 염려" },
-        { e: "✍️", b: "걱정을 적어서 맡기자", c: "하나씩 내려놓기" },
-        { e: "🕊️", b: "한결 가벼워졌어", c: "평안을 되찾은 마음" }
-      ] }
+    // 안식 / 평안 / 잠
+    { b:"PSA", c:23, v:"1", r:"시편 23:1", t:"여호와는 나의 목자시니 내게 부족함이 없으리로다", cat:["안식","감사"] },
+    { b:"MAT", c:11, v:"28", r:"마태복음 11:28", t:"수고하고 무거운 짐 진 자들아 다 내게로 오라 내가 너희를 쉬게 하리라", cat:["안식","힘듦"] },
+    { b:"JHN", c:14, v:"27", r:"요한복음 14:27", t:"평안을 너희에게 끼치노니 곧 나의 평안을 너희에게 주노라 내가 너희에게 주는 것은 세상이 주는 것 같지 아니하니라 너희는 마음에 근심도 말고 두려워하지도 말라", cat:["안식","불안"] },
+    { b:"PSA", c:4, v:"8", r:"시편 4:8", t:"내가 평안히 눕고 자기도 하리니 나를 안전히 거하게 하시는 이는 오직 여호와이시니이다", cat:["안식"] },
+    { b:"PSA", c:127, v:"2", r:"시편 127:2", t:"너희가 일찌기 일어나고 늦게 누우며 수고의 떡을 먹음이 헛되도다 그러므로 여호와께서 그 사랑하시는 자에게는 잠을 주시는도다", cat:["안식","위로"] },
+    { b:"PSA", c:3, v:"5", r:"시편 3:5", t:"내가 누워 자고 깨었으니 여호와께서 나를 붙드심이로다", cat:["안식","위로"] },
+
+    // 불안 / 두려움
+    { b:"ISA", c:41, v:"10", r:"이사야 41:10", t:"두려워 말라 내가 너와 함께 함이니라 놀라지 말라 나는 네 하나님이 됨이니라 내가 너를 굳세게 하리라 참으로 너를 도와주리라 참으로 나의 의로운 오른손으로 너를 붙들리라", cat:["불안","힘듦"] },
+    { b:"PHP", c:4, v:"6", r:"빌립보서 4:6", t:"아무 것도 염려하지 말고 오직 모든 일에 기도와 간구로 너희 구할 것을 감사함으로 하나님께 아뢰라", cat:["불안","기도"] },
+    { b:"1PE", c:5, v:"7", r:"베드로전서 5:7", t:"너희 염려를 다 주께 맡겨버리라 이는 저가 너희를 권고하심이니라", cat:["불안","위로"] },
+    { b:"MAT", c:6, v:"34", r:"마태복음 6:34", t:"그러므로 내일 일을 위하여 염려하지 말라 내일 일은 내일 염려할 것이요 한 날 괴로움은 그 날에 족하니라", cat:["불안"] },
+    { b:"1JN", c:4, v:"18", r:"요한일서 4:18", t:"사랑 안에 두려움이 없고 온전한 사랑이 두려움을 내어 쫓나니 두려움에는 형벌이 있음이라 두려워하는 자는 사랑 안에서 온전히 이루지 못하였느니라", cat:["불안","사랑"] },
+
+    // 슬픔 / 위로
+    { b:"PSA", c:34, v:"18", r:"시편 34:18", t:"여호와는 마음이 상한 자에게 가까이 하시고 중심에 통회하는 자를 구원하시는도다", cat:["슬픔","위로"] },
+    { b:"MAT", c:5, v:"4", r:"마태복음 5:4", t:"애통하는 자는 복이 있나니 저희가 위로를 받을 것임이요", cat:["슬픔","위로"] },
+    { b:"JHN", c:14, v:"1", r:"요한복음 14:1", t:"너희는 마음에 근심하지 말라 하나님을 믿으니 또 나를 믿으라", cat:["슬픔","불안"] },
+    { b:"PSA", c:30, v:"5", r:"시편 30:5", t:"그 노염은 잠간이요 그 은총은 평생이로다 저녁에는 울음이 기숙할지라도 아침에는 기쁨이 오리로다", cat:["슬픔","위로"] },
+    { b:"REV", c:21, v:"4", r:"요한계시록 21:4", t:"모든 눈물을 그 눈에서 씻기시매 다시 사망이 없고 애통하는 것이나 곡하는 것이나 아픈 것이 다시 있지 아니하리니 처음 것들이 다 지나갔음이러라", cat:["슬픔","위로"] },
+
+    // 힘듦 / 능력
+    { b:"PHP", c:4, v:"13", r:"빌립보서 4:13", t:"내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라", cat:["힘듦","결단"] },
+    { b:"ISA", c:40, v:"31", r:"이사야 40:31", t:"오직 여호와를 앙망하는 자는 새 힘을 얻으리니 독수리의 날개치며 올라감 같을 것이요 달음박질하여도 곤비치 아니하겠고 걸어가도 피곤치 아니하리로다", cat:["힘듦","결단"] },
+    { b:"2CO", c:12, v:"9", r:"고린도후서 12:9", t:"내게 이르시기를 내 은혜가 네게 족하도다 이는 내 능력이 약한 데서 온전하여짐이라 하신지라", cat:["힘듦","위로"] },
+    { b:"ROM", c:8, v:"18", r:"로마서 8:18", t:"생각건대 현재의 고난은 장차 우리에게 나타날 영광과 족히 비교할 수 없도다", cat:["힘듦"] },
+    { b:"ROM", c:5, v:"3", r:"로마서 5:3", t:"다만 이뿐 아니라 우리가 환난 중에도 즐거워하나니 이는 환난은 인내를", cat:["힘듦"] },
+
+    // 화 / 관계
+    { b:"JAS", c:1, v:"19", r:"야고보서 1:19", t:"내 사랑하는 형제들아 너희가 알거니와 사람마다 듣기는 속히 하고 말하기는 더디 하며 성내기도 더디 하라", cat:["화","관계"] },
+    { b:"PRO", c:15, v:"1", r:"잠언 15:1", t:"유순한 대답은 분노를 쉬게 하여도 과격한 말은 노를 격동하느니라", cat:["화","관계"] },
+    { b:"EPH", c:4, v:"26", r:"에베소서 4:26", t:"분을 내어도 죄를 짓지 말며 해가 지도록 분을 품지 말고", cat:["화"] },
+    { b:"PRO", c:16, v:"32", r:"잠언 16:32", t:"노하기를 더디하는 자는 용사보다 낫고 자기의 마음을 다스리는 자는 성을 빼앗는 자보다 나으니라", cat:["화","관계"] },
+    { b:"COL", c:3, v:"13", r:"골로새서 3:13", t:"누가 뉘게 혐의가 있거든 서로 용납하여 피차 용서하되 주께서 너희를 용서하신 것과 같이 너희도 그리하고", cat:["관계","화"] },
+
+    // 감사
+    { b:"1TH", c:5, v:"18", r:"데살로니가전서 5:18", t:"범사에 감사하라 이는 그리스도 예수 안에서 너희를 향하신 하나님의 뜻이니라", cat:["감사"] },
+    { b:"PSA", c:100, v:"4", r:"시편 100:4", t:"감사함으로 그 문에 들어가며 찬송함으로 그 궁정에 들어가서 그에게 감사하며 그 이름을 송축할지어다", cat:["감사"] },
+    { b:"COL", c:3, v:"17", r:"골로새서 3:17", t:"또 무엇을 하든지 말에나 일에나 다 주 예수의 이름으로 하고 그를 힘입어 하나님 아버지께 감사하라", cat:["감사"] },
+    { b:"PSA", c:107, v:"1", r:"시편 107:1", t:"여호와께 감사하라 그는 선하시며 그 인자하심이 영원함이로다", cat:["감사"] },
+
+    // 사랑
+    { b:"JHN", c:3, v:"16", r:"요한복음 3:16", t:"하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니 이는 저를 믿는 자마다 멸망치 않고 영생을 얻게 하려 하심이니라", cat:["사랑"] },
+    { b:"1CO", c:13, v:"4", r:"고린도전서 13:4", t:"사랑은 오래 참고 사랑은 온유하며 투기하는 자가 되지 아니하며 사랑은 자랑하지 아니하며 교만하지 아니하며", cat:["사랑","관계"] },
+    { b:"ROM", c:8, v:"38", r:"로마서 8:38", t:"내가 확신하노니 사망이나 생명이나 천사들이나 권세자들이나 현재 일이나 장래 일이나 능력이나", cat:["사랑"] },
+    { b:"1JN", c:4, v:"7", r:"요한일서 4:7", t:"사랑하는 자들아 우리가 서로 사랑하자 사랑은 하나님께 속한 것이니 사랑하는 자마다 하나님께로 나서 하나님을 알고", cat:["사랑","관계"] },
+
+    // 새출발 / 희망
+    { b:"ISA", c:43, v:"19", r:"이사야 43:19", t:"보라 내가 새 일을 행하리니 이제 나타낼 것이라 너희가 그것을 알지 못하겠느냐 정녕히 내가 광야에 길과 사막에 강을 내리니", cat:["새출발","희망"] },
+    { b:"2CO", c:5, v:"17", r:"고린도후서 5:17", t:"그런즉 누구든지 그리스도 안에 있으면 새로운 피조물이라 이전 것은 지나갔으니 보라 새 것이 되었도다", cat:["새출발"] },
+    { b:"PHP", c:3, v:"13", r:"빌립보서 3:13", t:"형제들아 나는 아직 내가 잡은 줄로 여기지 아니하고 오직 한 일 즉 뒤에 있는 것은 잊어버리고 앞에 있는 것을 잡으려고", cat:["새출발","결단"] },
+    { b:"JER", c:29, v:"11", r:"예레미야 29:11", t:"나 여호와가 말하노라 너희를 향한 나의 생각을 내가 아나니 재앙이 아니라 곧 평안이요 너희 장래에 소망을 주려하는 생각이라", cat:["새출발","희망"] },
+    { b:"LAM", c:3, v:"22", r:"예레미야애가 3:22", t:"여호와의 자비와 긍휼이 무궁하시므로 우리가 진멸되지 아니함이니이다", cat:["새출발","희망"] },
+
+    // 결단 / 용기
+    { b:"JOS", c:1, v:"9", r:"여호수아 1:9", t:"내가 네게 명하지 아니하였느냐 마음을 강하게 하고 담대히 하라 두려워 말며 놀라지 말라 네가 어디로 가든지 네 하나님 여호와가 너와 함께 하느니라", cat:["결단","불안"] },
+    { b:"DEU", c:31, v:"6", r:"신명기 31:6", t:"너는 마음을 강하게 하고 담대히 하라 그들을 두려워 말라 그들 앞에서 떨지 말라 이는 네 하나님 여호와 그가 너와 함께 행하실 것임이라 반드시 너를 떠나지 아니하시며 버리지 아니하시리라", cat:["결단","불안"] },
+    { b:"PSA", c:27, v:"1", r:"시편 27:1", t:"여호와는 나의 빛이요 나의 구원이시니 내가 누구를 두려워하리요 여호와는 내 생명의 능력이시니 내가 누구를 무서워하리요", cat:["결단","불안"] },
+    { b:"2TI", c:1, v:"7", r:"디모데후서 1:7", t:"하나님이 우리에게 주신 것은 두려워하는 마음이 아니요 오직 능력과 사랑과 근신하는 마음이니", cat:["결단"] },
+
+    // 신뢰 / 빛
+    { b:"PRO", c:3, v:"5", r:"잠언 3:5", t:"너는 마음을 다하여 여호와를 의뢰하고 네 명철을 의지하지 말라", cat:["결단","신뢰"] },
+    { b:"PSA", c:37, v:"4", r:"시편 37:4", t:"또 여호와를 기뻐하라 저가 네 마음의 소원을 이루어 주시리로다", cat:["감사"] },
+    { b:"ROM", c:8, v:"28", r:"로마서 8:28", t:"우리가 알거니와 하나님을 사랑하는 자 곧 그 뜻대로 부르심을 입은 자들에게는 모든 것이 합력하여 선을 이루느니라", cat:["힘듦","희망"] },
+    { b:"MAT", c:6, v:"33", r:"마태복음 6:33", t:"너희는 먼저 그의 나라와 그의 의를 구하라 그리하면 이 모든 것을 너희에게 더하시리라", cat:["결단"] },
+    { b:"PSA", c:119, v:"105", r:"시편 119:105", t:"주의 말씀은 내 발에 등이요 내 길에 빛이니이다", cat:["결단"] },
+    { b:"PSA", c:121, v:"1", r:"시편 121:1", t:"내가 산을 향하여 눈을 들리라 나의 도움이 어디서 올꼬", cat:["힘듦","위로"] },
+    { b:"GAL", c:5, v:"22", r:"갈라디아서 5:22", t:"오직 성령의 열매는 사랑과 희락과 화평과 오래 참음과 자비와 양선과 충성과", cat:["감사"] },
+    { b:"PRO", c:12, v:"25", r:"잠언 12:25", t:"근심이 사람의 마음에 있으면 그것으로 번뇌케 하나 선한 말은 그것을 즐겁게 하느니라", cat:["불안","위로"] }
   ];
+
+  const CATEGORIES = [
+    { key:"불안",  ic:"😰", label:"불안할 때" },
+    { key:"슬픔",  ic:"😢", label:"슬플 때" },
+    { key:"힘듦",  ic:"💪", label:"힘들 때" },
+    { key:"화",    ic:"😡", label:"화날 때" },
+    { key:"감사",  ic:"🙏", label:"감사할 때" },
+    { key:"사랑",  ic:"💕", label:"사랑이 필요할 때" },
+    { key:"새출발", ic:"🌅", label:"새 출발할 때" },
+    { key:"결단",  ic:"🔥", label:"결단이 필요할 때" }
+  ];
+
+  // -------- helloao API: fetch chapter, extract verse(s) --------
+  const API_BASE = "https://bible.helloao.org/api/kor_old";
+  const chapterCache = new Map();
+
+  function cleanText(s) {
+    return String(s)
+      .replace(/[`´]/g, "")  // kor_old uses backticks as quote marks
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  async function fetchChapter(book, chapter) {
+    const key = `${book}/${chapter}`;
+    if (chapterCache.has(key)) return chapterCache.get(key);
+    const p = (async () => {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 6000);
+      try {
+        const res = await fetch(`${API_BASE}/${book}/${chapter}.json`, { signal: ctrl.signal });
+        if (!res.ok) throw new Error("http " + res.status);
+        const data = await res.json();
+        return data.chapter && data.chapter.content ? data.chapter.content : null;
+      } finally { clearTimeout(t); }
+    })();
+    chapterCache.set(key, p.catch(() => null));
+    return chapterCache.get(key);
+  }
+
+  async function fetchVerseText(verse) {
+    // verse.v can be "1" or "1-2"
+    const parts = String(verse.v).split("-").map(n => parseInt(n, 10));
+    const start = parts[0], end = parts[1] || parts[0];
+    const content = await fetchChapter(verse.b, verse.c);
+    if (!content) return null;
+    const lines = [];
+    for (const item of content) {
+      if (item.type === "verse" && item.number >= start && item.number <= end) {
+        const t = Array.isArray(item.content) ? item.content.join(" ") : String(item.content);
+        lines.push(cleanText(t));
+      }
+    }
+    return lines.length ? lines.join(" ") : null;
+  }
+
+  // -------- deterministic seeded random for daily picks --------
+  function dayNumber(d) { return Math.floor(d.getTime() / 86400000); }
+  function seededRand(seed) {
+    let h = 2166136261 ^ seed;
+    return function () {
+      h += (h << 13); h ^= (h >>> 7);
+      h += (h << 3);  h ^= (h >>> 17);
+      h += (h << 5);
+      return ((h >>> 0) % 1_000_000) / 1_000_000;
+    };
+  }
+  function pickUnique(seed, count) {
+    const rand = seededRand(seed);
+    const pool = VERSES.map((_, i) => i);
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, Math.min(count, pool.length));
+  }
+
+  // -------- DOM --------
   const dateEl = document.getElementById('date');
   const verseEl = document.getElementById('verse');
   const refEl = document.getElementById('ref');
-  const comicWrap = document.getElementById('comicWrap');
-  function dayIndex(d) {
-    const days = Math.floor(d.getTime() / 86400000);
-    return ((days % VERSES.length) + VERSES.length) % VERSES.length;
-  }
-  function renderComic(v) {
-    if (!v.comic) { comicWrap.innerHTML = '<div class="comic-none">— 이 말씀의 만화는 곧 추가됩니다 —</div>'; return; }
-    let panels = v.comic.map((p, i) => `
-      <div class="panel">
-        <span class="num">${i+1}</span>
-        <div class="scene">${p.e}</div>
-        <div class="bubble">${p.b}</div>
-        <div class="cap">${p.c}</div>
-      </div>`).join('');
-    comicWrap.innerHTML = `<div class="comic-label">✏️ 오늘의 네 컷</div><div class="comic">${panels}</div>`;
-  }
-  function showVerse(i) {
-    const v = VERSES[i];
-    verseEl.style.animation = 'none'; refEl.style.animation = 'none';
-    void verseEl.offsetWidth;
-    verseEl.textContent = v.t; refEl.textContent = v.r;
-    verseEl.style.animation = ''; refEl.style.animation = '';
-    renderComic(v);
-  }
-  function showToday() {
-    const now = new Date();
+  const chipsEl = document.getElementById('chips');
+  const sitCard = document.getElementById('situationCard');
+  const listEl = document.getElementById('list');
+
+  function renderToday(dateNow) {
     const days = ['일','월','화','수','목','금','토'];
-    dateEl.textContent = `${now.getFullYear()}. ${now.getMonth()+1}. ${now.getDate()}. (${days[now.getDay()]})`;
-    showVerse(dayIndex(now));
+    dateEl.textContent = `${dateNow.getFullYear()}. ${dateNow.getMonth()+1}. ${dateNow.getDate()}. (${days[dateNow.getDay()]})`;
   }
+
+  async function displayVerseInto(verse, textEl, refElTarget) {
+    // show cached fallback first for instant feel
+    textEl.style.animation = 'none'; refElTarget.style.animation = 'none';
+    void textEl.offsetWidth;
+    textEl.textContent = verse.t;
+    refElTarget.textContent = verse.r;
+    textEl.style.animation = ''; refElTarget.style.animation = '';
+    // refresh with API text if available
+    try {
+      const fresh = await fetchVerseText(verse);
+      if (fresh && fresh.length > 4) textEl.textContent = fresh;
+    } catch (e) { /* keep fallback */ }
+  }
+
+  async function showToday() {
+    const now = new Date();
+    renderToday(now);
+    const idx = ((dayNumber(now) % VERSES.length) + VERSES.length) % VERSES.length;
+    await displayVerseInto(VERSES[idx], verseEl, refEl);
+  }
+
+  async function showRandom() {
+    const idx = Math.floor(Math.random() * VERSES.length);
+    await displayVerseInto(VERSES[idx], verseEl, refEl);
+  }
+
+  function renderChips() {
+    chipsEl.innerHTML = CATEGORIES.map(c =>
+      `<button class="chip" data-cat="${c.key}"><span class="ic">${c.ic}</span><span>${c.label}</span></button>`
+    ).join('');
+    chipsEl.querySelectorAll('.chip').forEach(el => {
+      el.addEventListener('click', () => onChipClick(el.dataset.cat, el));
+    });
+  }
+
+  let lastSitIdx = -1;
+  async function onChipClick(catKey, btnEl) {
+    chipsEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c === btnEl));
+    const pool = VERSES.map((v, i) => ({ v, i })).filter(x => x.v.cat && x.v.cat.includes(catKey));
+    if (!pool.length) return;
+    let pick = pool[Math.floor(Math.random() * pool.length)];
+    if (pool.length > 1 && pick.i === lastSitIdx) {
+      pick = pool[(pool.indexOf(pick) + 1) % pool.length];
+    }
+    lastSitIdx = pick.i;
+    const v = pick.v;
+
+    sitCard.classList.remove('show');
+    sitCard.innerHTML = `
+      <div class="stag">${(CATEGORIES.find(c => c.key === catKey) || {}).label || catKey}</div>
+      <blockquote class="st" id="sitText">${v.t}</blockquote>
+      <div class="sr" id="sitRef">${v.r}</div>
+      <div class="srow">
+        <button id="sitAgainBtn">이 상황의 다른 말씀</button>
+        <button id="sitCopyBtn">복사하기</button>
+      </div>`;
+    requestAnimationFrame(() => sitCard.classList.add('show'));
+
+    const stEl = document.getElementById('sitText');
+    const srEl = document.getElementById('sitRef');
+    try {
+      const fresh = await fetchVerseText(v);
+      if (fresh && fresh.length > 4) stEl.textContent = fresh;
+    } catch (e) {}
+
+    document.getElementById('sitAgainBtn').addEventListener('click', () => onChipClick(catKey, btnEl));
+    document.getElementById('sitCopyBtn').addEventListener('click', () => {
+      const text = `${stEl.textContent} (${srEl.textContent})`;
+      navigator.clipboard?.writeText(text).then(() => {
+        const b = document.getElementById('sitCopyBtn');
+        const old = b.textContent; b.textContent = '복사됨';
+        setTimeout(() => b.textContent = old, 1400);
+      });
+    });
+  }
+
+  function renderCollection(indexes) {
+    listEl.innerHTML = '';
+    indexes.forEach((vi, i) => {
+      const v = VERSES[vi];
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.style.animationDelay = `${i * 0.06}s`;
+      card.dataset.vi = vi;
+      card.innerHTML = `
+        <div class="idx">No. ${String(i + 1).padStart(2, '0')}</div>
+        <blockquote class="t">${v.t}</blockquote>
+        <div class="r">${v.r}</div>`;
+      listEl.appendChild(card);
+    });
+    // refresh each card's text from API
+    indexes.forEach(async (vi) => {
+      const v = VERSES[vi];
+      try {
+        const fresh = await fetchVerseText(v);
+        if (!fresh || fresh.length < 4) return;
+        const card = listEl.querySelector(`.card[data-vi="${vi}"] .t`);
+        if (card) card.textContent = fresh;
+      } catch (e) {}
+    });
+  }
+
+  function showCollectionToday() {
+    const seed = dayNumber(new Date());
+    renderCollection(pickUnique(seed, 6));
+  }
+
+  function showCollectionShuffle() {
+    const seed = Math.floor(Math.random() * 2_147_483_647);
+    renderCollection(pickUnique(seed, 6));
+  }
+
+  // -------- wiring --------
   document.getElementById('todayBtn').addEventListener('click', showToday);
-  document.getElementById('nextBtn').addEventListener('click', () => showVerse(Math.floor(Math.random() * VERSES.length)));
+  document.getElementById('nextBtn').addEventListener('click', showRandom);
   document.getElementById('copyBtn').addEventListener('click', () => {
     const text = `${verseEl.textContent} (${refEl.textContent})`;
     navigator.clipboard?.writeText(text).then(() => {
@@ -172,7 +456,21 @@
       setTimeout(() => btn.textContent = old, 1400);
     });
   });
+  document.getElementById('shuffleBtn').addEventListener('click', showCollectionShuffle);
+  document.getElementById('copyAllBtn').addEventListener('click', () => {
+    const text = Array.from(listEl.querySelectorAll('.card'))
+      .map(c => `${c.querySelector('.t').textContent.trim()} (${c.querySelector('.r').textContent.trim()})`)
+      .join('\n\n');
+    navigator.clipboard?.writeText(text).then(() => {
+      const btn = document.getElementById('copyAllBtn');
+      const old = btn.textContent; btn.textContent = '복사됨';
+      setTimeout(() => btn.textContent = old, 1400);
+    });
+  });
+
+  renderChips();
   showToday();
+  showCollectionToday();
 </script>
 </body>
 </html>
