@@ -87,27 +87,8 @@
   .range .item.rn .val { color: #2c6fc9; }
   .range .item .ic { font-size: 18px; }
 
-  /* button */
-  .toggle-wrap { display: flex; justify-content: center; margin: 6px 0 18px; }
-  .toggle {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 13px 22px; border-radius: 999px; border: none;
-    background: var(--ink); color: #fff; cursor: pointer;
-    font-family: inherit; font-size: 14px; font-weight: 600;
-    transition: transform .15s ease, background .15s; box-shadow: var(--shadow);
-  }
-  .toggle:hover { background: var(--accent); transform: translateY(-1px); }
-  .toggle:active { transform: scale(0.98); }
-  .toggle .arrow { transition: transform .25s ease; display: inline-block; }
-  .toggle.open .arrow { transform: rotate(180deg); }
-
   /* 7-day forecast */
-  .forecast {
-    max-height: 0; overflow: hidden;
-    transition: max-height .4s ease, opacity .25s ease;
-    opacity: 0;
-  }
-  .forecast.open { max-height: 1400px; opacity: 1; }
+  .forecast { margin-top: 18px; }
 
   .forecast-card {
     background: var(--card); border: 1px solid var(--line); border-radius: 20px;
@@ -203,13 +184,7 @@
     </div>
   </section>
 
-  <div class="toggle-wrap reveal" style="animation-delay:.15s">
-    <button type="button" class="toggle" id="toggleBtn" aria-expanded="false" aria-controls="forecast">
-      <span>📅</span><span id="toggleLabel">앞으로 7일 보기</span><span class="arrow">▾</span>
-    </button>
-  </div>
-
-  <section class="forecast" id="forecast" aria-hidden="true">
+  <section class="forecast reveal" style="animation-delay:.15s" id="forecast">
     <div class="forecast-card">
       <div class="forecast-title">7일 예보</div>
       <div id="forecastBody">
@@ -312,19 +287,6 @@
   }
 
   loadWeather();
-
-  (function setupToggle() {
-    const btn = document.getElementById('toggleBtn');
-    const label = document.getElementById('toggleLabel');
-    const panel = document.getElementById('forecast');
-    btn.addEventListener('click', () => {
-      const open = panel.classList.toggle('open');
-      btn.classList.toggle('open', open);
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-      label.textContent = open ? '7일 예보 닫기' : '앞으로 7일 보기';
-    });
-  })();
 </script>
 </body>
 </html>
