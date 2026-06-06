@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>맨 오른쪽 콘텐츠 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f5fc;
+    --ink: #1a1916;
+    --muted: #7a7770;
+    --line: #e3e9f2;
+    --card: #ffffff;
+    --accent: #2a6fd6;
+    --accent-soft: #e0ecfc;
+    --shadow: 0 1px 2px rgba(26,25,22,0.03), 0 4px 14px rgba(26,25,22,0.05);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: linear-gradient(180deg, #eef4fc 0%, #f6f9fd 60%, #ffffff 100%);
+    color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 14px 0 32px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+  }
+
+  .back {
+    align-self: flex-end;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding-right: 16px;
+  }
+  .back:hover { color: var(--accent); }
+
+  .head {
+    text-align: right;
+    max-width: 92vw;
+    padding-right: 0;
+    margin-right: 0;
+  }
+  .head .logo {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(28px, 6vw, 44px); letter-spacing: -0.02em; line-height: 1;
+    padding-right: 12px;
+  }
+  .head .logo .dot { color: var(--accent); }
+  .head .tagline {
+    font-family: 'Fraunces', serif; font-size: 13px;
+    font-style: italic; color: var(--muted); margin-top: 4px;
+    padding-right: 12px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-right: none;
+    border-radius: 14px 0 0 14px;
+    padding: 20px 16px 20px 24px;
+    box-shadow: var(--shadow);
+    max-width: 480px;
+    width: 88%;
+    text-align: right;
+    margin-right: 0;
+  }
+  .card h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+  .card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .card .accent { color: var(--accent); font-weight: 600; }
+
+  .meta {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    padding-right: 16px;
+  }
+  .meta .k {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-right: 4px;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    width: 100%;
+    padding-right: 0;
+  }
+  .chip {
+    display: inline-block;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-right: none;
+    border-radius: 999px 0 0 999px;
+    padding: 6px 14px 6px 16px;
+    font-size: 12px;
+    color: var(--ink);
+    box-shadow: var(--shadow);
+  }
+  .chip .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  footer {
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px 16px 0 0;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .reveal { opacity: 0; transform: translateX(8px); animation: slide .35s ease forwards; }
+  @keyframes slide { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back reveal" href="/">← U-SOL</a>
+
+  <div class="head reveal" style="animation-delay:.05s">
+    <div class="logo">맨 오른쪽<span class="dot">.</span></div>
+    <div class="tagline">edge-pinned content, zero right margin</div>
+  </div>
+
+  <div class="meta reveal" style="animation-delay:.08s">
+    <span class="k">레이아웃</span>화면 우측 끝 고정
+  </div>
+
+  <div class="card reveal" style="animation-delay:.12s">
+    <h1>콘텐츠가 화면의 맨 오른쪽 끝에 붙어 있습니다</h1>
+    <p>
+      카드와 텍스트, 칩 모두 <span class="accent">오른쪽 가장자리</span>에 정확히 맞닿아
+      있고, 왼쪽 공간은 의도적으로 비워두었습니다. 오른쪽 모서리는 둥근 형태를 제거해
+      화면 끝선과 자연스럽게 이어지도록 했습니다.
+    </p>
+  </div>
+
+  <div class="stack reveal" style="animation-delay:.18s">
+    <span class="chip"><span class="dot"></span>우측 끝 고정</span>
+    <span class="chip"><span class="dot"></span>왼쪽 여백 비움</span>
+    <span class="chip"><span class="dot"></span>비대칭 레이아웃</span>
+  </div>
+
+  <footer class="reveal" style="animation-delay:.24s">
+    <span>© 2026 U-SOL · 맨 오른쪽 정렬</span>
+  </footer>
+</div>
+</body>
+</html>
