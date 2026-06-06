@@ -229,7 +229,7 @@
     try {
       const today = new Date();
       const past = new Date();
-      past.setDate(today.getDate() - 9);
+      past.setDate(today.getDate() - 7);
       const fmt = d => d.toISOString().slice(0, 10);
       const url = `https://api.frankfurter.dev/v1/${fmt(past)}..${fmt(today)}?base=CAD&symbols=KRW`;
       const res = await fetch(url);
@@ -238,7 +238,7 @@
       if (vals.length === 0) return;
       const min = Math.min(...vals);
       const max = Math.max(...vals);
-      document.getElementById('fxCadRange').textContent = `최근 최저 ${fmtWon(min)} · 최고 ${fmtWon(max)}원`;
+      document.getElementById('fxCadRange').textContent = `주간 최저 ${fmtWon(min)} · 최고 ${fmtWon(max)}원`;
     } catch (e) {}
   }
   loadCadRange();
