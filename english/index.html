@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="매일 하나씩, 일상에서 자주 쓰는 영어 표현. 발음과 예문까지 함께 익혀요.">
+<meta name="theme-color" content="#fbfaf7">
+<title>오늘의 영어 한마디 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.55;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 22px 20px 80px; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+  .today { font-size: 13px; color: var(--muted); }
+  header { margin-bottom: 28px; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+  h1 .dot { color: var(--accent); }
+  .subtitle { font-family: 'Fraunces', serif; font-style: italic; color: var(--muted); margin-top: 6px; font-size: 16px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 28px 24px; box-shadow: var(--shadow); margin-bottom: 18px;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .card.swap { opacity: 0; transform: translateY(6px); }
+
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 14px; }
+  .phrase { font-family: 'Fraunces', serif; font-size: clamp(26px, 5.5vw, 36px); font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
+  .pron { color: var(--muted); font-style: italic; margin-top: 10px; font-size: 15px; font-family: 'Fraunces', serif; }
+  .pron .speak {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-left: 10px; padding: 4px 10px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent);
+    font-style: normal; font-family: 'Spline Sans', sans-serif; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: none; transition: transform .1s;
+  }
+  .pron .speak:hover { transform: scale(1.05); }
+  .pron .speak:active { transform: scale(0.96); }
+
+  .meaning {
+    margin-top: 22px; padding-top: 20px; border-top: 1px dashed var(--line);
+    font-size: 18px; font-weight: 500;
+  }
+  .meaning .ko-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; display: block; margin-bottom: 6px; }
+
+  .example {
+    margin-top: 20px; padding: 16px 18px; background: #f7f4ec;
+    border-radius: 12px; border-left: 3px solid var(--accent);
+  }
+  .example .ex-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+  .example .en { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500; margin-bottom: 6px; }
+  .example .ko { font-size: 14px; color: var(--muted); }
+
+  .actions { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .btn {
+    flex: 1; min-width: 140px;
+    padding: 13px 18px; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink); font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: transform .1s, border-color .15s, background .15s;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn:active { transform: scale(0.98); }
+  .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn.primary:hover { background: #c03d24; }
+
+  .progress { margin-top: 8px; font-size: 12px; color: var(--muted); text-align: center; }
+
+  footer { margin-top: 40px; font-size: 12px; color: var(--muted); text-align: center; padding-top: 20px; border-top: 1px solid var(--line); }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top reveal">
+    <a class="back" href="/">← U-SOL</a>
+    <span class="today" id="today">—</span>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <h1>오늘의 영어 한마디<span class="dot">.</span></h1>
+    <p class="subtitle">매일 하나씩, 입에 붙는 표현을 익혀요</p>
+  </header>
+
+  <div class="card reveal" id="card" style="animation-delay:.1s">
+    <div class="label" id="modeLabel">오늘의 표현</div>
+    <div class="phrase" id="phrase">—</div>
+    <div class="pron">
+      <span id="pron">—</span>
+      <button class="speak" id="speak" type="button" aria-label="발음 듣기">🔊 듣기</button>
+    </div>
+
+    <div class="meaning">
+      <span class="ko-label">뜻</span>
+      <span id="meaning">—</span>
+    </div>
+
+    <div class="example">
+      <div class="ex-label">예문</div>
+      <div class="en" id="exEn">—</div>
+      <div class="ko" id="exKo">—</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="todayBtn" type="button">오늘의 표현</button>
+      <button class="btn primary" id="nextBtn" type="button">다른 표현 보기 →</button>
+    </div>
+    <div class="progress" id="progress">1 / 20</div>
+  </div>
+
+  <footer class="reveal" style="animation-delay:.2s">
+    © 2026 U-SOL · 다양한 아이디어를 만들고 실험하는 공간
+  </footer>
+</div>
+
+<script>
+  const PHRASES = [
+    { en: "It is what it is.", pron: "잇 이즈 왓 잇 이즈", ko: "어쩔 수 없지 뭐. / 그게 현실이지.", exEn: "We missed the flight, but it is what it is.", exKo: "비행기를 놓쳤지만, 어쩔 수 없지 뭐." },
+    { en: "Long time no see.", pron: "롱 타임 노 씨", ko: "오랜만이야.", exEn: "Hey, long time no see! How have you been?", exKo: "야, 오랜만이야! 어떻게 지냈어?" },
+    { en: "No worries.", pron: "노 워리스", ko: "괜찮아. / 신경 쓰지 마.", exEn: "No worries, I'll take care of it.", exKo: "괜찮아, 내가 처리할게." },
+    { en: "Sounds good.", pron: "사운즈 굿", ko: "좋은데? / 그러자.", exEn: "Coffee at three? Sounds good.", exKo: "3시에 커피? 좋은데." },
+    { en: "What's up?", pron: "왓츠 업", ko: "잘 지내? / 무슨 일이야?", exEn: "Hey man, what's up?", exKo: "야, 잘 지내?" },
+    { en: "Take it easy.", pron: "테이크 잇 이지", ko: "여유 가져. / 잘 지내.", exEn: "Don't stress too much. Take it easy.", exKo: "너무 스트레스 받지 마. 여유 가져." },
+    { en: "I got it.", pron: "아이 갓 잇", ko: "알겠어. / 내가 할게.", exEn: "Don't worry about the bill, I got it.", exKo: "계산 걱정 마, 내가 낼게." },
+    { en: "Never mind.", pron: "네버 마인드", ko: "아니야, 됐어. / 신경 쓰지 마.", exEn: "Never mind, I'll figure it out myself.", exKo: "됐어, 내가 알아서 할게." },
+    { en: "You bet.", pron: "유 벳", ko: "당연하지. / 물론이야.", exEn: "Need a hand? — You bet.", exKo: "도와줄까? — 당연하지." },
+    { en: "Just in case.", pron: "저스트 인 케이스", ko: "혹시 모르니까.", exEn: "Bring an umbrella, just in case.", exKo: "혹시 모르니까 우산 챙겨." },
+    { en: "It's up to you.", pron: "잇츠 업 투 유", ko: "네가 결정해. / 너한테 달렸어.", exEn: "Pizza or sushi? It's up to you.", exKo: "피자 아니면 초밥? 네가 골라." },
+    { en: "I'm beat.", pron: "아임 비-트", ko: "완전 지쳤어. / 녹초야.", exEn: "What a day. I'm beat.", exKo: "오늘 하루 진짜… 완전 녹초야." },
+    { en: "My bad.", pron: "마이 배드", ko: "내 잘못이야. / 미안.", exEn: "Wrong number — my bad.", exKo: "잘못 걸었네, 미안." },
+    { en: "Let's call it a day.", pron: "렛츠 콜 잇 어 데이", ko: "오늘은 여기까지 하자.", exEn: "We've done enough. Let's call it a day.", exKo: "할 만큼 했어. 오늘은 이만 하자." },
+    { en: "Hang in there.", pron: "행 인 데어", ko: "조금만 더 버텨. / 힘내.", exEn: "I know it's tough. Hang in there.", exKo: "힘든 거 알아. 조금만 더 버텨." },
+    { en: "Sounds like a plan.", pron: "사운즈 라이크 어 플랜", ko: "그거 좋은 생각이네.", exEn: "Dinner at seven? Sounds like a plan.", exKo: "7시에 저녁? 좋은 생각인데." },
+    { en: "I'm on it.", pron: "아임 온 잇", ko: "지금 바로 할게. / 처리 중이야.", exEn: "Can you send the file? — I'm on it.", exKo: "파일 보내줄래? — 지금 보낼게." },
+    { en: "No big deal.", pron: "노 빅 딜", ko: "별일 아니야. / 괜찮아.", exEn: "I forgot to reply — no big deal, right?", exKo: "답장 깜빡했네 — 별거 아니지?" },
+    { en: "Speak of the devil.", pron: "스픽 오브 더 데블", ko: "호랑이도 제 말 하면 온다더니.", exEn: "We were just talking about you — speak of the devil!", exKo: "방금 네 얘기 하고 있었는데 — 호랑이도 제 말 하면!" },
+    { en: "I'll get back to you.", pron: "아일 겟 백 투 유", ko: "다시 연락드릴게요.", exEn: "Let me check the schedule and I'll get back to you.", exKo: "일정 확인하고 다시 연락드릴게요." }
+  ];
+
+  const card = document.getElementById('card');
+  const modeLabel = document.getElementById('modeLabel');
+  const phraseEl = document.getElementById('phrase');
+  const pronEl = document.getElementById('pron');
+  const meaningEl = document.getElementById('meaning');
+  const exEnEl = document.getElementById('exEn');
+  const exKoEl = document.getElementById('exKo');
+  const progressEl = document.getElementById('progress');
+  const todayBtn = document.getElementById('todayBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const speakBtn = document.getElementById('speak');
+  const todayEl = document.getElementById('today');
+
+  const days = ['일','월','화','수','목','금','토'];
+  const now = new Date();
+  todayEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+
+  function todayIndex() {
+    const d = Math.floor(Date.now() / 86400000);
+    return ((d % PHRASES.length) + PHRASES.length) % PHRASES.length;
+  }
+
+  let currentIdx = todayIndex();
+  let isTodayView = true;
+
+  function render(idx, today) {
+    card.classList.add('swap');
+    setTimeout(() => {
+      const p = PHRASES[idx];
+      modeLabel.textContent = today ? '오늘의 표현' : '다른 표현';
+      phraseEl.textContent = p.en;
+      pronEl.textContent = `[${p.pron}]`;
+      meaningEl.textContent = p.ko;
+      exEnEl.textContent = p.exEn;
+      exKoEl.textContent = p.exKo;
+      progressEl.textContent = `${idx + 1} / ${PHRASES.length}`;
+      card.classList.remove('swap');
+    }, 180);
+  }
+
+  render(currentIdx, true);
+
+  todayBtn.addEventListener('click', () => {
+    currentIdx = todayIndex();
+    isTodayView = true;
+    render(currentIdx, true);
+  });
+
+  nextBtn.addEventListener('click', () => {
+    let next;
+    do { next = Math.floor(Math.random() * PHRASES.length); }
+    while (next === currentIdx && PHRASES.length > 1);
+    currentIdx = next;
+    isTodayView = (currentIdx === todayIndex());
+    render(currentIdx, isTodayView);
+  });
+
+  speakBtn.addEventListener('click', () => {
+    if (!('speechSynthesis' in window)) {
+      speakBtn.textContent = '미지원';
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(PHRASES[currentIdx].en);
+    u.lang = 'en-US';
+    u.rate = 0.92;
+    window.speechSynthesis.speak(u);
+  });
+</script>
+</body>
+</html>
