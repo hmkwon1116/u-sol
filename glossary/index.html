@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI·IT 인프라 핵심 용어를 한 줄 정의 + 쉬운 비유 + 왜 중요한지로 풀어주는 용어집.">
+<meta name="theme-color" content="#fbfaf7">
+<title>AI·IT 인프라 용어집 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #2a6fd6; --accent-soft: #e5edfb;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.55;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 22px 20px 80px; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+  .count-pill { font-size: 12px; color: var(--muted); background: var(--card); border: 1px solid var(--line); padding: 4px 10px; border-radius: 999px; }
+  header { margin-bottom: 22px; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+  h1 .dot { color: var(--accent); }
+  .subtitle { font-family: 'Fraunces', serif; font-style: italic; color: var(--muted); margin-top: 6px; font-size: 16px; }
+
+  .tabs {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(251,250,247,0.92); backdrop-filter: blur(8px);
+    margin: 0 -20px 22px; padding: 12px 20px; border-bottom: 1px solid var(--line);
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .tab-row { display: flex; gap: 8px; min-width: max-content; }
+  .tab {
+    flex-shrink: 0; padding: 8px 14px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--line);
+    font-size: 13px; font-weight: 600; font-family: inherit;
+    color: var(--ink); cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+    white-space: nowrap;
+  }
+  .tab:hover { border-color: var(--accent); }
+  .tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .tab .num { opacity: 0.6; font-weight: 500; margin-left: 4px; }
+  .tab.active .num { opacity: 0.7; }
+
+  .cat-group { margin-bottom: 28px; }
+  .cat-group.hidden { display: none; }
+  .cat-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .cat-head .emoji { font-size: 22px; }
+  .cat-head .nm { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; }
+  .cat-head .nm-sub { font-size: 12px; color: var(--muted); }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 680px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+  .term-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: var(--shadow); overflow: hidden;
+    transition: border-color .15s, transform .15s;
+  }
+  .term-card:hover { border-color: #d2cdc0; }
+  .term-card.open { border-color: var(--accent); }
+
+  .term-head {
+    width: 100%; text-align: left; background: transparent; border: 0; cursor: pointer;
+    padding: 16px 18px; display: flex; justify-content: space-between; align-items: center;
+    gap: 14px; font-family: inherit; color: inherit;
+  }
+  .term-head:hover { background: #faf9f5; }
+  .term-card.open .term-head { background: #f4f7fd; }
+  .term-name { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; line-height: 1.25; }
+  .term-ko { font-size: 12px; color: var(--muted); margin-top: 2px; font-style: italic; font-family: 'Fraunces', serif; }
+  .chevron {
+    flex-shrink: 0; font-size: 18px; color: var(--muted);
+    transition: transform .25s ease, color .15s;
+  }
+  .term-card.open .chevron { transform: rotate(180deg); color: var(--accent); }
+
+  .term-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height .35s ease;
+  }
+  .term-card.open .term-body { max-height: 1200px; }
+  .term-inner { padding: 0 18px 18px; }
+
+  .row {
+    margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line);
+  }
+  .row:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+  .row-label {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent);
+    background: var(--accent-soft); padding: 3px 8px; border-radius: 5px;
+    margin-bottom: 8px;
+  }
+  .row-label.gray { color: var(--muted); background: #efece5; }
+  .row-label.warm { color: #b25b1d; background: #fbe9d8; }
+  .row-body { font-size: 14.5px; line-height: 1.65; color: var(--ink); }
+  .row-body strong { font-weight: 600; }
+
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); text-align: center; }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top reveal">
+    <a class="back" href="/">← U-SOL</a>
+    <span class="count-pill" id="countPill">전체 24개 용어</span>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <h1>AI·IT 인프라 용어집<span class="dot">.</span></h1>
+    <p class="subtitle">한 줄 정의 + 쉬운 비유 + 왜 중요한지. 카드를 누르면 펼쳐져요.</p>
+  </header>
+
+  <div class="tabs reveal" style="animation-delay:.1s">
+    <div class="tab-row" id="tabRow"></div>
+  </div>
+
+  <div id="groups"></div>
+
+  <footer class="reveal">
+    © 2026 U-SOL · 다양한 아이디어를 만들고 실험하는 공간
+  </footer>
+</div>
+
+<script>
+  const DATA = [
+    {
+      key: 'model', emoji: '🧠', name: 'AI 모델 구조',
+      sub: '요즘 AI가 어떻게 생겼는지',
+      items: [
+        {
+          term: 'Transformer', ko: '트랜스포머',
+          def: '문장 안의 모든 단어를 한꺼번에 보고, 단어들끼리 서로 얼마나 관련 있는지(어텐션) 따져서 다음 단어를 예측하는 신경망 구조.',
+          analogy: '단체 사진을 한눈에 둘러보고 "누구와 누가 친한 사이인지" 동시에 파악하는 사람. 한 명씩 차례로 묻는 옛날 방식(RNN)과 달리 전체를 한 번에 본다.',
+          why: 'GPT, Claude, Gemini 등 거의 모든 최신 LLM의 뼈대. 단어를 차례대로 처리할 필요가 없어 GPU 병렬 처리에 잘 맞고, 그래서 거대 모델이 가능해졌다.'
+        },
+        {
+          term: 'MoE (Mixture of Experts)', ko: '전문가 혼합 모델',
+          def: '거대한 모델 안에 여러 명의 작은 "전문가" 네트워크를 두고, 입력마다 가장 어울리는 전문가 몇 명만 골라 쓰는 구조.',
+          analogy: '종합병원에 의사 100명이 있어도, 환자 한 명이 오면 증상에 맞는 의사 2~3명만 진료에 참여하는 것과 같다. 매번 전 직원을 깨우지 않는다.',
+          why: '총 파라미터는 어마어마하게 키우면서도 한 번 답할 때 쓰는 연산은 작게 유지할 수 있다. GPT-4, DeepSeek, Mixtral 등이 채택해 "큰데 싼" 모델의 표준이 됐다.'
+        },
+        {
+          term: 'Dense 모델', ko: '밀집 모델',
+          def: '입력이 들어올 때마다 모델의 모든 파라미터를 동원해 계산하는 전통적인 구조.',
+          analogy: '어떤 질문이 와도 회사 전 직원이 회의실에 모여 함께 답을 만드는 방식. 단순하지만 사람이 많아질수록 회의 비용도 같이 늘어난다.',
+          why: '구조가 단순하고 학습이 안정적이라 가장 널리 쓰인다. MoE와의 대비로 자주 등장 — "이 모델이 Dense냐 MoE냐"가 성능·비용 분석의 출발점.'
+        },
+        {
+          term: '멀티모달 모델', ko: 'Multimodal',
+          def: '텍스트뿐 아니라 이미지·음성·영상 등 여러 종류의 입력을 함께 이해하고 답할 수 있는 모델.',
+          analogy: '친구가 사진을 보여주며 "이거 뭐야?" 묻는 상황에서, 사진과 말을 동시에 해석하는 사람. 글만 읽는 사람과 다르다.',
+          why: '현실의 정보는 글로만 오지 않는다. 이미지 분석, 영상 검색, 음성 비서 등 실제 서비스 대부분이 멀티모달로 옮겨가는 추세 — GPT-4o, Gemini가 대표적.'
+        }
+      ]
+    },
+    {
+      key: 'train', emoji: '🎓', name: '학습 방식',
+      sub: '모델은 어떻게 똑똑해지나',
+      items: [
+        {
+          term: '사전학습', ko: 'Pretraining',
+          def: '인터넷·책 등 어마어마한 양의 데이터로 모델에게 "세상의 일반 지식과 언어 감각"을 처음 가르치는 단계.',
+          analogy: '학교에서 12년간 국어·사회·과학 등 기초를 두루 배우는 시간. 특정 직업을 정하기 전 단계다.',
+          why: '모델의 기본 능력은 사실상 이 단계에서 결정된다. 비용도 가장 크다 — GPT-4급 모델은 사전학습에만 수천억 원이 든다.'
+        },
+        {
+          term: '파인튜닝', ko: 'Fine-tuning',
+          def: '사전학습된 모델을 특정 목적(고객 응대, 코딩, 의료 등)에 맞춰 추가 데이터로 짧게 다시 가르치는 단계.',
+          analogy: '대학 졸업자를 입사시켜 2~3주 신입 교육시키는 것. 기본기는 갖춘 사람을 우리 회사 일에 맞춘다.',
+          why: '처음부터 학습시키는 비용의 1/100~1/1000로 원하는 분야 전문가 모델을 만들 수 있다. 기업 AI 활용의 표준 방식.'
+        },
+        {
+          term: 'RLHF', ko: '사람 피드백 기반 강화학습',
+          def: '사람이 모델 답변을 보고 "이게 더 좋다"고 평가한 데이터를 보상 신호로 써서, 모델이 사람의 선호에 맞게 답하도록 추가 학습시키는 방법.',
+          analogy: '신입이 보고서 초안 두 개를 들고 오면 상사가 "이쪽이 낫네"라고 골라주는 일을 반복해서, 점점 상사 취향에 맞는 보고서를 잘 쓰게 되는 과정.',
+          why: 'ChatGPT가 갑자기 "대화를 잘 하는 AI"가 된 핵심 비결. 모델이 똑똑한 것과 "사람이 듣고 싶은 답"을 하는 건 다른 문제다.'
+        },
+        {
+          term: 'LoRA', ko: '저랭크 적응',
+          def: '거대 모델의 가중치 전체를 고치지 않고, 그 옆에 아주 작은 보조 행렬을 끼워 넣어 학습시키는 효율적 파인튜닝 기법.',
+          analogy: '두꺼운 책 전체를 다시 쓰지 않고, 책 옆에 작은 포스트잇만 잔뜩 붙여서 내용을 업데이트하는 것.',
+          why: '일반 파인튜닝보다 메모리·비용이 10배 이상 적게 든다. 노트북 한 대로도 LLM을 내 데이터에 맞출 수 있게 만든 결정적 기술.'
+        },
+        {
+          term: '지도 / 비지도 / 강화학습', ko: '머신러닝 3대 학습법',
+          def: '지도학습: 정답이 붙은 데이터로 가르치기 / 비지도학습: 정답 없이 데이터끼리 비슷한 것을 묶기 / 강화학습: 결과에 보상·벌점을 주며 시행착오로 가르치기.',
+          analogy: '지도학습은 답안지 보며 공부, 비지도학습은 비슷한 책끼리 도서 분류, 강화학습은 자전거 타기 — 넘어지며 익힌다.',
+          why: '어떤 학습 방식을 쓰느냐가 데이터 준비 비용·모델 성격·활용 분야를 결정한다. 최신 LLM은 사전학습(비지도) + 파인튜닝(지도) + RLHF(강화)를 모두 섞어 쓴다.'
+        }
+      ]
+    },
+    {
+      key: 'serve', emoji: '⚡', name: '추론·서빙',
+      sub: '학습된 모델을 어떻게 굴리나',
+      items: [
+        {
+          term: 'vLLM', ko: '오픈소스 LLM 서빙 엔진',
+          def: 'LLM의 추론(질문에 답하는 단계)을 빠르게, 여러 사용자에게 동시에 서비스할 수 있게 만든 오픈소스 엔진.',
+          analogy: '같은 식당이라도 주문 → 조리 → 서빙 동선을 잘 짜둔 가게가 손님을 두 배 받는 것처럼, 같은 GPU로 더 많은 요청을 처리한다.',
+          why: '모델 자체를 안 바꿔도 vLLM 위에 올리는 것만으로 처리량이 2~10배 늘기도 한다. 실서비스 GPU 비용을 결정하는 핵심 컴포넌트.'
+        },
+        {
+          term: '양자화', ko: 'Quantization',
+          def: '모델 가중치를 32비트(매우 정밀한 소수)에서 8비트·4비트로 줄여, 같은 성능을 더 적은 메모리로 돌리는 기법.',
+          analogy: '0.001kg까지 표시하는 정밀 저울 대신 0.1kg 단위 저울로 바꾸는 것 — 대부분의 경우 충분히 정확하고 훨씬 가볍다.',
+          why: 'GPU 메모리는 비싸고 한정적이다. 4비트로 양자화하면 같은 모델을 1/4 메모리에 올릴 수 있어, 노트북·휴대폰에서도 LLM 구동이 가능해진다.'
+        },
+        {
+          term: 'KV 캐시', ko: 'Key-Value Cache',
+          def: 'LLM이 한 토큰씩 답을 만들 때, 앞에서 계산해둔 단어들의 정보(Key·Value)를 저장해뒀다가 재사용하는 메모리 영역.',
+          analogy: '책을 쓸 때 매 문장마다 처음부터 다시 읽지 않고, 메모지에 줄거리를 적어두고 참고하는 것과 같다.',
+          why: 'KV 캐시가 없으면 같은 계산을 매 토큰마다 반복해야 한다. 대신 캐시가 GPU 메모리를 많이 잡아먹어, "KV 캐시 관리"가 LLM 서빙의 핵심 난제다.'
+        },
+        {
+          term: '배치 처리', ko: 'Batching',
+          def: '여러 사용자의 요청을 한 묶음으로 모아 한 번에 GPU에 통과시키는 처리 방식.',
+          analogy: '카페에서 손님 한 명마다 머신을 돌리지 않고, 같은 메뉴가 5잔 모이면 한 번에 내리는 것.',
+          why: 'GPU는 한 번에 큰 덩어리를 처리할 때 가장 효율적이다. 배치를 잘 짜면 사용자당 비용이 5~10배 떨어진다 — vLLM·TensorRT의 핵심 기능.'
+        }
+      ]
+    },
+    {
+      key: 'infra', emoji: '🛠️', name: 'AI 인프라',
+      sub: 'AI를 굴리는 하드웨어',
+      items: [
+        {
+          term: 'GPU (H100 / H200)', ko: '그래픽 처리 장치',
+          def: '그래픽 처리를 위해 만들어진 칩이지만, 행렬 곱셈에 특화돼 AI 학습·추론에 표준으로 쓰이는 칩. H100·H200은 NVIDIA의 데이터센터급 최상위 모델.',
+          analogy: 'CPU가 똑똑한 직원 8명이라면, GPU는 단순 계산만 잘하는 직원 1만 명. AI 계산은 단순 곱셈을 한꺼번에 많이 하는 일이라 GPU가 훨씬 빠르다.',
+          why: '한 장에 4천만 원이 넘는 H100을 수천 장씩 쓰는 시대. GPU 확보가 곧 AI 경쟁력 — "GPU가 새로운 석유"라는 말이 나온 이유.'
+        },
+        {
+          term: 'TPU', ko: '구글의 AI 전용 칩',
+          def: '구글이 AI 학습·추론에 특화시켜 직접 설계한 칩 (Tensor Processing Unit). NVIDIA GPU의 대안 중 하나.',
+          analogy: '시중의 만능 공구(GPU) 대신, AI 한 가지 작업에만 최적화된 전용 공구. 그 작업 한정으로는 더 빠르고 효율적이다.',
+          why: 'Gemini 같은 구글 자체 모델은 대부분 TPU에서 학습된다. NVIDIA 독점에서 벗어나려는 흐름 — Amazon Trainium, Apple Silicon ML 등도 같은 맥락.'
+        },
+        {
+          term: 'VRAM', ko: 'GPU 전용 메모리',
+          def: 'GPU에 붙어있는 전용 메모리. 모델 가중치, KV 캐시, 학습 중간값 등을 올려두는 공간.',
+          analogy: '작업대(GPU 코어) 옆에 둔 작업물 거치대. 거치대가 작으면 큰 작업물(모델)을 올릴 수가 없다.',
+          why: '"이 모델을 돌릴 수 있느냐"는 사실상 VRAM 용량 싸움. H100은 80GB, H200은 141GB — 같은 GPU 코어라도 VRAM 크기에 따라 올릴 수 있는 모델이 달라진다.'
+        },
+        {
+          term: '분산학습', ko: 'Distributed Training',
+          def: '한 GPU로는 다 들어가지 않는 거대 모델을, 수십~수천 대 GPU에 쪼개 동시에 학습시키는 방법.',
+          analogy: '100명이 같이 짓는 대형 건물 — 누가 어느 층을 맡고, 부품은 언제 어디서 합칠지 정해두지 않으면 공사판이 된다.',
+          why: 'GPT-4급 모델은 한 대로는 영원히 못 만든다. Data·Tensor·Pipeline 등 분산 기법을 어떻게 조합하느냐가 학습 속도를 좌우한다.'
+        },
+        {
+          term: '클러스터', ko: 'GPU Cluster',
+          def: '수많은 GPU 서버를 고속 네트워크(InfiniBand 등)로 묶어 하나처럼 쓰는 컴퓨터 무리.',
+          analogy: '100명짜리 한 사무실 대신, 도시 곳곳 10개 사무실을 광케이블로 연결해 마치 한 회사처럼 일하는 구조.',
+          why: 'AI 학습 속도의 진짜 병목은 GPU 자체가 아니라 GPU들 사이의 통신이다. 같은 H100을 1000장 갖고 있어도 네트워크가 느리면 절반밖에 못 쓴다.'
+        }
+      ]
+    },
+    {
+      key: 'it', emoji: '🌐', name: '일반 IT',
+      sub: '서비스를 굴리는 기본기',
+      items: [
+        {
+          term: 'API', ko: 'Application Programming Interface',
+          def: '한 프로그램이 다른 프로그램의 기능을 호출할 수 있게 정해둔 약속·창구.',
+          analogy: '식당의 메뉴판 — 손님은 주방에서 어떻게 만드는지 몰라도, 메뉴판에 적힌 대로 주문하면 음식이 나온다.',
+          why: '모든 현대 서비스는 API로 연결된다. ChatGPT를 내 앱에 붙이는 것도 API 호출. API 설계를 잘 하면 외부 협업이 쉽고, 잘못하면 시스템 전체가 묶인다.'
+        },
+        {
+          term: '컨테이너 / 쿠버네티스', ko: 'Container / Kubernetes',
+          def: '컨테이너는 앱과 실행 환경을 한 박스에 담아 어디서든 똑같이 돌아가게 한 묶음. 쿠버네티스는 이런 박스 수천 개를 자동으로 배치·재시작·확장해 주는 관리자.',
+          analogy: '컨테이너는 즉석밥 — 어느 집 전자레인지(서버)에 돌려도 똑같이 익는다. 쿠버네티스는 편의점 점장 — 어느 진열대에 몇 개 놓을지, 떨어지면 채울지 자동으로 한다.',
+          why: '"내 노트북에선 되는데 서버에선 안 돼" 문제를 사실상 없앴다. 클라우드 시대 모든 대형 서비스의 표준 운영 방식.'
+        },
+        {
+          term: '로드밸런싱', ko: 'Load Balancing',
+          def: '들어오는 요청을 여러 서버에 골고루 나눠줘서, 한 서버가 과부하로 죽지 않게 하는 분배 장치.',
+          analogy: '마트 계산대 앞에 줄을 정리해주는 직원 — "3번 계산대 비었어요" 하고 손님을 흘려보낸다.',
+          why: '사용자가 늘어도 안 죽는 서비스의 기본기. 로드밸런서가 죽으면 그 뒤에 서버 100대가 있어도 무용지물 — 그만큼 핵심 장치.'
+        },
+        {
+          term: 'CI/CD', ko: '지속적 통합·배포',
+          def: '코드가 바뀌면 자동으로 테스트(CI)하고, 통과하면 자동으로 서비스에 반영(CD)하는 파이프라인.',
+          analogy: '공장의 자동 조립·검수 라인. 사람이 일일이 옮기지 않아도, 부품이 올라오면 알아서 조립 → 검사 → 출하까지 흘러간다.',
+          why: '하루에 수십 번 배포하는 빅테크의 비결. 사람이 일일이 손으로 빌드·배포하면 실수가 나오고 속도도 안 따라간다. GitHub Actions·Jenkins가 대표 도구.'
+        }
+      ]
+    }
+  ];
+
+  const tabRow = document.getElementById('tabRow');
+  const groupsEl = document.getElementById('groups');
+  const countPill = document.getElementById('countPill');
+
+  const totalCount = DATA.reduce((n, c) => n + c.items.length, 0);
+  countPill.textContent = `전체 ${totalCount}개 용어`;
+
+  function makeTab(key, label, count, active) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tab' + (active ? ' active' : '');
+    b.dataset.key = key;
+    b.innerHTML = `${label}<span class="num">${count}</span>`;
+    return b;
+  }
+  tabRow.appendChild(makeTab('all', '전체', totalCount, true));
+  DATA.forEach(cat => tabRow.appendChild(makeTab(cat.key, cat.emoji + ' ' + cat.name, cat.items.length, false)));
+
+  DATA.forEach((cat, gi) => {
+    const sec = document.createElement('section');
+    sec.className = 'cat-group reveal';
+    sec.dataset.key = cat.key;
+    sec.style.animationDelay = (0.15 + gi * 0.04) + 's';
+    sec.innerHTML = `
+      <div class="cat-head">
+        <span class="emoji">${cat.emoji}</span>
+        <div>
+          <div class="nm">${cat.name}</div>
+          <div class="nm-sub">${cat.sub} · ${cat.items.length}개</div>
+        </div>
+      </div>
+      <div class="grid"></div>
+    `;
+    const grid = sec.querySelector('.grid');
+    cat.items.forEach(it => {
+      const card = document.createElement('div');
+      card.className = 'term-card';
+      card.innerHTML = `
+        <button type="button" class="term-head">
+          <div>
+            <div class="term-name">${it.term}</div>
+            <div class="term-ko">${it.ko}</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </button>
+        <div class="term-body">
+          <div class="term-inner">
+            <div class="row">
+              <span class="row-label">정의</span>
+              <div class="row-body">${it.def}</div>
+            </div>
+            <div class="row">
+              <span class="row-label warm">쉬운 비유</span>
+              <div class="row-body">${it.analogy}</div>
+            </div>
+            <div class="row">
+              <span class="row-label gray">왜 중요한가</span>
+              <div class="row-body">${it.why}</div>
+            </div>
+          </div>
+        </div>
+      `;
+      const head = card.querySelector('.term-head');
+      head.addEventListener('click', () => card.classList.toggle('open'));
+      grid.appendChild(card);
+    });
+    groupsEl.appendChild(sec);
+  });
+
+  tabRow.addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab');
+    if (!btn) return;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const key = btn.dataset.key;
+    document.querySelectorAll('.cat-group').forEach(g => {
+      g.classList.toggle('hidden', key !== 'all' && g.dataset.key !== key);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
