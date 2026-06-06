@@ -4,202 +4,283 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="다양한 아이디어를 만들고 실험하는 공간. 날씨·환율·오늘의 말씀 한눈에, 그리고 직접 만든 도구와 게임까지.">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#f0f5fc">
 <title>U-SOL · 다양한 아이디어를 만들고 실험하는 공간</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #ffffff; --ink: #1a1916; --muted: #807b72; --line: #ececec;
-    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
-    --shadow: 0 1px 2px rgba(26,25,22,0.03), 0 6px 18px rgba(26,25,22,0.05);
+    --bg: #f0f5fc;
+    --ink: #1a1916;
+    --muted: #7a7770;
+    --line: #e3e9f2;
+    --card: #ffffff;
+    --accent: #d6452a;
+    --accent-soft: #fce7e0;
+    --shadow: 0 1px 2px rgba(26,25,22,0.03), 0 4px 14px rgba(26,25,22,0.05);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    background: var(--bg); color: var(--ink);
-    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.5;
-    -webkit-font-smoothing: antialiased; min-height: 100vh;
+    background: linear-gradient(180deg, #eef4fc 0%, #f6f9fd 60%, #ffffff 100%);
+    color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
-  .wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 80px; }
-  header { margin-bottom: 28px; }
-  .brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .logo { font-family: 'Fraunces', serif; font-weight: 900; font-size: clamp(34px, 7vw, 54px); letter-spacing: -0.02em; line-height: 1; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 14px 16px 32px; }
+
+  /* compact widget stripe — single horizontal row */
+  .stripe {
+    display: flex; gap: 6px; align-items: stretch; overflow-x: auto;
+    padding: 2px 2px 6px; margin-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .stripe::-webkit-scrollbar { display: none; }
+  .pill {
+    flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 11px; font-size: 12px;
+    text-decoration: none; color: var(--ink); white-space: nowrap;
+    box-shadow: var(--shadow);
+    transition: border-color .15s, transform .15s;
+  }
+  a.pill:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .pill .ic { font-size: 13px; }
+  .pill .k { color: var(--muted); font-weight: 500; font-size: 11px; }
+  .pill .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pill.verse-pill .v {
+    overflow: hidden; text-overflow: ellipsis; max-width: 240px;
+    display: inline-block; font-weight: 500; font-style: italic;
+  }
+  .pill.clock-pill .v { font-variant-numeric: tabular-nums; }
+
+  /* header */
+  header {
+    margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; min-width: 0; }
+  .logo {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(28px, 5.5vw, 40px); letter-spacing: -0.02em; line-height: 1;
+  }
   .logo .dot { color: var(--accent); }
-  .tagline { font-family: 'Fraunces', serif; font-size: clamp(15px, 3vw, 19px); font-style: italic; color: var(--muted); font-weight: 400; }
-  .pick-wrap { margin-top: 16px; }
-  .pick-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: #fff; border: none; font-family: 'Spline Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; padding: 11px 18px; border-radius: 999px; cursor: pointer; transition: transform .15s ease, background .15s; box-shadow: var(--shadow); }
+  .tagline {
+    font-family: 'Fraunces', serif; font-size: clamp(12px, 2.3vw, 14px);
+    font-style: italic; color: var(--muted); font-weight: 400;
+  }
+  .pick-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--ink); color: #fff; border: none;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13px; font-weight: 600; padding: 9px 14px;
+    border-radius: 999px; cursor: pointer;
+    transition: transform .15s ease, background .15s; box-shadow: var(--shadow);
+  }
   .pick-btn:hover { background: var(--accent); transform: translateY(-1px); }
-  .pick-btn .ic { font-size: 16px; }
-  .pick-card { margin-top: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); display: none; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s ease; animation: rise .35s ease forwards; }
-  .pick-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+  /* pick card */
+  .pick-card-wrap { margin-bottom: 10px; }
+  .pick-card {
+    display: none; align-items: center; gap: 12px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 10px 14px;
+    box-shadow: var(--shadow); text-decoration: none; color: inherit;
+    transition: border-color .15s, transform .15s ease;
+    animation: rise .3s ease forwards;
+  }
   .pick-card.show { display: flex; }
-  .pick-card .emoji { font-size: 30px; flex-shrink: 0; }
+  .pick-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .pick-card .emoji { font-size: 24px; flex-shrink: 0; }
   .pick-card .body { flex: 1; min-width: 0; }
-  .pick-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
-  .pick-card .nm { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; line-height: 1.25; }
-  .pick-card .desc { font-size: 13px; color: var(--muted); margin-top: 3px; }
-  .pick-card .arrow { font-size: 20px; color: var(--muted); flex-shrink: 0; }
-  .topline { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 8px; }
-  .date-now { font-size: 14px; color: var(--muted); }
-  .date-now strong { color: var(--ink); font-weight: 600; }
-  .clock { font-variant-numeric: tabular-nums; }
-  .dash { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 36px; }
-  @media (min-width: 680px) { .dash { grid-template-columns: repeat(4, 1fr); } }
-  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); min-height: 116px; display: flex; flex-direction: column; justify-content: space-between; }
-  .tile .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
-  .tile .big { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
-  .tile .sub { font-size: 12px; color: var(--muted); }
-  .weather-tile .big { display: flex; align-items: baseline; gap: 4px; }
-  .loading { color: var(--muted); font-size: 13px; font-style: italic; }
-  .section-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
-  .section-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .pick-card .label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--accent); font-weight: 700;
+  }
+  .pick-card .nm { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; line-height: 1.25; }
+  .pick-card .desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .pick-card .arrow { font-size: 18px; color: var(--muted); flex-shrink: 0; }
+
+  /* tabs — naver-news style */
+  .tabs {
+    display: flex; gap: 4px; overflow-x: auto;
+    margin-bottom: 14px; border-bottom: 1px solid var(--line);
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0; background: none; border: none;
+    padding: 10px 14px 12px;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 15px; font-weight: 600; color: var(--muted);
+    cursor: pointer; position: relative;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: color .15s;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+  /* tab panels */
+  .panel { display: none; }
+  .panel.active { display: block; animation: rise .25s ease; }
+
+  /* category cards (compact) */
   .cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
   @media (min-width: 560px) { .cats { grid-template-columns: repeat(3, 1fr); } }
-  @media (min-width: 820px) { .cats { grid-template-columns: repeat(4, 1fr); } }
-  .cat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 14px; text-decoration: none; color: inherit; box-shadow: var(--shadow); transition: transform .15s ease, box-shadow .15s ease, border-color .15s; position: relative; overflow: hidden; display: block; }
-  .cat:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 10px 24px rgba(26,25,22,0.08); border-color: #dcdcdc; }
-  .cat.live::before { content: "LIVE"; position: absolute; top: 9px; right: 9px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); background: var(--accent-soft); padding: 2px 6px; border-radius: 5px; }
-  .cat.soon { opacity: 0.62; }
-  .cat.soon::before { content: "준비중"; position: absolute; top: 9px; right: 9px; font-size: 9px; font-weight: 600; color: var(--muted); background: #f3f3f3; padding: 2px 6px; border-radius: 5px; }
-  .cat .emoji { font-size: 22px; display: block; margin-bottom: 6px; }
-  .cat .nm { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; line-height: 1.25; }
-  .cat .desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .cat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px; text-decoration: none; color: inherit;
+    box-shadow: var(--shadow);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s;
+    position: relative; display: block;
+  }
+  .cat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 10px 22px rgba(26,25,22,0.08);
+    border-color: #d4dbe6;
+  }
+  .cat .emoji { font-size: 26px; display: block; margin-bottom: 6px; }
+  .cat .nm { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; line-height: 1.2; }
+  .cat .desc { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
   .cat .count { font-size: 11px; color: var(--accent); margin-top: 6px; font-weight: 600; }
-  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+  footer {
+    margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line);
+    font-size: 11px; color: var(--muted);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  }
   footer a { color: var(--muted); }
-  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  .reveal { opacity: 0; transform: translateY(6px); animation: rise .35s ease forwards; }
   @keyframes rise { to { opacity: 1; transform: none; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="topline reveal">
-    <div class="date-now" id="dateNow">불러오는 중…</div>
-    <div class="date-now clock" id="clock"></div>
+  <!-- compact widget stripe -->
+  <div class="stripe reveal">
+    <span class="pill">
+      <span class="ic">📅</span><span class="k">오늘</span><span class="v" id="dateNow">…</span>
+    </span>
+    <span class="pill clock-pill">
+      <span class="ic">⏰</span><span class="v" id="clock">--:--</span>
+    </span>
+    <span class="pill" id="wxPill">
+      <span class="ic">🌡️</span><span class="k">서울</span><span class="v" id="wxTemp">…</span>
+    </span>
+    <span class="pill" id="rainPill">
+      <span class="ic">☔</span><span class="k">비</span><span class="v" id="wxRain">…</span>
+    </span>
+    <span class="pill" id="fxPill">
+      <span class="ic">🇨🇦</span><span class="k">CAD</span><span class="v" id="fxCad">…</span>
+    </span>
+    <a class="pill verse-pill" href="/verse/" id="vPill">
+      <span class="ic">🕊️</span><span class="v" id="vText">오늘의 말씀…</span>
+    </a>
   </div>
+
   <header class="reveal" style="animation-delay:.05s">
     <div class="brand">
       <div class="logo">U-SOL<span class="dot">.</span></div>
       <div class="tagline">다양한 아이디어를 만들고 실험하는 공간</div>
     </div>
-    <div class="pick-wrap">
-      <button type="button" class="pick-btn" id="pickBtn">
-        <span class="ic">🎲</span><span>오늘의 추천</span>
-      </button>
-      <a class="pick-card" id="pickCard" href="#">
-        <span class="emoji" id="pickEmoji">✨</span>
-        <div class="body">
-          <div class="label">오늘의 추천</div>
-          <div class="nm" id="pickName"></div>
-          <div class="desc" id="pickDesc"></div>
-        </div>
-        <span class="arrow">→</span>
-      </a>
-    </div>
+    <button type="button" class="pick-btn" id="pickBtn">
+      <span>🎲</span><span>오늘의 추천</span>
+    </button>
   </header>
 
-  <div class="dash">
-    <div class="tile weather-tile reveal" style="animation-delay:.1s">
-      <div class="label">서울 날씨</div>
-      <div class="big" id="wxTemp"><span class="loading">…</span></div>
-      <div class="sub" id="wxDesc">현재 기온</div>
-    </div>
-    <div class="tile reveal" style="animation-delay:.15s">
-      <div class="label">원/캐나다달러</div>
-      <div class="big" id="fxCad"><span class="loading">…</span></div>
-      <div class="sub" id="fxCadRange">1 CAD 기준</div>
-    </div>
-    <div class="tile reveal" style="animation-delay:.2s">
-      <div class="label">오늘 비올 확률</div>
-      <div class="big" id="wxRain"><span class="loading">…</span></div>
-      <div class="sub" id="wxRainSub">서울 기준</div>
-    </div>
-    <a class="tile reveal" id="verseTile" style="animation-delay:.25s; text-decoration:none; color:inherit; cursor:pointer;" href="/verse/">
-      <div class="label">오늘의 말씀</div>
-      <div class="big" id="vText" style="font-size:15px; line-height:1.5; font-weight:400;">…</div>
-      <div class="sub" id="vRef">매일 새 구절 →</div>
+  <div class="pick-card-wrap">
+    <a class="pick-card" id="pickCard" href="#">
+      <span class="emoji" id="pickEmoji">✨</span>
+      <div class="body">
+        <div class="label">오늘의 추천</div>
+        <div class="nm" id="pickName"></div>
+        <div class="desc" id="pickDesc"></div>
+      </div>
+      <span class="arrow">→</span>
     </a>
   </div>
 
-  <h2 class="section-title reveal" style="animation-delay:.3s">카테고리</h2>
-  <div class="cats">
-    <a class="cat live reveal" style="animation-delay:.35s" href="/game/">
-      <span class="emoji">🎮</span>
-      <div class="nm">게임</div>
-      <div class="desc">짬 날 때 한 판, 혼자서도 즐기는 미니 게임</div>
-      <div class="count">테트리스 · 갤러그 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.4s" href="/novel/">
-      <span class="emoji">📖</span>
-      <div class="nm">웹소설</div>
-      <div class="desc">일과 사람에 대한 직장 성장 이야기</div>
-      <div class="count">팀장이 된 어느 날 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.45s" href="/verse/">
-      <span class="emoji">🕊️</span>
-      <div class="nm">오늘의 말씀</div>
-      <div class="desc">매일 한 구절, 잠잠히 마음에 새기는 시간</div>
-      <div class="count">날마다 새롭게 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.5s" href="/food/">
-      <span class="emoji">🍜</span>
-      <div class="nm">주변 맛집</div>
-      <div class="desc">내 위치 기준으로 맛집·카페를 바로 검색</div>
-      <div class="count">지금 내 주변 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.55s" href="/news/">
-      <span class="emoji">📰</span>
-      <div class="nm">주요 뉴스</div>
-      <div class="desc">AI·금융·연예·여행·투자·경제 최신 소식</div>
-      <div class="count">분야별 모아보기 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.6s" href="/table/">
-      <span class="emoji">🍱</span>
-      <div class="nm">오늘의 밥상</div>
-      <div class="desc">매일 바뀌는 균형 잡힌 한 상 추천</div>
-      <div class="count">오늘 뭐 먹지 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.65s" href="/english/">
-      <span class="emoji">🗣️</span>
-      <div class="nm">오늘의 영어 한마디</div>
-      <div class="desc">일상에서 자주 쓰는 영어 표현, 발음·예문까지</div>
-      <div class="count">매일 새 표현 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.7s" href="/ai/">
-      <span class="emoji">🤖</span>
-      <div class="nm">오늘의 AI 지식</div>
-      <div class="desc">AI 시대를 살아가는 데 꼭 알아야 할 핵심 개념</div>
-      <div class="count">매일 새 개념 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.75s" href="/ai-infra/">
-      <span class="emoji">🛠️</span>
-      <div class="nm">오늘의 AI 인프라 지식</div>
-      <div class="desc">GPU·분산학습·서빙·MLOps 등 AI를 굴리는 기술</div>
-      <div class="count">매일 새 개념 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.8s" href="/glossary/">
-      <span class="emoji">📚</span>
-      <div class="nm">AI·IT 용어집</div>
-      <div class="desc">Transformer·MoE부터 CI/CD까지 카테고리별로 쉽게</div>
-      <div class="count">24개 핵심 용어 →</div>
-    </a>
-    <a class="cat live reveal" style="animation-delay:.85s" href="/finance/">
-      <span class="emoji">🏦</span>
-      <div class="nm">금융</div>
-      <div class="desc">복리·대출·예적금 계산 등 금융 생활 도우미</div>
-      <div class="count">계산기 모음 →</div>
-    </a>
-    <a class="cat soon reveal" style="animation-delay:.9s" href="#">
-      <span class="emoji">🧪</span>
-      <div class="nm">실험실</div>
-      <div class="desc">아이디어 단계의 프로토타입을 먼저 올려보는 곳</div>
-      <div class="count">기획 중</div>
-    </a>
+  <div class="tabs reveal" style="animation-delay:.1s" role="tablist">
+    <button class="tab active" data-tab="content" role="tab">콘텐츠</button>
+    <button class="tab" data-tab="daily" role="tab">매일 한 입</button>
+    <button class="tab" data-tab="life" role="tab">생활</button>
+    <button class="tab" data-tab="news" role="tab">뉴스</button>
   </div>
 
-  <footer class="reveal" style="animation-delay:.8s">
+  <div class="panel active" data-panel="content">
+    <div class="cats">
+      <a class="cat" href="/game/">
+        <span class="emoji">🎮</span>
+        <div class="nm">게임</div>
+        <div class="desc">짬 날 때 한 판, 혼자서도 즐기는 미니 게임</div>
+        <div class="count">테트리스 · 갤러그 →</div>
+      </a>
+      <a class="cat" href="/novel/">
+        <span class="emoji">📖</span>
+        <div class="nm">웹소설</div>
+        <div class="desc">일과 사람에 대한 직장 성장 이야기</div>
+        <div class="count">팀장이 된 어느 날 →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="daily">
+    <div class="cats">
+      <a class="cat" href="/verse/">
+        <span class="emoji">🕊️</span>
+        <div class="nm">오늘의 말씀</div>
+        <div class="desc">매일 한 구절, 잠잠히 마음에 새기는 시간</div>
+        <div class="count">날마다 새롭게 →</div>
+      </a>
+      <a class="cat" href="/english/">
+        <span class="emoji">🗣️</span>
+        <div class="nm">영어 한마디</div>
+        <div class="desc">일상에서 자주 쓰는 영어 표현, 발음·예문까지</div>
+        <div class="count">매일 새 표현 →</div>
+      </a>
+      <a class="cat" href="/ai/">
+        <span class="emoji">🤖</span>
+        <div class="nm">AI 지식</div>
+        <div class="desc">AI 시대를 살아가는 데 꼭 알아야 할 핵심 개념</div>
+        <div class="count">매일 새 개념 →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="life">
+    <div class="cats">
+      <a class="cat" href="/food/">
+        <span class="emoji">🍜</span>
+        <div class="nm">주변 맛집</div>
+        <div class="desc">내 위치 기준으로 맛집·카페를 바로 검색</div>
+        <div class="count">지금 내 주변 →</div>
+      </a>
+      <a class="cat" href="/table/">
+        <span class="emoji">🍱</span>
+        <div class="nm">오늘의 밥상</div>
+        <div class="desc">매일 바뀌는 균형 잡힌 한 상 추천</div>
+        <div class="count">오늘 뭐 먹지 →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="news">
+    <div class="cats">
+      <a class="cat" href="/news/">
+        <span class="emoji">📰</span>
+        <div class="nm">주요 뉴스</div>
+        <div class="desc">AI·금융·연예·여행·투자·경제 최신 소식</div>
+        <div class="count">분야별 모아보기 →</div>
+      </a>
+    </div>
+  </div>
+
+  <footer class="reveal" style="animation-delay:.2s">
     <span>© 2026 U-SOL · 다양한 아이디어를 만들고 실험하는 공간</span>
     <span>made on a Mac mini</span>
   </footer>
@@ -209,42 +290,33 @@
   function updateClock() {
     const now = new Date();
     const days = ['일','월','화','수','목','금','토'];
-    const dateStr = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
-    document.getElementById('dateNow').innerHTML = `오늘은 <strong>${dateStr}</strong>`;
+    const dateStr = `${now.getMonth()+1}/${now.getDate()} (${days[now.getDay()]})`;
+    document.getElementById('dateNow').textContent = dateStr;
     const hh = String(now.getHours()).padStart(2,'0');
     const mm = String(now.getMinutes()).padStart(2,'0');
-    const ss = String(now.getSeconds()).padStart(2,'0');
-    document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`;
+    document.getElementById('clock').textContent = `${hh}:${mm}`;
   }
   updateClock();
-  setInterval(updateClock, 1000);
+  setInterval(updateClock, 30000);
 
   async function loadWeather() {
     try {
-      const url = 'https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,relative_humidity_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=1';
+      const url = 'https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,weather_code&daily=precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=1';
       const res = await fetch(url);
       const data = await res.json();
       const c = data.current;
       const d = data.daily;
-      const codeMap = { 0:'맑음', 1:'대체로 맑음', 2:'구름 조금', 3:'흐림', 45:'안개', 48:'짙은 안개', 51:'약한 이슬비', 53:'이슬비', 55:'강한 이슬비', 61:'약한 비', 63:'비', 65:'강한 비', 71:'약한 눈', 73:'눈', 75:'강한 눈', 80:'소나기', 81:'소나기', 82:'강한 소나기', 95:'천둥번개' };
       document.getElementById('wxTemp').textContent = `${Math.round(c.temperature_2m)}℃`;
-      const desc = codeMap[c.weather_code] || '—';
-      const hi = Math.round(d.temperature_2m_max[0]);
-      const lo = Math.round(d.temperature_2m_min[0]);
-      document.getElementById('wxDesc').textContent = `${desc} · 최고 ${hi}° 최저 ${lo}°`;
       const rain = d.precipitation_probability_max[0];
       document.getElementById('wxRain').textContent = (rain != null ? `${rain}%` : '—');
-      document.getElementById('wxRainSub').textContent = rain >= 60 ? '우산 챙기세요 ☔' : (rain >= 30 ? '혹시 모르니 대비' : '서울 기준');
     } catch (e) {
       document.getElementById('wxTemp').textContent = '—';
-      document.getElementById('wxDesc').textContent = '날씨 정보를 불러오지 못했어요';
       document.getElementById('wxRain').textContent = '—';
     }
   }
   loadWeather();
 
   function fmtWon(v) { return v.toLocaleString('ko-KR', { maximumFractionDigits: 1 }); }
-
   async function loadFx() {
     try {
       const res = await fetch('https://api.frankfurter.dev/v1/latest?base=KRW&symbols=CAD');
@@ -257,24 +329,6 @@
   }
   loadFx();
 
-  async function loadCadRange() {
-    try {
-      const today = new Date();
-      const past = new Date();
-      past.setDate(today.getDate() - 7);
-      const fmt = d => d.toISOString().slice(0, 10);
-      const url = `https://api.frankfurter.dev/v1/${fmt(past)}..${fmt(today)}?base=CAD&symbols=KRW`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const vals = Object.values(data.rates).map(r => r.KRW).filter(Boolean);
-      if (vals.length === 0) return;
-      const min = Math.min(...vals);
-      const max = Math.max(...vals);
-      document.getElementById('fxCadRange').textContent = `주간 최저 ${fmtWon(min)} · 최고 ${fmtWon(max)}원`;
-    } catch (e) {}
-  }
-  loadCadRange();
-
   const MINI_VERSES = [
     { t: "여호와는 나의 목자시니 내게 부족함이 없으리로다", r: "시편 23:1" },
     { t: "수고하고 무거운 짐 진 자들아 다 내게로 오라", r: "마태복음 11:28" },
@@ -286,22 +340,33 @@
   function loadMiniVerse() {
     const days = Math.floor(Date.now() / 86400000);
     const v = MINI_VERSES[((days % MINI_VERSES.length) + MINI_VERSES.length) % MINI_VERSES.length];
-    const tEl = document.getElementById('vText');
-    const rEl = document.getElementById('vRef');
-    if (tEl) tEl.textContent = `"${v.t}"`;
-    if (rEl) rEl.textContent = `${v.r} · 자세히 →`;
+    const el = document.getElementById('vText');
+    if (el) el.textContent = v.t;
   }
   loadMiniVerse();
+
+  (function setupTabs() {
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.panel');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        tabs.forEach(t => t.classList.toggle('active', t === tab));
+        panels.forEach(p => p.classList.toggle('active', p.dataset.panel === target));
+      });
+    });
+  })();
 
   (function setupPick() {
     const btn = document.getElementById('pickBtn');
     const card = document.getElementById('pickCard');
     if (!btn || !card) return;
-    const items = Array.from(document.querySelectorAll('.cats .cat.live')).map(el => ({
+    const items = Array.from(document.querySelectorAll('.panel .cat')).map(el => ({
       href: el.getAttribute('href'),
       emoji: el.querySelector('.emoji')?.textContent || '✨',
       name: el.querySelector('.nm')?.textContent || '',
-      desc: el.querySelector('.desc')?.textContent || ''
+      desc: el.querySelector('.desc')?.textContent || '',
+      panel: el.closest('.panel')?.dataset.panel || ''
     })).filter(it => it.href && it.href !== '#');
     if (!items.length) { btn.style.display = 'none'; return; }
     let lastIdx = -1;
@@ -317,6 +382,10 @@
       card.classList.remove('show');
       void card.offsetWidth;
       card.classList.add('show');
+      if (pick.panel) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === pick.panel));
+        document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === pick.panel));
+      }
     });
   })();
 </script>
