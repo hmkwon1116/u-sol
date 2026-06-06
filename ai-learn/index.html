@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="무료로 공개된 AI 지식 자료 모음. 강의·유튜브·실습·블로그·한국어 자료까지 한곳에서.">
+<meta name="theme-color" content="#fbfaf7">
+<title>무료 AI 지식 자료 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.55;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 20px 80px; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+  .today { font-size: 13px; color: var(--muted); }
+
+  header { margin-bottom: 28px; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+  h1 .dot { color: var(--accent); }
+  .subtitle { font-family: 'Fraunces', serif; font-style: italic; color: var(--muted); margin-top: 6px; font-size: 16px; }
+
+  .section { margin-bottom: 28px; }
+  .section-head {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .section-head .emoji { font-size: 20px; }
+  .section-head h2 {
+    font-family: 'Fraunces', serif; font-size: 19px;
+    font-weight: 600; letter-spacing: -0.01em;
+  }
+  .section-head .hint { font-size: 12px; color: var(--muted); }
+
+  .items { display: grid; gap: 10px; }
+  @media (min-width: 560px) { .items { grid-template-columns: 1fr 1fr; } }
+
+  .item {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; text-decoration: none; color: inherit;
+    box-shadow: var(--shadow); display: flex; flex-direction: column;
+    transition: transform .15s ease, border-color .15s, box-shadow .15s;
+    position: relative;
+  }
+  .item:hover {
+    transform: translateY(-2px); border-color: var(--accent);
+    box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 10px 22px rgba(26,25,22,0.08);
+  }
+  .item-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+  .item .nm {
+    font-family: 'Fraunces', serif; font-size: 15.5px; font-weight: 600; line-height: 1.25;
+  }
+  .item .tag {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+    background: var(--accent-soft); color: var(--accent);
+    padding: 2px 7px; border-radius: 999px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .item .tag.ko { background: #eef4ec; color: #4a7c3a; }
+  .item .desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .item .host {
+    font-size: 11px; color: var(--muted); margin-top: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .item .arrow {
+    position: absolute; top: 14px; right: 14px;
+    font-size: 14px; color: var(--muted); opacity: 0; transition: opacity .15s;
+  }
+  .item:hover .arrow { opacity: 1; }
+
+  .note {
+    margin-top: 16px; padding: 14px 16px; background: #f7f4ec;
+    border-radius: 12px; border-left: 3px solid var(--accent);
+    font-size: 13px; color: var(--ink); line-height: 1.55;
+  }
+  .note b { color: var(--accent); }
+
+  footer {
+    margin-top: 40px; font-size: 12px; color: var(--muted);
+    text-align: center; padding-top: 20px; border-top: 1px solid var(--line);
+  }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top reveal">
+    <a class="back" href="/">← U-SOL</a>
+    <span class="today" id="today">—</span>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <h1>무료 AI 지식 자료<span class="dot">.</span></h1>
+    <p class="subtitle">돈 안 내고 배울 수 있는, 검증된 AI 학습 자료 모음</p>
+  </header>
+
+  <section class="section reveal" style="animation-delay:.1s">
+    <div class="section-head">
+      <span class="emoji">🎓</span>
+      <h2>대표 무료 강의</h2>
+      <span class="hint">처음 시작한다면 여기서부터</span>
+    </div>
+    <div class="items">
+      <a class="item" href="https://www.elementsofai.com/kr" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Elements of AI</span><span class="tag ko">한국어</span></div>
+        <div class="desc">헬싱키 대학이 만든, 비전공자를 위한 가장 친절한 AI 입문 코스</div>
+        <span class="host">elementsofai.com</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://www.coursera.org/specializations/machine-learning-introduction" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Andrew Ng · Machine Learning</span><span class="tag">청강 무료</span></div>
+        <div class="desc">머신러닝 입문의 정석. 청강 모드로 강의·과제 모두 무료</div>
+        <span class="host">coursera.org</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://course.fast.ai/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">fast.ai · Practical Deep Learning</span><span class="tag">완전 무료</span></div>
+        <div class="desc">코드로 먼저 만들어 보는, 실전 위주 딥러닝 코스</div>
+        <span class="host">course.fast.ai</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://developers.google.com/machine-learning/crash-course" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Google ML Crash Course</span><span class="tag ko">한국어</span></div>
+        <div class="desc">구글 엔지니어가 만든 15시간짜리 머신러닝 단기 집중 코스</div>
+        <span class="host">developers.google.com</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://huggingface.co/learn" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Hugging Face Courses</span><span class="tag">완전 무료</span></div>
+        <div class="desc">NLP·강화학습·오디오·비전·LLM까지, 실습 위주 공식 코스</div>
+        <span class="host">huggingface.co</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://introtodeeplearning.com/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">MIT 6.S191 Deep Learning</span><span class="tag">완전 무료</span></div>
+        <div class="desc">MIT의 인기 딥러닝 부트캠프, 매년 영상·슬라이드 전부 공개</div>
+        <span class="host">introtodeeplearning.com</span><span class="arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section reveal" style="animation-delay:.15s">
+    <div class="section-head">
+      <span class="emoji">📺</span>
+      <h2>유튜브 채널</h2>
+      <span class="hint">눈으로 이해하는 게 빠른 사람에게</span>
+    </div>
+    <div class="items">
+      <a class="item" href="https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">3Blue1Brown · Neural Networks</span></div>
+        <div class="desc">신경망·역전파·트랜스포머를 그림으로 풀어주는 명강의</div>
+        <span class="host">youtube.com</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Karpathy · Zero to Hero</span></div>
+        <div class="desc">OpenAI 공동창립자가 직접 GPT를 코드 한 줄씩 만들며 가르치는 시리즈</div>
+        <span class="host">youtube.com</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://www.youtube.com/@StatQuest" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">StatQuest</span></div>
+        <div class="desc">통계·머신러닝 개념을 동요풍 노래로 정리, "Bam!"</div>
+        <span class="host">youtube.com</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://www.youtube.com/@TwoMinutePapers" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Two Minute Papers</span></div>
+        <div class="desc">최신 AI 논문을 2~5분 영상으로 풀어주는 채널. "What a time to be alive!"</div>
+        <span class="host">youtube.com</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://www.youtube.com/@SungKim-yo7zg/playlists" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">모두를 위한 딥러닝</span><span class="tag ko">한국어</span></div>
+        <div class="desc">홍콩과기대 김성훈 교수의 한국어 딥러닝 입문 시리즈</div>
+        <span class="host">youtube.com</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://www.youtube.com/@TeddyNote" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">테디노트</span><span class="tag ko">한국어</span></div>
+        <div class="desc">LangChain·RAG·LLM 실습을 한국어로 친절하게 풀어주는 채널</div>
+        <span class="host">youtube.com</span><span class="arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section reveal" style="animation-delay:.2s">
+    <div class="section-head">
+      <span class="emoji">🛠️</span>
+      <h2>실습·핸즈온</h2>
+      <span class="hint">읽기보다 직접 돌려봐야 남는다</span>
+    </div>
+    <div class="items">
+      <a class="item" href="https://www.kaggle.com/learn" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Kaggle Learn</span></div>
+        <div class="desc">4~5시간짜리 마이크로 코스 30여 개. 노트북에서 바로 실습</div>
+        <span class="host">kaggle.com</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://microsoft.github.io/AI-For-Beginners/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Microsoft · AI for Beginners</span></div>
+        <div class="desc">마이크로소프트가 만든 12주 커리큘럼, 모든 자료 깃허브 공개</div>
+        <span class="host">microsoft.github.io</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://github.com/microsoft/generative-ai-for-beginners" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Generative AI for Beginners</span></div>
+        <div class="desc">21개 레슨으로 배우는 생성형 AI, 파이썬·자바스크립트 둘 다 지원</div>
+        <span class="host">github.com</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://www.deeplearning.ai/short-courses/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">DeepLearning.AI Short Courses</span></div>
+        <div class="desc">1~2시간짜리 LLM·RAG·에이전트 단기 코스, 전부 무료</div>
+        <span class="host">deeplearning.ai</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://www.boostcourse.org/opencourse" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">네이버 부스트코스</span><span class="tag ko">한국어</span></div>
+        <div class="desc">네이버 커넥트재단이 만든 무료 한국어 AI·코딩 강의 모음</div>
+        <span class="host">boostcourse.org</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://colab.research.google.com/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Google Colab</span></div>
+        <div class="desc">설치 없이 브라우저에서 무료 GPU로 파이썬·딥러닝 실습</div>
+        <span class="host">colab.research.google.com</span><span class="arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section reveal" style="animation-delay:.25s">
+    <div class="section-head">
+      <span class="emoji">📚</span>
+      <h2>책·읽을거리</h2>
+      <span class="hint">웹에서 무료로 읽는 명저</span>
+    </div>
+    <div class="items">
+      <a class="item" href="https://www.deeplearningbook.org/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Deep Learning Book</span></div>
+        <div class="desc">Ian Goodfellow의 정통 딥러닝 교과서, HTML로 전문 무료 공개</div>
+        <span class="host">deeplearningbook.org</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://d2l.ai/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Dive into Deep Learning</span></div>
+        <div class="desc">코드·수식·설명이 한 화면에서 같이 가는 인터랙티브 책</div>
+        <span class="host">d2l.ai</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://transformer-circuits.pub/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Anthropic · Transformer Circuits</span></div>
+        <div class="desc">트랜스포머 내부가 어떻게 돌아가는지 파헤치는 연구 시리즈</div>
+        <span class="host">transformer-circuits.pub</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://distill.pub/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Distill.pub</span></div>
+        <div class="desc">시각화로 풀어쓴 머신러닝 논문 모음. 한 편 한 편이 예술</div>
+        <span class="host">distill.pub</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://jalammar.github.io/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Jay Alammar's Blog</span></div>
+        <div class="desc">"The Illustrated Transformer" 등 그림으로 보는 LLM 시리즈</div>
+        <span class="host">jalammar.github.io</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://lilianweng.github.io/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Lil'Log (Lilian Weng)</span></div>
+        <div class="desc">OpenAI 출신 연구자의 길고 깊은 정리 글. RLHF·에이전트·확률 모델</div>
+        <span class="host">lilianweng.github.io</span><span class="arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section reveal" style="animation-delay:.3s">
+    <div class="section-head">
+      <span class="emoji">🏫</span>
+      <h2>스탠퍼드·MIT 정규 강의</h2>
+      <span class="hint">더 깊이 가고 싶다면</span>
+    </div>
+    <div class="items">
+      <a class="item" href="https://cs229.stanford.edu/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Stanford CS229</span></div>
+        <div class="desc">Andrew Ng의 정통 머신러닝 강의. 노트·영상 전부 공개</div>
+        <span class="host">cs229.stanford.edu</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://cs231n.stanford.edu/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Stanford CS231n</span></div>
+        <div class="desc">컴퓨터 비전·CNN의 바이블. Karpathy가 만든 그 강의</div>
+        <span class="host">cs231n.stanford.edu</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://web.stanford.edu/class/cs224n/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Stanford CS224n</span></div>
+        <div class="desc">자연어처리 with 딥러닝. 트랜스포머·LLM의 정석</div>
+        <span class="host">web.stanford.edu</span><span class="arrow">→</span>
+      </a>
+      <a class="item" href="https://stanford-cs324.github.io/winter2022/" target="_blank" rel="noopener">
+        <div class="item-head"><span class="nm">Stanford CS324 · LLMs</span></div>
+        <div class="desc">대형 언어 모델 전용 강의. 이론·데이터·평가·사회적 영향까지</div>
+        <span class="host">stanford-cs324.github.io</span><span class="arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <div class="note reveal" style="animation-delay:.35s">
+    <b>👉 추천 경로:</b> AI가 처음이면 <b>Elements of AI</b> → <b>모두를 위한 딥러닝</b> → <b>fast.ai</b> 순으로,
+    이미 코딩이 익숙하다면 <b>Karpathy Zero to Hero</b> 한 줄로 GPT까지 직접 만들어 보는 게 가장 빠릅니다.
+  </div>
+
+  <footer>© 2026 U-SOL · 다양한 아이디어를 만들고 실험하는 공간</footer>
+</div>
+
+<script>
+  (function setToday() {
+    const now = new Date();
+    const days = ['일','월','화','수','목','금','토'];
+    document.getElementById('today').textContent =
+      `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${days[now.getDay()]})`;
+  })();
+</script>
+</body>
+</html>
