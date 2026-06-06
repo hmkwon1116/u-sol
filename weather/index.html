@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="서울 날씨 한눈에 — 현재 기온과 오늘의 최저·최고, 그리고 앞으로 7일간의 날씨 예보까지.">
+<meta name="theme-color" content="#eef4fc">
+<title>서울 날씨 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef4fc; --ink: #1a1916; --muted: #7a7770; --line: #d8e2f0;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fce7e0;
+    --cold: #2c6fc9; --warm: #d6452a;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: linear-gradient(180deg, #eef4fc 0%, #f6f9fd 60%, #ffffff 100%);
+    color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    line-height: 1.55; -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 22px 20px 80px; }
+
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+  .today { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  header { margin-bottom: 22px; }
+  h1 {
+    font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px);
+    font-weight: 900; letter-spacing: -0.02em; line-height: 1.1;
+  }
+  h1 .dot { color: var(--accent); }
+  .subtitle {
+    font-family: 'Fraunces', serif; font-style: italic;
+    color: var(--muted); margin-top: 6px; font-size: 15px;
+  }
+
+  /* hero card — current + today's range */
+  .hero {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 26px 24px; box-shadow: var(--shadow); margin-bottom: 18px;
+  }
+  .hero .place {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--accent); font-weight: 700; margin-bottom: 8px;
+  }
+  .hero .now {
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .hero .icon { font-size: 44px; line-height: 1; }
+  .hero .temp {
+    font-family: 'Fraunces', serif; font-size: clamp(48px, 11vw, 72px);
+    font-weight: 600; line-height: 1; letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero .desc { font-size: 15px; color: var(--muted); margin-left: 2px; }
+
+  .range {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    padding-top: 16px; border-top: 1px dashed var(--line);
+  }
+  .range .item {
+    flex: 1; min-width: 90px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px; background: #f7faff;
+    border-radius: 12px; border: 1px solid var(--line);
+  }
+  .range .item .lbl {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted); font-weight: 600;
+  }
+  .range .item .val {
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .range .item.hi .val { color: var(--warm); }
+  .range .item.lo .val { color: var(--cold); }
+  .range .item.rn .val { color: #2c6fc9; }
+  .range .item .ic { font-size: 18px; }
+
+  /* button */
+  .toggle-wrap { display: flex; justify-content: center; margin: 6px 0 18px; }
+  .toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 22px; border-radius: 999px; border: none;
+    background: var(--ink); color: #fff; cursor: pointer;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    transition: transform .15s ease, background .15s; box-shadow: var(--shadow);
+  }
+  .toggle:hover { background: var(--accent); transform: translateY(-1px); }
+  .toggle:active { transform: scale(0.98); }
+  .toggle .arrow { transition: transform .25s ease; display: inline-block; }
+  .toggle.open .arrow { transform: rotate(180deg); }
+
+  /* 7-day forecast */
+  .forecast {
+    max-height: 0; overflow: hidden;
+    transition: max-height .4s ease, opacity .25s ease;
+    opacity: 0;
+  }
+  .forecast.open { max-height: 1400px; opacity: 1; }
+
+  .forecast-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 18px; box-shadow: var(--shadow);
+  }
+  .forecast-title {
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600;
+    margin-bottom: 14px; padding: 0 4px;
+  }
+  .day-row {
+    display: grid;
+    grid-template-columns: 56px 32px 1fr 64px 64px;
+    align-items: center; gap: 10px;
+    padding: 12px 6px; border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .day-row:first-of-type { border-top: none; }
+  .day-row .d-day { font-weight: 600; }
+  .day-row .d-day .sub { display: block; font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+  .day-row .d-icon { font-size: 20px; text-align: center; }
+  .day-row .d-rain {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; color: #2c6fc9; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .day-row .d-rain.dry { color: var(--muted); }
+  .day-row .d-lo, .day-row .d-hi {
+    font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;
+    text-align: right; font-variant-numeric: tabular-nums;
+  }
+  .day-row .d-lo { color: var(--cold); }
+  .day-row .d-hi { color: var(--warm); }
+
+  .status {
+    text-align: center; padding: 30px 16px;
+    color: var(--muted); font-size: 14px;
+  }
+  .status.error { color: var(--accent); }
+
+  footer { margin-top: 36px; font-size: 12px; color: var(--muted); text-align: center; padding-top: 18px; border-top: 1px solid var(--line); }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  @media (max-width: 420px) {
+    .day-row { grid-template-columns: 50px 26px 1fr 54px 54px; gap: 8px; font-size: 13px; }
+    .day-row .d-icon { font-size: 18px; }
+    .day-row .d-lo, .day-row .d-hi { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top reveal">
+    <a class="back" href="/">← U-SOL</a>
+    <span class="today" id="today">—</span>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <h1>서울 날씨<span class="dot">.</span></h1>
+    <p class="subtitle">지금 기온, 오늘의 최저·최고, 그리고 앞으로 7일</p>
+  </header>
+
+  <section class="hero reveal" style="animation-delay:.1s" id="hero">
+    <div class="place">서울 · 지금</div>
+    <div class="now">
+      <span class="icon" id="nowIcon">⛅</span>
+      <span class="temp" id="nowTemp">—</span>
+      <span class="desc" id="nowDesc">불러오는 중…</span>
+    </div>
+    <div class="range">
+      <div class="item hi">
+        <span class="ic">🔺</span>
+        <div>
+          <div class="lbl">최고</div>
+          <div class="val" id="todayHi">—</div>
+        </div>
+      </div>
+      <div class="item lo">
+        <span class="ic">🔻</span>
+        <div>
+          <div class="lbl">최저</div>
+          <div class="val" id="todayLo">—</div>
+        </div>
+      </div>
+      <div class="item rn">
+        <span class="ic">☔</span>
+        <div>
+          <div class="lbl">비올 확률</div>
+          <div class="val" id="todayRain">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="toggle-wrap reveal" style="animation-delay:.15s">
+    <button type="button" class="toggle" id="toggleBtn" aria-expanded="false" aria-controls="forecast">
+      <span>📅</span><span id="toggleLabel">앞으로 7일 보기</span><span class="arrow">▾</span>
+    </button>
+  </div>
+
+  <section class="forecast" id="forecast" aria-hidden="true">
+    <div class="forecast-card">
+      <div class="forecast-title">7일 예보</div>
+      <div id="forecastBody">
+        <div class="status">불러오는 중…</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2026 U-SOL · 데이터 제공: open-meteo.com</footer>
+</div>
+
+<script>
+  const DAYS = ['일','월','화','수','목','금','토'];
+
+  function setToday() {
+    const now = new Date();
+    const t = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${DAYS[now.getDay()]})`;
+    document.getElementById('today').textContent = t;
+  }
+  setToday();
+
+  function wxInfo(code) {
+    if (code === 0) return { icon: '☀️', desc: '맑음' };
+    if (code === 1) return { icon: '🌤️', desc: '대체로 맑음' };
+    if (code === 2) return { icon: '⛅', desc: '구름 조금' };
+    if (code === 3) return { icon: '☁️', desc: '흐림' };
+    if (code === 45 || code === 48) return { icon: '🌫️', desc: '안개' };
+    if (code >= 51 && code <= 57) return { icon: '🌦️', desc: '이슬비' };
+    if (code >= 61 && code <= 65) return { icon: '🌧️', desc: '비' };
+    if (code === 66 || code === 67) return { icon: '🌧️', desc: '얼어붙는 비' };
+    if (code >= 71 && code <= 77) return { icon: '❄️', desc: '눈' };
+    if (code >= 80 && code <= 82) return { icon: '🌦️', desc: '소나기' };
+    if (code === 85 || code === 86) return { icon: '🌨️', desc: '소낙눈' };
+    if (code === 95) return { icon: '⛈️', desc: '천둥번개' };
+    if (code === 96 || code === 99) return { icon: '⛈️', desc: '천둥·우박' };
+    return { icon: '🌡️', desc: '—' };
+  }
+
+  function dayLabel(dateStr, idx) {
+    const d = new Date(dateStr + 'T00:00:00');
+    if (idx === 0) return { main: '오늘', sub: `${d.getMonth()+1}/${d.getDate()}` };
+    if (idx === 1) return { main: '내일', sub: `${d.getMonth()+1}/${d.getDate()}` };
+    return { main: DAYS[d.getDay()] + '요일', sub: `${d.getMonth()+1}/${d.getDate()}` };
+  }
+
+  async function loadWeather() {
+    const url = 'https://api.open-meteo.com/v1/forecast'
+      + '?latitude=37.5665&longitude=126.9780'
+      + '&current=temperature_2m,weather_code'
+      + '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code'
+      + '&timezone=Asia%2FSeoul&forecast_days=7';
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('network');
+      const data = await res.json();
+      renderCurrent(data);
+      renderForecast(data);
+    } catch (e) {
+      document.getElementById('nowTemp').textContent = '—';
+      document.getElementById('nowDesc').textContent = '날씨를 불러오지 못했어요';
+      document.getElementById('forecastBody').innerHTML =
+        '<div class="status error">예보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</div>';
+    }
+  }
+
+  function renderCurrent(data) {
+    const c = data.current;
+    const d = data.daily;
+    const info = wxInfo(c.weather_code);
+    document.getElementById('nowIcon').textContent = info.icon;
+    document.getElementById('nowTemp').textContent = `${Math.round(c.temperature_2m)}°`;
+    document.getElementById('nowDesc').textContent = info.desc;
+    document.getElementById('todayHi').textContent = `${Math.round(d.temperature_2m_max[0])}°`;
+    document.getElementById('todayLo').textContent = `${Math.round(d.temperature_2m_min[0])}°`;
+    const rain = d.precipitation_probability_max[0];
+    document.getElementById('todayRain').textContent = (rain != null ? `${rain}%` : '—');
+  }
+
+  function renderForecast(data) {
+    const d = data.daily;
+    const rows = d.time.map((dateStr, i) => {
+      const info = wxInfo(d.weather_code[i]);
+      const lbl = dayLabel(dateStr, i);
+      const hi = Math.round(d.temperature_2m_max[i]);
+      const lo = Math.round(d.temperature_2m_min[i]);
+      const rain = d.precipitation_probability_max[i];
+      const rainClass = (rain == null || rain < 20) ? 'dry' : '';
+      const rainTxt = rain == null ? '—' : `${rain}%`;
+      return `
+        <div class="day-row">
+          <div class="d-day">${lbl.main}<span class="sub">${lbl.sub}</span></div>
+          <div class="d-icon" title="${info.desc}">${info.icon}</div>
+          <div class="d-rain ${rainClass}"><span>☔</span><span>${rainTxt}</span></div>
+          <div class="d-lo">${lo}°</div>
+          <div class="d-hi">${hi}°</div>
+        </div>
+      `;
+    }).join('');
+    document.getElementById('forecastBody').innerHTML = rows;
+  }
+
+  loadWeather();
+
+  (function setupToggle() {
+    const btn = document.getElementById('toggleBtn');
+    const label = document.getElementById('toggleLabel');
+    const panel = document.getElementById('forecast');
+    btn.addEventListener('click', () => {
+      const open = panel.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+      label.textContent = open ? '7일 예보 닫기' : '앞으로 7일 보기';
+    });
+  })();
+</script>
+</body>
+</html>
