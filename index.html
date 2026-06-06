@@ -77,27 +77,44 @@
   }
   .pick-btn:hover { background: var(--accent); transform: translateY(-1px); }
 
-  /* pick card */
-  .pick-card-wrap { margin-bottom: 10px; }
+  /* pick row: button + banner side by side */
+  .pick-row {
+    display: flex; align-items: stretch; gap: 10px;
+    margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .pick-row .pick-btn { flex-shrink: 0; }
   .pick-card {
-    display: none; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--card); border: 1px solid var(--line);
-    border-radius: 12px; padding: 10px 14px;
+    border-radius: 999px; padding: 6px 14px 6px 10px;
     box-shadow: var(--shadow); text-decoration: none; color: inherit;
     transition: border-color .15s, transform .15s ease;
-    animation: rise .3s ease forwards;
+    flex: 1 1 220px; min-width: 0;
   }
-  .pick-card.show { display: flex; }
   .pick-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-  .pick-card .emoji { font-size: 24px; flex-shrink: 0; }
-  .pick-card .body { flex: 1; min-width: 0; }
+  .pick-card .emoji { font-size: 20px; flex-shrink: 0; line-height: 1; }
+  .pick-card .body { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; }
   .pick-card .label {
     font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--accent); font-weight: 700;
+    color: var(--accent); font-weight: 700; flex-shrink: 0;
   }
-  .pick-card .nm { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; line-height: 1.25; }
-  .pick-card .desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .pick-card .arrow { font-size: 18px; color: var(--muted); flex-shrink: 0; }
+  .pick-card .nm {
+    font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; line-height: 1.2;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+  }
+  .pick-card .desc {
+    font-size: 11px; color: var(--muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+  }
+  .pick-card .arrow { font-size: 16px; color: var(--muted); flex-shrink: 0; }
+  @media (max-width: 480px) {
+    .pick-card .desc { display: none; }
+  }
+  @keyframes pickFlash {
+    0% { opacity: 0; transform: translateY(-2px); }
+    100% { opacity: 1; transform: none; }
+  }
+  .pick-card.flash { animation: pickFlash .25s ease; }
 
   /* tabs — naver-news style */
   .tabs {
@@ -178,18 +195,17 @@
       <div class="logo">U-SOL<span class="dot">.</span></div>
       <div class="tagline">다양한 아이디어를 만들고 실험하는 공간</div>
     </div>
-    <button type="button" class="pick-btn" id="pickBtn">
-      <span>🎲</span><span>오늘의 추천</span>
-    </button>
   </header>
 
-  <div class="pick-card-wrap">
+  <div class="pick-row reveal" style="animation-delay:.08s">
+    <button type="button" class="pick-btn" id="pickBtn" aria-label="오늘의 추천 새로 고르기">
+      <span>🎲</span><span>오늘의 추천</span>
+    </button>
     <a class="pick-card" id="pickCard" href="#">
       <span class="emoji" id="pickEmoji">✨</span>
       <div class="body">
-        <div class="label">오늘의 추천</div>
-        <div class="nm" id="pickName"></div>
-        <div class="desc" id="pickDesc"></div>
+        <span class="nm" id="pickName">…</span>
+        <span class="desc" id="pickDesc"></span>
       </div>
       <span class="arrow">→</span>
     </a>
@@ -366,9 +382,9 @@
       desc: el.querySelector('.desc')?.textContent || '',
       panel: el.closest('.panel')?.dataset.panel || ''
     })).filter(it => it.href && it.href !== '#');
-    if (!items.length) { btn.style.display = 'none'; return; }
+    if (!items.length) { btn.style.display = 'none'; card.style.display = 'none'; return; }
     let lastIdx = -1;
-    btn.addEventListener('click', () => {
+    function pickOne(switchTab) {
       let idx = Math.floor(Math.random() * items.length);
       if (items.length > 1 && idx === lastIdx) idx = (idx + 1) % items.length;
       lastIdx = idx;
@@ -377,14 +393,16 @@
       document.getElementById('pickName').textContent = pick.name;
       document.getElementById('pickDesc').textContent = pick.desc;
       card.setAttribute('href', pick.href);
-      card.classList.remove('show');
+      card.classList.remove('flash');
       void card.offsetWidth;
-      card.classList.add('show');
-      if (pick.panel) {
+      card.classList.add('flash');
+      if (switchTab && pick.panel) {
         document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === pick.panel));
         document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === pick.panel));
       }
-    });
+    }
+    pickOne(false);
+    btn.addEventListener('click', () => pickOne(true));
   })();
 </script>
 </body>
