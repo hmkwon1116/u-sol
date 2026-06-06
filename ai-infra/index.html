@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="GPU·분산학습·서빙·MLOps까지. AI를 '굴리는' 인프라 핵심 개념을 매일 하나씩 정리.">
+<meta name="theme-color" content="#fbfaf7">
+<title>오늘의 AI 인프라 지식 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #2a6fd6; --accent-soft: #e5edfb;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.55;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 22px 20px 80px; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+  .today { font-size: 13px; color: var(--muted); }
+  header { margin-bottom: 28px; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+  h1 .dot { color: var(--accent); }
+  .subtitle { font-family: 'Fraunces', serif; font-style: italic; color: var(--muted); margin-top: 6px; font-size: 16px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 28px 24px; box-shadow: var(--shadow); margin-bottom: 18px;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .card.swap { opacity: 0; transform: translateY(6px); }
+
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 14px; }
+  .term { font-family: 'Fraunces', serif; font-size: clamp(28px, 5.5vw, 38px); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; }
+  .ko-term { color: var(--muted); font-style: italic; margin-top: 8px; font-size: 16px; font-family: 'Fraunces', serif; }
+  .tag { display: inline-block; margin-top: 12px; padding: 4px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; }
+
+  .summary {
+    margin-top: 22px; padding-top: 20px; border-top: 1px dashed var(--line);
+    font-size: 17px; font-weight: 500; line-height: 1.6;
+  }
+  .summary .sec-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; display: block; margin-bottom: 8px; }
+
+  .example {
+    margin-top: 20px; padding: 16px 18px; background: #f4f6fb;
+    border-radius: 12px; border-left: 3px solid var(--accent);
+  }
+  .example .ex-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+  .example .ex-body { font-size: 14.5px; line-height: 1.6; }
+
+  .why {
+    margin-top: 16px; padding: 14px 18px; background: #e5edfb;
+    border-radius: 12px;
+  }
+  .why .why-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .why .why-body { font-size: 14px; line-height: 1.55; color: var(--ink); }
+
+  .actions { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .btn {
+    flex: 1; min-width: 140px;
+    padding: 13px 18px; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink); font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: transform .1s, border-color .15s, background .15s;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn:active { transform: scale(0.98); }
+  .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn.primary:hover { background: #2360bb; }
+
+  .progress { margin-top: 8px; font-size: 12px; color: var(--muted); text-align: center; }
+
+  footer { margin-top: 40px; font-size: 12px; color: var(--muted); text-align: center; padding-top: 20px; border-top: 1px solid var(--line); }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top reveal">
+    <a class="back" href="/">← U-SOL</a>
+    <span class="today" id="today">—</span>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <h1>오늘의 AI 인프라 지식<span class="dot">.</span></h1>
+    <p class="subtitle">AI를 '굴리는' 기술 — GPU·분산학습·서빙·MLOps의 핵심 개념</p>
+  </header>
+
+  <div class="card reveal" id="card" style="animation-delay:.1s">
+    <div class="label" id="modeLabel">오늘의 개념</div>
+    <div class="term" id="term">—</div>
+    <div class="ko-term" id="koTerm">—</div>
+    <span class="tag" id="tag">—</span>
+
+    <div class="summary">
+      <span class="sec-label">핵심 정리</span>
+      <span id="summary">—</span>
+    </div>
+
+    <div class="example">
+      <div class="ex-label">쉽게 이해하기</div>
+      <div class="ex-body" id="exBody">—</div>
+    </div>
+
+    <div class="why">
+      <div class="why-label">왜 알아야 할까</div>
+      <div class="why-body" id="whyBody">—</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="todayBtn" type="button">오늘의 개념</button>
+      <button class="btn primary" id="nextBtn" type="button">다른 개념 보기 →</button>
+    </div>
+    <div class="progress" id="progress">1 / 28</div>
+  </div>
+
+  <footer class="reveal" style="animation-delay:.2s">
+    © 2026 U-SOL · 다양한 아이디어를 만들고 실험하는 공간
+  </footer>
+</div>
+
+<script>
+  const TOPICS = [
+    {
+      term: "GPU (Graphics Processing Unit)",
+      ko: "그래픽 처리 장치",
+      tag: "하드웨어",
+      summary: "수천 개의 작은 코어가 동시에 같은 연산을 처리하도록 설계된 칩이에요. AI의 거대한 행렬 곱셈이 바로 이 병렬 처리에 딱 맞아 표준 가속기로 자리 잡았습니다.",
+      ex: "CPU가 박사 4명이 어려운 문제를 차근차근 푸는 거라면, GPU는 초등학생 5천 명이 단순 곱셈 문제를 한꺼번에 푸는 식이에요.",
+      why: "AI 비용·속도의 90%가 GPU에서 결정됩니다. H100·B200 가격이 뉴스가 되는 이유, 엔비디아 시총이 폭등한 이유가 모두 여기에 있어요."
+    },
+    {
+      term: "CUDA",
+      ko: "쿠다",
+      tag: "소프트웨어 스택",
+      summary: "엔비디아 GPU에서 일반 연산을 돌릴 수 있게 해주는 프로그래밍 플랫폼이에요. PyTorch·TensorFlow의 GPU 가속이 모두 그 아래 CUDA를 깔고 돌아갑니다.",
+      ex: "엔비디아 GPU라는 '하드웨어'와 PyTorch라는 '앱' 사이의 통역사. CUDA가 없으면 AI 프레임워크는 GPU에게 일을 시킬 수 없어요.",
+      why: "엔비디아의 진짜 해자는 칩이 아니라 CUDA 생태계. AMD·인텔이 GPU를 만들어도 쉽게 못 따라잡는 이유가 바로 이 소프트웨어 락인이에요."
+    },
+    {
+      term: "HBM (High Bandwidth Memory)",
+      ko: "고대역폭 메모리",
+      tag: "하드웨어",
+      summary: "GPU 옆에 수직으로 쌓아 붙이는 초고속 메모리. 일반 D램보다 데이터를 훨씬 빠르게 GPU 코어로 흘려보낼 수 있어요.",
+      ex: "공장(GPU 코어)에 부품을 공급하는 컨베이어 벨트. 코어가 아무리 빨라도 벨트가 좁으면 일이 안 되는데, HBM이 그 벨트를 광폭으로 만든 거예요.",
+      why: "AI 가속기 성능의 진짜 병목은 연산이 아니라 메모리 대역폭. SK하이닉스·삼성 HBM이 엔비디아만큼 귀해진 이유가 여기 있어요."
+    },
+    {
+      term: "NVLink / InfiniBand",
+      ko: "GPU 고속 연결망",
+      tag: "하드웨어",
+      summary: "GPU와 GPU, 서버와 서버를 초고속으로 잇는 전용 네트워크예요. 거대 모델을 여러 GPU에 쪼개 학습할 때 이 연결이 곧 성능입니다.",
+      ex: "혼자 못 드는 거대한 짐을 여러 명이 나눠 드는데, 사람들끼리 신호를 빨리 못 주고받으면 일이 안 되죠. NVLink는 그 '사람 사이의 무전기'예요.",
+      why: "GPU 1만 장짜리 클러스터의 실제 성능은 카드 수가 아니라 이 연결 속도가 결정해요. 데이터센터 설계의 핵심 변수입니다."
+    },
+    {
+      term: "TPU (Tensor Processing Unit)",
+      ko: "텐서 처리 장치",
+      tag: "하드웨어",
+      summary: "구글이 자체 설계한 AI 전용 칩. 범용 GPU와 달리 행렬 연산만 잘하도록 극단적으로 최적화돼 있어요.",
+      ex: "GPU가 만능 운동선수라면, TPU는 100m 달리기 한 종목만 죽도록 훈련한 전문 선수. 그 종목에서는 더 빠르고 더 효율적이에요.",
+      why: "엔비디아 독점에 균열을 내는 가장 현실적인 대안. 구글 Gemini·Anthropic Claude의 학습 일부도 TPU에서 돌아갑니다."
+    },
+    {
+      term: "Mixed Precision (FP16 / BF16 / FP8)",
+      ko: "혼합 정밀도",
+      tag: "연산 최적화",
+      summary: "숫자 정밀도를 32비트에서 16·8비트로 낮춰 메모리는 절반·계산은 2~4배로 빠르게 만드는 기법이에요. 손실은 거의 없고 효율은 큽니다.",
+      ex: "소수점 7자리까지 계산하던 걸 3자리까지만 계산하기로 합의한 것. 답은 거의 같은데 일이 훨씬 빨라져요.",
+      why: "최신 모델 학습의 사실상 기본값. FP8을 지원하는지가 H100·B200 같은 신형 GPU의 가장 큰 차별점이에요."
+    },
+    {
+      term: "Quantization",
+      ko: "양자화",
+      tag: "추론 최적화",
+      summary: "이미 학습된 모델의 가중치를 4비트·8비트로 압축해 용량과 메모리 사용량을 크게 줄이는 기술. 추론 속도도 함께 빨라져요.",
+      ex: "원본 사진을 화질 살짝 낮춰 1/4 크기로 만드는 것. 눈으로 보면 거의 차이가 없는데 파일은 훨씬 가벼워지죠.",
+      why: "70B 모델이 노트북·휴대폰에서 돌아가는 비결. AI 온디바이스 시대의 기반 기술이에요."
+    },
+    {
+      term: "Data Parallelism",
+      ko: "데이터 병렬화",
+      tag: "분산 학습",
+      summary: "같은 모델을 GPU마다 한 벌씩 두고, 학습 데이터만 쪼개 나눠주는 방식. 가장 간단해서 분산 학습의 기본기예요.",
+      ex: "수학 문제집 1000장을 학생 10명이 100장씩 푸는 것. 똑같은 풀이법(모델)을 쓰되, 푸는 문제(데이터)만 나눠 갖는 거예요.",
+      why: "거의 모든 학습 코드의 출발점. 모델이 GPU 한 장에 들어가는 한 이 방식이면 충분해요."
+    },
+    {
+      term: "Model / Tensor / Pipeline Parallelism",
+      ko: "모델·텐서·파이프라인 병렬화",
+      tag: "분산 학습",
+      summary: "모델 자체가 GPU 한 장에 안 들어갈 때 모델을 쪼개 여러 GPU에 나눠 올리는 기법들. 층을 나누면 pipeline, 한 층을 가로로 자르면 tensor 병렬이에요.",
+      ex: "거대한 자동차를 한 공장에서 다 못 만들 때, 엔진·차체·내장을 다른 공장이 맡고 컨베이어 벨트로 잇는 식.",
+      why: "수천억~조 단위 파라미터 모델은 이게 없으면 학습 자체가 불가능. GPT-4 같은 초거대 모델의 필수 인프라예요."
+    },
+    {
+      term: "ZeRO / DeepSpeed / FSDP",
+      ko: "분산 학습 최적화 프레임워크",
+      tag: "분산 학습",
+      summary: "옵티마이저·그래디언트·파라미터를 GPU 간에 잘게 쪼개 메모리 사용을 극단적으로 줄이는 기술들. 같은 GPU 수로 더 큰 모델을 학습할 수 있어요.",
+      ex: "10명이 100권짜리 백과사전을 다 들고 다니지 말고, 각자 10권씩만 갖고 있다가 필요할 때 서로 빌리자 — 라는 합의 같아요.",
+      why: "오픈소스로 거대 모델을 학습할 수 있게 된 결정적 도구. 라마·미스트랄 같은 모델의 학습 코드 절반이 이걸 씁니다."
+    },
+    {
+      term: "FlashAttention",
+      ko: "플래시어텐션",
+      tag: "연산 최적화",
+      summary: "트랜스포머의 어텐션 연산을 메모리 접근 패턴 단계에서 다시 짜, 속도는 빠르고 메모리는 적게 쓰도록 만든 알고리즘이에요.",
+      ex: "같은 요리(어텐션)를 만드는데 동선만 바꿨더니, 같은 재료로 절반 시간에 더 많이 만들 수 있게 된 셈이에요.",
+      why: "긴 컨텍스트(100만 토큰)가 가능해진 핵심 이유 중 하나. 거의 모든 최신 LLM에 기본 탑재돼 있어요."
+    },
+    {
+      term: "KV Cache",
+      ko: "KV 캐시",
+      tag: "추론 최적화",
+      summary: "LLM이 토큰을 한 개씩 생성할 때, 앞서 계산한 Key·Value 값을 메모리에 저장해 두는 것. 같은 계산을 반복하지 않게 해줍니다.",
+      ex: "긴 글을 이어 쓸 때 앞 문단을 매번 처음부터 다시 읽지 말고, 머릿속에 요약을 띄워놓고 거기서부터 이어가는 것과 같아요.",
+      why: "LLM 추론 비용·속도의 절반은 이 KV 캐시 관리에서 결정. vLLM의 PagedAttention이 유명해진 이유도 여기예요."
+    },
+    {
+      term: "vLLM / TGI / TensorRT-LLM",
+      ko: "LLM 추론 서버",
+      tag: "서빙",
+      summary: "LLM을 실서비스로 띄울 때 처리량과 지연을 동시에 잡아주는 전용 추론 엔진들이에요. 그냥 PyTorch로 돌리는 것보다 처리량이 5~10배까지 차이 나요.",
+      ex: "주방장 한 명이 주문을 하나씩 받지 말고, 비슷한 주문을 모아 한 번에 굽도록 시스템을 짠 패스트푸드 주방.",
+      why: "사내 LLM API의 비용·응답 속도가 여기서 갈립니다. '오픈소스 모델 자체 서빙'을 검토할 때 첫 번째로 보는 도구예요."
+    },
+    {
+      term: "Continuous Batching",
+      ko: "연속 배칭",
+      tag: "서빙",
+      summary: "들어오는 요청을 한 묶음(batch)에 가둬두지 않고, 누군가 끝나면 그 자리에 새 요청을 바로 끼워 넣는 동적 배치 기법이에요.",
+      ex: "버스에서 정류장마다 사람이 내리면 그 좌석에 다음 손님을 바로 태우는 것. 빈자리 없이 굴리니 처리량이 폭증해요.",
+      why: "vLLM이 PyTorch보다 빠른 진짜 이유. 실서비스 LLM의 GPU 가동률을 90%대로 끌어올린 핵심 트릭이에요."
+    },
+    {
+      term: "Speculative Decoding",
+      ko: "추측 디코딩",
+      tag: "추론 최적화",
+      summary: "작은 모델이 다음 몇 토큰을 미리 추측하고, 큰 모델이 그걸 검증만 하는 방식. 큰 모델의 호출 수를 줄여 응답을 1.5~3배 빠르게 만들어요.",
+      ex: "비서가 답변 초안을 미리 써두면 사장은 검토만 하면 되는 셈. 다시 쓸 부분만 사장이 손대니 훨씬 빠릅니다.",
+      why: "최신 모델 응답 속도가 갑자기 빨라진 비결. 같은 GPU·같은 모델로 처리량을 더 뽑아내는 정공법이에요."
+    },
+    {
+      term: "Latency vs Throughput",
+      ko: "지연시간 vs 처리량",
+      tag: "서빙",
+      summary: "한 요청이 끝나는 데 걸리는 시간(latency)과 단위 시간당 처리한 요청 수(throughput)의 구분. 둘은 자주 상충해서 둘 중 무엇을 우선할지 정해야 해요.",
+      ex: "패스트푸드는 줄 서서 받으면 한 명 기준은 좀 걸리지만(높은 latency), 가게 전체로는 시간당 많이 팔립니다(높은 throughput).",
+      why: "AI 서비스 설계의 가장 기본적인 트레이드오프. 챗봇은 latency 우선, 배치 임베딩은 throughput 우선 — 답이 달라요."
+    },
+    {
+      term: "LoRA / PEFT",
+      ko: "저랭크 적응 / 효율적 파인튜닝",
+      tag: "학습 최적화",
+      summary: "거대 모델 전체를 다시 학습시키는 대신, 작은 추가 가중치만 끼워 넣어 학습하는 기법. 메모리·시간·비용이 수십 배 절약돼요.",
+      ex: "옷을 새로 사는 대신 작은 액세서리만 바꿔 분위기를 바꾸는 것. 본체는 그대로 두고 효과는 비슷하게 내는 셈이에요.",
+      why: "수억짜리 클러스터 없이도 회사 데이터로 LLM을 튜닝할 수 있게 된 결정적 도구. 거의 모든 사내 파인튜닝의 표준이에요."
+    },
+    {
+      term: "Checkpointing",
+      ko: "체크포인팅",
+      tag: "분산 학습",
+      summary: "학습 도중 모델 상태를 주기적으로 디스크에 저장하는 일. GPU 한 장만 고장 나도 며칠치 학습이 날아가는 걸 막아줍니다.",
+      ex: "긴 게임을 하다가 보스 전 직전에 세이브 포인트를 찍어두는 것. 죽어도 그 지점부터 다시 시작할 수 있어요.",
+      why: "수천 장 GPU 클러스터에서는 어딘가가 항상 고장 나요. 체크포인트 없이 학습한다는 건 사실상 불가능합니다."
+    },
+    {
+      term: "Hugging Face Hub",
+      ko: "허깅페이스 허브",
+      tag: "생태계",
+      summary: "모델·데이터셋·데모를 공유하는 AI 업계의 깃허브 같은 플랫폼이에요. 오픈소스 LLM 대부분이 여기에 올라옵니다.",
+      ex: "프로그래머가 깃허브에서 코드를 받듯, AI 엔지니어는 허깅페이스에서 모델을 받아 다운로드·실행해요.",
+      why: "오픈소스 AI 생태계의 사실상 표준 인프라. 'meta-llama/Llama-3'처럼 모델 주소가 곧 그 모델의 신분증이에요."
+    },
+    {
+      term: "ONNX / TensorRT",
+      ko: "모델 포맷·런타임",
+      tag: "서빙",
+      summary: "PyTorch·TensorFlow에서 학습한 모델을 추론 환경에 맞춰 변환·최적화하는 표준 포맷과 런타임이에요. 더 작고 더 빠르게 돌릴 수 있어요.",
+      ex: "한국어로 쓴 보고서를 영어 회의에 맞게 번역·요약해서 가져가는 것. 같은 내용을 다른 환경에 맞춰 다시 포장하는 거예요.",
+      why: "엣지·모바일·임베디드 배포의 거의 필수 경로. 학습 환경과 서빙 환경이 다른 게 표준이라 변환 단계가 늘 들어가요."
+    },
+    {
+      term: "Llama.cpp / GGUF",
+      ko: "로컬 LLM 실행 도구",
+      tag: "엣지·온디바이스",
+      summary: "양자화된 LLM을 GPU 없이 CPU·맥북·휴대폰에서도 돌릴 수 있게 해주는 경량 추론 엔진과 모델 포맷이에요.",
+      ex: "원래 5톤 트럭이 필요한 짐을 잘게 쪼개고 압축해서 승용차에도 실을 수 있게 만든 셈. 오픈소스 진영의 신박한 발명품이에요.",
+      why: "맥북·아이폰에서 로컬 LLM이 돌아가는 이유. 보안·프라이버시가 중요한 사내 AI의 새로운 선택지로 자리 잡았어요."
+    },
+    {
+      term: "Kubernetes / Ray",
+      ko: "쿠버네티스 / 레이",
+      tag: "오케스트레이션",
+      summary: "수많은 컨테이너와 GPU 작업을 자동으로 배치·확장·회복시켜주는 클러스터 운영 도구들이에요. Ray는 그중에서도 분산 ML 작업에 특화돼 있죠.",
+      ex: "거대한 콜센터에서 직원 수백 명에게 전화를 자동 배분하고, 결근자 자리는 자동으로 메워주는 매니저 시스템 같은 거예요.",
+      why: "AI 클러스터를 직접 운영하면 결국 만나는 도구. 큰 회사일수록 'k8s 위에 Ray' 같은 조합이 표준이에요."
+    },
+    {
+      term: "MLOps",
+      ko: "엠엘옵스",
+      tag: "운영",
+      summary: "데이터 수집·학습·배포·모니터링·재학습까지, 머신러닝 시스템을 안정적으로 굴리는 운영 방법론과 도구 모음이에요.",
+      ex: "DevOps가 '코드'를 위한 거라면, MLOps는 '모델'을 위한 같은 일. 한 번 띄우고 끝이 아니라 계속 돌봐줘야 한다는 게 핵심이에요.",
+      why: "PoC를 실서비스로 끌고 가는 데 90%가 여기서 막혀요. 모델보다 파이프라인이 더 중요하다는 말이 나오는 이유예요."
+    },
+    {
+      term: "Feature Store",
+      ko: "피처 스토어",
+      tag: "데이터 인프라",
+      summary: "ML 모델이 쓰는 입력 변수(피처)를 학습용·서비스용 양쪽에서 일관되게 관리·제공하는 저장소예요.",
+      ex: "주방에서 자주 쓰는 손질된 채소를 한 곳에 모아두는 냉장고. 요리(모델)할 때마다 새로 손질하지 않아도 되는 거죠.",
+      why: "'학습 때는 잘 됐는데 서비스에서는 망가지는' 문제의 절반은 피처 불일치. 피처 스토어가 그 격차를 메워줍니다."
+    },
+    {
+      term: "Vector Database",
+      ko: "벡터 데이터베이스",
+      tag: "데이터 인프라",
+      summary: "임베딩(숫자 벡터)을 저장하고 '가장 비슷한 것'을 빠르게 찾는 데 특화된 DB. Pinecone·Weaviate·pgvector가 대표적이에요.",
+      ex: "도서관에서 '비슷한 책 5권 추천'을 0.1초 안에 해주는 사서. RAG 시스템이 사내 문서를 검색할 때 쓰는 도구예요.",
+      why: "RAG·시맨틱 검색·추천 시스템의 핵심 부품. 사내 AI를 만들면 거의 반드시 한 번은 도입을 고민하게 돼요."
+    },
+    {
+      term: "Model Registry",
+      ko: "모델 레지스트리",
+      tag: "운영",
+      summary: "학습한 모델의 버전·메타데이터·평가 결과를 한 곳에 기록하고 'production'·'staging' 같은 상태로 관리하는 시스템이에요.",
+      ex: "깃허브가 코드 버전을 다루듯, 모델 레지스트리는 모델 버전을 다뤄요. v1.2가 어떤 데이터로 학습됐고 성능이 얼마였는지 다 추적되죠.",
+      why: "모델을 롤백하거나 사후에 문제 원인을 찾을 때 이게 없으면 지옥. 컴플라이언스·감사 측면에서도 점점 필수가 돼요."
+    },
+    {
+      term: "AI Cloud (SageMaker / Vertex AI / Bedrock)",
+      ko: "관리형 AI 클라우드",
+      tag: "클라우드",
+      summary: "학습·서빙·튜닝·모니터링을 한 콘솔에서 제공하는 클라우드 AI 플랫폼들이에요. 인프라 직접 운영을 줄여줍니다.",
+      ex: "직접 식당을 차리는 대신 '주방 딸린 푸드코트 자리'를 빌리는 것. 설비는 클라우드가 주고, 우리는 요리(모델)만 신경 쓰면 돼요.",
+      why: "사내 클러스터를 운영할 수 없는 대부분의 조직이 가장 먼저 검토하는 길. 비용·락인·보안의 트레이드오프를 따져야 해요."
+    },
+    {
+      term: "Inference Cost / Token Economics",
+      ko: "추론 비용 · 토큰 경제학",
+      tag: "비용 관리",
+      summary: "LLM 서비스 비용은 거의 다 토큰 단위로 발생합니다. 입력·출력 토큰 단가, KV 캐시 효율, 배치 크기가 결합돼 월 청구서가 결정돼요.",
+      ex: "전기처럼 '쓴 만큼' 내는데, 어느 시간대·어떤 회로로 쓰느냐에 따라 청구서가 몇 배씩 갈리는 셈이에요.",
+      why: "AI 도입의 ROI는 여기서 갈립니다. 같은 기능도 모델 선택·프롬프트 길이·캐싱 전략에 따라 비용이 10배 차이 나요."
+    }
+  ];
+
+  const card = document.getElementById('card');
+  const modeLabel = document.getElementById('modeLabel');
+  const termEl = document.getElementById('term');
+  const koTermEl = document.getElementById('koTerm');
+  const tagEl = document.getElementById('tag');
+  const summaryEl = document.getElementById('summary');
+  const exBodyEl = document.getElementById('exBody');
+  const whyBodyEl = document.getElementById('whyBody');
+  const progressEl = document.getElementById('progress');
+  const todayBtn = document.getElementById('todayBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const todayEl = document.getElementById('today');
+
+  const days = ['일','월','화','수','목','금','토'];
+  const now = new Date();
+  todayEl.textContent = `${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+
+  function todayIndex() {
+    const d = Math.floor(Date.now() / 86400000);
+    return ((d % TOPICS.length) + TOPICS.length) % TOPICS.length;
+  }
+
+  let currentIdx = todayIndex();
+
+  function render(idx, today) {
+    card.classList.add('swap');
+    setTimeout(() => {
+      const t = TOPICS[idx];
+      modeLabel.textContent = today ? '오늘의 개념' : '다른 개념';
+      termEl.textContent = t.term;
+      koTermEl.textContent = t.ko;
+      tagEl.textContent = t.tag;
+      summaryEl.textContent = t.summary;
+      exBodyEl.textContent = t.ex;
+      whyBodyEl.textContent = t.why;
+      progressEl.textContent = `${idx + 1} / ${TOPICS.length}`;
+      card.classList.remove('swap');
+    }, 180);
+  }
+
+  render(currentIdx, true);
+
+  todayBtn.addEventListener('click', () => {
+    currentIdx = todayIndex();
+    render(currentIdx, true);
+  });
+
+  nextBtn.addEventListener('click', () => {
+    let next;
+    do { next = Math.floor(Math.random() * TOPICS.length); }
+    while (next === currentIdx && TOPICS.length > 1);
+    currentIdx = next;
+    render(currentIdx, currentIdx === todayIndex());
+  });
+</script>
+</body>
+</html>
