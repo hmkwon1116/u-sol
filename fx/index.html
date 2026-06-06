@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="캐나다 달러(CAD) 대 원화 환율 — 지금 시세와 최근 한 달간의 흐름을 한눈에.">
+<meta name="theme-color" content="#eef4fc">
+<title>캐나다 환율 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef4fc; --ink: #1a1916; --muted: #7a7770; --line: #d8e2f0;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fce7e0;
+    --up: #c8341c; --down: #2c6fc9; --maple: #d6452a;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: linear-gradient(180deg, #eef4fc 0%, #f6f9fd 60%, #ffffff 100%);
+    color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    line-height: 1.55; -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 22px 20px 80px; }
+
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+  .today { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  header { margin-bottom: 22px; }
+  h1 {
+    font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px);
+    font-weight: 900; letter-spacing: -0.02em; line-height: 1.1;
+  }
+  h1 .dot { color: var(--accent); }
+  .subtitle {
+    font-family: 'Fraunces', serif; font-style: italic;
+    color: var(--muted); margin-top: 6px; font-size: 15px;
+  }
+
+  .hero {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 26px 24px; box-shadow: var(--shadow); margin-bottom: 18px;
+  }
+  .hero .pair {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--accent); font-weight: 700; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hero .pair .flag { font-size: 14px; }
+  .hero .now {
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .hero .rate {
+    font-family: 'Fraunces', serif; font-size: clamp(40px, 10vw, 60px);
+    font-weight: 600; line-height: 1; letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero .unit { font-size: 16px; color: var(--muted); font-weight: 500; }
+  .hero .delta {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 10px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
+  }
+  .hero .delta.up { background: #fce7e0; color: var(--up); }
+  .hero .delta.down { background: #e0ecf9; color: var(--down); }
+  .hero .delta.flat { background: #eee; color: var(--muted); }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    padding-top: 16px; border-top: 1px dashed var(--line);
+  }
+  .stats .item {
+    padding: 10px 12px; background: #f7faff;
+    border-radius: 12px; border: 1px solid var(--line);
+  }
+  .stats .lbl {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted); font-weight: 600; margin-bottom: 4px;
+  }
+  .stats .val {
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .chart-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 20px; box-shadow: var(--shadow); margin-bottom: 18px;
+  }
+  .chart-title {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 14px; padding: 0 2px;
+  }
+  .chart-title .ttl {
+    font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600;
+  }
+  .chart-title .span {
+    font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .chart {
+    position: relative; width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 220px;
+  }
+  .chart svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .chart .grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 4; }
+  .chart .axis-lbl {
+    fill: var(--muted); font-size: 11px;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  .chart .line {
+    fill: none; stroke: var(--maple); stroke-width: 2.2;
+    stroke-linejoin: round; stroke-linecap: round;
+  }
+  .chart .area { fill: var(--accent-soft); opacity: 0.7; }
+  .chart .dot {
+    fill: var(--maple); stroke: #fff; stroke-width: 2;
+  }
+  .chart .focus-v {
+    stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.4;
+  }
+
+  .status {
+    text-align: center; padding: 40px 16px;
+    color: var(--muted); font-size: 14px;
+  }
+  .status.error { color: var(--accent); }
+  .retry {
+    margin-top: 10px; background: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 14px; font-size: 13px; color: var(--ink); cursor: pointer;
+    font-family: inherit;
+  }
+  .retry:hover { border-color: var(--accent); color: var(--accent); }
+
+  .note {
+    margin-top: 4px; font-size: 12px; color: var(--muted);
+    line-height: 1.5;
+  }
+  .note a { color: var(--muted); }
+
+  footer { margin-top: 36px; font-size: 12px; color: var(--muted); text-align: center; padding-top: 18px; border-top: 1px solid var(--line); }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  @media (max-width: 420px) {
+    .stats { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .stats .item { padding: 8px 9px; }
+    .stats .val { font-size: 16px; }
+    .chart .axis-lbl { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top reveal">
+    <a class="back" href="/">← U-SOL</a>
+    <span class="today" id="today">—</span>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <h1>캐나다 환율<span class="dot">.</span></h1>
+    <p class="subtitle">지금 시세와 최근 한 달간의 흐름 — 캐나다 달러 vs 원화</p>
+  </header>
+
+  <section class="hero reveal" style="animation-delay:.1s">
+    <div class="pair"><span class="flag">🇨🇦</span><span>CAD → KRW</span></div>
+    <div class="now">
+      <span class="rate" id="rateNow">—</span>
+      <span class="unit">원 / 1 CAD</span>
+      <span class="delta flat" id="rateDelta">—</span>
+    </div>
+    <div class="stats">
+      <div class="item">
+        <div class="lbl">한 달 최고</div>
+        <div class="val" id="statHi">—</div>
+      </div>
+      <div class="item">
+        <div class="lbl">한 달 최저</div>
+        <div class="val" id="statLo">—</div>
+      </div>
+      <div class="item">
+        <div class="lbl">평균</div>
+        <div class="val" id="statAvg">—</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chart-card reveal" style="animation-delay:.15s">
+    <div class="chart-title">
+      <span class="ttl">최근 한 달 추이</span>
+      <span class="span" id="rangeLabel">—</span>
+    </div>
+    <div class="chart" id="chartBox">
+      <div class="status" id="chartStatus">불러오는 중…</div>
+    </div>
+    <p class="note">시세는 영업일 기준 종가이며, 비영업일(주말·공휴일)은 직전 영업일 값이 유지됩니다. 데이터: <a href="https://www.frankfurter.dev" target="_blank" rel="noopener">frankfurter.dev</a> · 유럽중앙은행(ECB) 참고환율.</p>
+  </section>
+
+  <footer>© 2026 U-SOL · 다양한 아이디어를 만들고 실험하는 공간</footer>
+</div>
+
+<script>
+  (function setToday() {
+    const now = new Date();
+    const days = ['일','월','화','수','목','금','토'];
+    document.getElementById('today').textContent =
+      `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${days[now.getDay()]})`;
+  })();
+
+  function fmt(v, digits) {
+    if (v == null || !isFinite(v)) return '—';
+    return v.toLocaleString('ko-KR', {
+      minimumFractionDigits: digits, maximumFractionDigits: digits
+    });
+  }
+  function isoDate(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function shortMD(iso) {
+    const [, m, d] = iso.split('-');
+    return `${parseInt(m,10)}/${parseInt(d,10)}`;
+  }
+
+  async function load() {
+    const status = document.getElementById('chartStatus');
+    try {
+      const today = new Date();
+      const start = new Date();
+      start.setDate(today.getDate() - 30);
+      const url = `https://api.frankfurter.dev/v1/${isoDate(start)}..${isoDate(today)}?base=CAD&symbols=KRW`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('네트워크 오류');
+      const data = await res.json();
+
+      // also fetch latest in case today not in series yet
+      let latestRate = null, latestDate = null;
+      try {
+        const lres = await fetch('https://api.frankfurter.dev/v1/latest?base=CAD&symbols=KRW');
+        const ldata = await lres.json();
+        latestRate = ldata.rates.KRW;
+        latestDate = ldata.date;
+      } catch (_) {}
+
+      const entries = Object.entries(data.rates)
+        .map(([date, r]) => ({ date, rate: r.KRW }))
+        .sort((a,b) => a.date.localeCompare(b.date));
+
+      if (latestRate != null && latestDate) {
+        if (!entries.length || entries[entries.length-1].date !== latestDate) {
+          entries.push({ date: latestDate, rate: latestRate });
+        }
+      }
+      if (!entries.length) throw new Error('데이터 없음');
+
+      const last = entries[entries.length-1];
+      const first = entries[0];
+      const rates = entries.map(e => e.rate);
+      const hi = Math.max(...rates);
+      const lo = Math.min(...rates);
+      const avg = rates.reduce((a,b)=>a+b,0) / rates.length;
+      const diff = last.rate - first.rate;
+      const pct = (diff / first.rate) * 100;
+
+      document.getElementById('rateNow').textContent = fmt(last.rate, 2);
+      document.getElementById('statHi').textContent = fmt(hi, 2);
+      document.getElementById('statLo').textContent = fmt(lo, 2);
+      document.getElementById('statAvg').textContent = fmt(avg, 2);
+      document.getElementById('rangeLabel').textContent = `${shortMD(first.date)} – ${shortMD(last.date)}`;
+
+      const deltaEl = document.getElementById('rateDelta');
+      deltaEl.classList.remove('up','down','flat');
+      if (Math.abs(diff) < 0.005) {
+        deltaEl.classList.add('flat');
+        deltaEl.textContent = `한 달 변동 없음`;
+      } else {
+        deltaEl.classList.add(diff > 0 ? 'up' : 'down');
+        const arrow = diff > 0 ? '▲' : '▼';
+        deltaEl.textContent = `${arrow} ${fmt(Math.abs(diff), 2)}원 (${diff>0?'+':'-'}${fmt(Math.abs(pct), 2)}%)`;
+      }
+
+      window.__fxData = { entries, hi, lo };
+      drawChart(entries, hi, lo);
+      status.remove();
+    } catch (e) {
+      status.classList.add('error');
+      status.innerHTML = `데이터를 불러오지 못했어요. <br><button class="retry" type="button" onclick="location.reload()">다시 시도</button>`;
+    }
+  }
+
+  function drawChart(entries, hi, lo) {
+    const box = document.getElementById('chartBox');
+    const W = box.clientWidth || 640;
+    const H = box.clientHeight || 280;
+    const padL = 44, padR = 12, padT = 14, padB = 28;
+    const innerW = W - padL - padR;
+    const innerH = H - padT - padB;
+
+    // pad vertical range a bit
+    const span = hi - lo || 1;
+    const yMin = lo - span * 0.08;
+    const yMax = hi + span * 0.08;
+    const yRange = yMax - yMin;
+
+    const n = entries.length;
+    function xAt(i) { return padL + (n === 1 ? innerW/2 : (i / (n-1)) * innerW); }
+    function yAt(r) { return padT + (1 - (r - yMin) / yRange) * innerH; }
+
+    // y-axis ticks: 4 lines (min, ~33%, ~66%, max approximate)
+    const yTicks = 4;
+    const tickVals = [];
+    for (let i = 0; i < yTicks; i++) {
+      tickVals.push(yMin + (yRange * i) / (yTicks - 1));
+    }
+
+    // x ticks: ~5 evenly spaced
+    const xTicks = Math.min(5, n);
+    const xIdxs = [];
+    for (let i = 0; i < xTicks; i++) {
+      xIdxs.push(Math.round((i / (xTicks - 1)) * (n - 1)));
+    }
+
+    // line path
+    let d = '';
+    entries.forEach((e, i) => {
+      d += (i === 0 ? 'M' : 'L') + xAt(i).toFixed(2) + ',' + yAt(e.rate).toFixed(2) + ' ';
+    });
+    // area path
+    const areaD = d + `L${xAt(n-1).toFixed(2)},${(padT+innerH).toFixed(2)} L${xAt(0).toFixed(2)},${(padT+innerH).toFixed(2)} Z`;
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">`;
+
+    // grid + y labels
+    tickVals.forEach(v => {
+      const y = yAt(v);
+      svg += `<line class="grid" x1="${padL}" y1="${y.toFixed(2)}" x2="${W-padR}" y2="${y.toFixed(2)}"/>`;
+      svg += `<text class="axis-lbl" x="${padL-6}" y="${(y+3.5).toFixed(2)}" text-anchor="end">${fmt(v, 1)}</text>`;
+    });
+
+    // area + line
+    svg += `<path class="area" d="${areaD}"/>`;
+    svg += `<path class="line" d="${d}"/>`;
+
+    // x labels
+    xIdxs.forEach(i => {
+      const e = entries[i];
+      svg += `<text class="axis-lbl" x="${xAt(i).toFixed(2)}" y="${(H - padB + 16).toFixed(2)}" text-anchor="middle">${shortMD(e.date)}</text>`;
+    });
+
+    // last point dot
+    const lastE = entries[n-1];
+    svg += `<circle class="dot" cx="${xAt(n-1).toFixed(2)}" cy="${yAt(lastE.rate).toFixed(2)}" r="4.5"/>`;
+
+    svg += `</svg>`;
+    box.innerHTML = svg;
+  }
+
+  load();
+  window.addEventListener('resize', () => {
+    clearTimeout(window.__fxRedraw);
+    window.__fxRedraw = setTimeout(() => {
+      if (window.__fxData) drawChart(window.__fxData.entries, window.__fxData.hi, window.__fxData.lo);
+    }, 180);
+  }, { passive: true });
+</script>
+</body>
+</html>
