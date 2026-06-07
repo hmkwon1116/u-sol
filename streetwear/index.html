@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="슈프림(Supreme) · 베이프(BAPE) 신상품 옷 추천 — 시즌 드롭 핵심 아이템과 스타일링 포인트를 한 페이지에.">
+<meta name="theme-color" content="#0f0f12">
+<title>슈프림 · 베이프 신상 추천 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f12; --bg2: #16161b; --ink: #f4f3ef; --muted: #8e8c85;
+    --line: #2a2a30; --card: #1c1c22;
+    --sup: #d62828; --sup-soft: #2a1416;
+    --bape: #2f7d3b; --bape-soft: #14241a;
+    --gold: #c9a96b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 50% -10%, #1d1d24, transparent 60%), linear-gradient(180deg, var(--bg), var(--bg2));
+    color: var(--ink); font-family: 'Noto Sans KR', sans-serif; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .back { position: fixed; top: 16px; left: 18px; color: var(--muted); text-decoration: none; font-size: 13px; z-index: 5; }
+  .back:hover { color: var(--ink); }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 70px 22px 60px; }
+
+  .eyebrow {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 12px; letter-spacing: 0.25em;
+    color: var(--gold); margin-bottom: 10px; text-align: center;
+  }
+  h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(34px, 6vw, 52px); line-height: 1.05;
+    letter-spacing: -0.01em; text-align: center;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  h1 .red { color: var(--sup); }
+  h1 .grn { color: var(--bape); }
+  .lede {
+    text-align: center; color: var(--muted); font-size: 14px;
+    max-width: 540px; margin: 0 auto 28px; line-height: 1.75;
+    word-break: keep-all;
+  }
+  .lede strong { color: var(--ink); font-weight: 700; }
+
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin-bottom: 32px;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 12px; font-size: 12px;
+    color: var(--ink);
+  }
+  .chip .k { color: var(--muted); }
+  .chip .v { font-weight: 700; }
+
+  .tabs {
+    display: flex; gap: 8px; justify-content: center; margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    font-family: 'Archivo Black', sans-serif; font-size: 13px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: transparent; border: 1px solid var(--line);
+    color: var(--muted); padding: 10px 18px; border-radius: 999px;
+    cursor: pointer; transition: all .18s;
+  }
+  .tab:hover { color: var(--ink); border-color: #444; }
+  .tab.active.sup { background: var(--sup); border-color: var(--sup); color: #fff; }
+  .tab.active.bape { background: var(--bape); border-color: var(--bape); color: #fff; }
+  .tab.active.all { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+
+  .grid {
+    display: grid; grid-template-columns: 1fr; gap: 16px;
+  }
+  @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 22px 20px; display: flex; flex-direction: column;
+    transition: transform .2s, border-color .2s;
+    position: relative; overflow: hidden;
+    animation: fade .5s ease both;
+  }
+  .card:hover { transform: translateY(-3px); }
+  .card.sup { border-top: 3px solid var(--sup); }
+  .card.sup:hover { border-color: var(--sup); }
+  .card.bape { border-top: 3px solid var(--bape); }
+  .card.bape:hover { border-color: var(--bape); }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .brand-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .brand-tag {
+    font-family: 'Archivo Black', sans-serif; font-size: 11px;
+    letter-spacing: 0.12em; padding: 4px 10px; border-radius: 4px;
+  }
+  .brand-tag.sup { background: var(--sup); color: #fff; }
+  .brand-tag.bape { background: var(--bape); color: #fff; }
+  .drop-tag {
+    font-size: 11px; color: var(--muted); letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .item-emoji {
+    font-size: 52px; line-height: 1; margin-bottom: 12px;
+  }
+  .item-name {
+    font-family: 'Archivo Black', sans-serif; font-size: 19px;
+    letter-spacing: -0.01em; margin-bottom: 4px; line-height: 1.25;
+  }
+  .item-kor {
+    font-size: 13px; color: var(--muted); margin-bottom: 14px;
+  }
+
+  .specs {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    padding: 12px 0; border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line);
+    margin-bottom: 14px;
+  }
+  .spec { display: flex; flex-direction: column; gap: 2px; min-width: 70px; }
+  .spec .sk { font-size: 10.5px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .spec .sv { font-size: 13.5px; font-weight: 700; }
+  .card.sup .spec .sv.price { color: var(--sup); }
+  .card.bape .spec .sv.price { color: var(--bape); }
+
+  .desc {
+    font-size: 13.5px; line-height: 1.75; color: var(--ink);
+    margin-bottom: 14px; word-break: keep-all;
+  }
+  .desc strong { color: var(--gold); font-weight: 600; }
+
+  .style-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .style-tip {
+    font-size: 12.5px; color: var(--muted); line-height: 1.7;
+    padding: 10px 12px; border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    word-break: keep-all;
+  }
+  .card.sup .style-tip { background: var(--sup-soft); }
+  .card.bape .style-tip { background: var(--bape-soft); }
+
+  .divider {
+    display: flex; align-items: center; gap: 14px;
+    margin: 44px 4px 22px; color: var(--muted);
+  }
+  .divider::before, .divider::after {
+    content: ""; flex: 1; height: 1px; background: var(--line);
+  }
+  .divider .label {
+    font-family: 'Archivo Black', sans-serif; font-size: 12px;
+    letter-spacing: 0.2em; color: var(--gold);
+    white-space: nowrap; text-transform: uppercase;
+  }
+
+  .combo {
+    background: linear-gradient(135deg, rgba(214,40,40,0.06), rgba(47,125,59,0.06));
+    border: 1px solid var(--line); border-radius: 16px;
+    padding: 22px 20px; margin-bottom: 18px;
+  }
+  .combo-title {
+    font-family: 'Archivo Black', sans-serif; font-size: 16px;
+    letter-spacing: 0.02em; margin-bottom: 8px;
+  }
+  .combo-desc {
+    font-size: 13px; color: var(--muted); line-height: 1.75;
+    margin-bottom: 12px; word-break: keep-all;
+  }
+  .combo-list {
+    display: grid; grid-template-columns: 1fr; gap: 8px;
+    font-size: 13px;
+  }
+  .combo-list li { list-style: none; padding-left: 16px; position: relative; }
+  .combo-list li::before {
+    content: ""; position: absolute; left: 0; top: 9px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+  }
+  .combo-list b { color: var(--ink); font-weight: 700; margin-right: 4px; }
+
+  .tip {
+    margin-top: 32px; font-size: 12.5px; color: var(--muted);
+    line-height: 1.85; word-break: keep-all; text-align: center;
+  }
+  footer { text-align: center; padding: 22px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 20px; }
+  footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/">← U-SOL</a>
+  <div class="wrap">
+    <div class="eyebrow">SS26 DROP · NEW ARRIVALS</div>
+    <h1><span class="red">SUPREME</span> × <span class="grn">BAPE</span><br>신상 추천</h1>
+    <p class="lede">두 거장의 시즌 신상 중 <strong>지금 사도 안 후회할</strong> 아이템만 골랐어요. 가격대·무게감·스타일링 포인트까지 한 번에 살펴보세요.</p>
+
+    <div class="meta">
+      <span class="chip"><span class="k">📅</span><span class="v" id="dateTag">—</span></span>
+      <span class="chip"><span class="k">🔥</span><span class="v">이번 주 핫픽 8</span></span>
+      <span class="chip"><span class="k">💵</span><span class="v">$48 – $498</span></span>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active all" data-filter="all">전체</button>
+      <button class="tab sup" data-filter="sup">SUPREME</button>
+      <button class="tab bape" data-filter="bape">BAPE</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="divider"><span class="label">FULL LOOK · 추천 조합</span></div>
+
+    <div class="combo">
+      <div class="combo-title">🔥 시티 스트리트 · 데일리 루즈핏</div>
+      <p class="combo-desc">박시한 박스 로고 후디 위에 라이트 자켓, 아래는 카고로 떨어뜨리는 정석. 캠퍼스·홍대·성수에서 무난하게 먹히는 조합.</p>
+      <ul class="combo-list">
+        <li><b>상의 —</b> Supreme Box Logo Hooded Sweatshirt (Ash Grey)</li>
+        <li><b>아우터 —</b> BAPE 1st Camo Shark Full Zip Hoodie (Green)</li>
+        <li><b>하의 —</b> Supreme Cargo Pant (Washed Black)</li>
+        <li><b>슈즈 —</b> BAPE STA Low (White / Navy)</li>
+      </ul>
+    </div>
+
+    <div class="combo">
+      <div class="combo-title">🌃 나이트 미니멀 · 올블랙 톤온톤</div>
+      <p class="combo-desc">로고는 한두 군데만. 검정 베이스에 카모 패턴을 포인트로만 살리면 과하지 않게 시그니처가 살아요.</p>
+      <ul class="combo-list">
+        <li><b>상의 —</b> BAPE ABC Camo Tee (Black Camo)</li>
+        <li><b>아우터 —</b> Supreme Coaches Jacket (Black)</li>
+        <li><b>하의 —</b> BAPE Relaxed Fit Sweatpants (Black)</li>
+        <li><b>액세서리 —</b> Supreme New Era Box Logo Cap (Black)</li>
+      </ul>
+    </div>
+
+    <p class="tip">신상 드롭은 매주 목요일(미국 EST 11AM) · 발매 직후 리셀가가 정가의 1.5~3배까지 뛰는 품목도 많아요.<br>구매 전 사이즈 차트와 정품 인증(BAPE QR 태그, Supreme 시즌 라벨) 꼭 확인하세요.</p>
+  </div>
+  <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
+<script>
+  const ITEMS = [
+    {
+      brand: "sup", emoji: "👕",
+      drop: "Week 14 Drop",
+      name: "Box Logo Hooded Sweatshirt",
+      kor: "박스 로고 후디 — SS26 시즌",
+      price: "$198", weight: "헤비웨이트 380gsm", fit: "박시핏",
+      desc: "슈프림의 <strong>시그니처 박스 로고</strong> 후드. 매 시즌 가장 빨리 품절되는 핵심 아이템. 이번 시즌은 Ash Grey · Cardinal · Forest 세 컬러가 강세.",
+      tip: "정사이즈보다 한 치수 다운하면 더 깔끔. 카고팬츠나 와이드 데님과 매칭하면 정석 스트리트 룩."
+    },
+    {
+      brand: "bape", emoji: "🦈",
+      drop: "April Release",
+      name: "1st Camo Shark Full Zip Hoodie",
+      kor: "샤크 풀집 후디 — 1st 카모",
+      price: "$498", weight: "미디엄웨이트 320gsm", fit: "오버사이즈",
+      desc: "베이프의 가장 상징적인 아이템. <strong>상어 얼굴 후드</strong>를 올리면 풀페이스 마스크. 그린·퍼플·블랙 3컬러 발매 중.",
+      tip: "단독으로도 충분히 임팩트 있어서 하의는 무지 블랙·그레이로. 후드 올린 채로 사진 한 컷은 필수."
+    },
+    {
+      brand: "sup", emoji: "🧥",
+      drop: "SS26 Outerwear",
+      name: "Coaches Jacket",
+      kor: "코치 자켓 — 백 프린트 그래픽",
+      price: "$168", weight: "라이트웨이트 나일론", fit: "레귤러핏",
+      desc: "환절기 필수템. 백 프린트가 강렬한 <strong>그래픽 코치 자켓</strong>. 안에 후디·롱슬리브 다 받아주는 만능 아우터.",
+      tip: "어깨 라인이 떨어지는 디자인이라 인너로 두꺼운 후디를 입어도 답답하지 않아요. 봄·가을 데일리 1순위."
+    },
+    {
+      brand: "bape", emoji: "👟",
+      drop: "Restock",
+      name: "BAPE STA Low",
+      kor: "베이프스타 로우 — 화이트/네이비",
+      price: "$329", weight: "—", fit: "정사이즈",
+      desc: "나이키 에어포스1에서 영감 받은 <strong>베이프의 시그니처 스니커즈</strong>. 사이드 별 로고와 페이턴트 가죽 디테일이 포인트.",
+      tip: "와이드 팬츠 밑단을 살짝 덮어 신으면 비율 가장 좋아요. 흰색 가죽 부분은 방수 스프레이 필수."
+    },
+    {
+      brand: "sup", emoji: "🧢",
+      drop: "Week 12 Drop",
+      name: "New Era Box Logo Cap",
+      kor: "뉴에라 박스 로고 캡 — 시즌 컬러",
+      price: "$58", weight: "—", fit: "조절형",
+      desc: "<strong>가장 가성비 좋은 슈프림 입문템</strong>. 어떤 옷에도 무난하게 어울리고, 시즌 한정 컬러는 리셀가도 안 떨어져요.",
+      tip: "챙은 살짝만 굽혀서 자연스럽게. 검정·네이비는 데일리, 레드는 포인트용으로 한 개씩 두면 좋아요."
+    },
+    {
+      brand: "bape", emoji: "👖",
+      drop: "New In",
+      name: "Relaxed Fit Camo Sweatpants",
+      kor: "릴렉스 카모 스웻팬츠",
+      price: "$248", weight: "헤비웨이트 코튼", fit: "릴렉스핏",
+      desc: "ABC 카모 패턴이 다리 한쪽에만 들어간 <strong>밸런스형 스웻팬츠</strong>. 풀카모가 부담스러운 분께 추천.",
+      tip: "상의는 무조건 무지 솔리드로. 화이트 티 + 이 팬츠 + BAPE STA 조합이 가장 안 망하는 공식."
+    },
+    {
+      brand: "sup", emoji: "👕",
+      drop: "Tee Drop",
+      name: "Small Box Tee",
+      kor: "스몰 박스 티 — 헤비웨이트",
+      price: "$48", weight: "헤비웨이트 220gsm", fit: "박시핏",
+      desc: "박스 로고 후디가 비싸다면 이거. <strong>가장 무난한 슈프림 입문 티</strong>. 면 두께감 있어서 비치지 않고 형태도 잘 잡혀요.",
+      tip: "여름엔 단독, 환절기엔 셔츠 안에 레이어드. 화이트·블랙·헤더그레이 세 컬러는 사두면 평생 입어요."
+    },
+    {
+      brand: "bape", emoji: "🦈",
+      drop: "Capsule",
+      name: "Shark Tee · Glow in the Dark",
+      kor: "샤크 야광 반팔 티 — 한정판",
+      price: "$135", weight: "미디엄웨이트", fit: "레귤러핏",
+      desc: "밤에 빛나는 <strong>샤크 그래픽 야광 티</strong>. 어두운 곳에서 상어 입이 그대로 떠올라요. 페스티벌·클럽 시즌 필수템.",
+      tip: "낮엔 평범한 그래픽 티지만 밤엔 시선 강탈. 흰색보다 블랙 컬러가 야광 대비 효과 훨씬 좋아요."
+    }
+  ];
+
+  function render(filter) {
+    const grid = document.getElementById('grid');
+    const items = filter === 'all' ? ITEMS : ITEMS.filter(i => i.brand === filter);
+    grid.innerHTML = items.map((it, idx) => `
+      <article class="card ${it.brand}" style="animation-delay:${idx * 0.04}s">
+        <div class="brand-row">
+          <span class="brand-tag ${it.brand}">${it.brand === 'sup' ? 'SUPREME' : 'BAPE'}</span>
+          <span class="drop-tag">${it.drop}</span>
+        </div>
+        <div class="item-emoji">${it.emoji}</div>
+        <div class="item-name">${it.name}</div>
+        <div class="item-kor">${it.kor}</div>
+        <div class="specs">
+          <div class="spec"><span class="sk">Price</span><span class="sv price">${it.price}</span></div>
+          <div class="spec"><span class="sk">Weight</span><span class="sv">${it.weight}</span></div>
+          <div class="spec"><span class="sk">Fit</span><span class="sv">${it.fit}</span></div>
+        </div>
+        <div class="desc">${it.desc}</div>
+        <div class="style-title">Styling Tip</div>
+        <div class="style-tip">${it.tip}</div>
+      </article>
+    `).join('');
+  }
+
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render(btn.dataset.filter);
+    });
+  });
+
+  const d = new Date(2026, 5, 7);
+  const wk = ['일','월','화','수','목','금','토'][d.getDay()];
+  document.getElementById('dateTag').textContent = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} (${wk})`;
+
+  render('all');
+</script>
+</body>
+</html>
