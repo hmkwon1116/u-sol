@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="오늘의 말씀과 상황별 맞춤 말씀, 그리고 6구절 모음 — 매일 다른 말씀을 외부 성경 API로 신선하게.">
+<meta name="description" content="오늘의 말씀, 묵상 가이드, 오늘의 기도, 이번 주 암송, 성경 인물 한 입, 상황별 맞춤 말씀과 6구절 모음 — 매일 새롭게 묵상할 수 있는 한 페이지.">
 <meta name="theme-color" content="#f4efe6">
 <title>오늘의 말씀 · U-SOL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,6 +69,75 @@
   }
   .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
+  /* generic section card */
+  .section-card {
+    width: 100%; background: var(--card); border: 1px solid var(--line);
+    border-radius: 18px; padding: 22px 22px 20px;
+    box-shadow: 0 4px 16px rgba(120,100,60,0.06);
+    text-align: left;
+  }
+  .section-card + .section-card { margin-top: 14px; }
+
+  /* meditation guide */
+  .guide-list { display: flex; flex-direction: column; gap: 14px; }
+  .guide-item { display: flex; gap: 14px; align-items: flex-start; }
+  .guide-num {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    font-family: 'Gowun Batang', serif; font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  .guide-body { flex: 1; min-width: 0; }
+  .guide-label { font-family: 'Gowun Batang', serif; font-size: 12px; color: var(--accent); letter-spacing: .2em; margin-bottom: 4px; }
+  .guide-q { font-family: 'Gowun Batang', serif; font-size: 15.5px; line-height: 1.75; word-break: keep-all; }
+
+  /* prayer card */
+  .prayer-body {
+    font-family: 'Gowun Batang', serif; font-size: 15.5px; line-height: 1.95;
+    word-break: keep-all; color: var(--ink);
+    padding: 4px 0 6px;
+  }
+  .prayer-amen { display: block; margin-top: 12px; font-size: 13px; color: var(--accent); letter-spacing: .12em; text-align: right; }
+  .stag-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .stag { font-family: 'Gowun Batang', serif; font-size: 12px; color: var(--accent); letter-spacing: .2em; }
+  .micro-btn {
+    font-family: 'Noto Serif KR', serif; font-size: 12px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 11px; cursor: pointer; letter-spacing: .04em;
+    transition: all .15s;
+  }
+  .micro-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* weekly memory verse */
+  .weekly {
+    text-align: center; padding: 24px 22px 22px;
+    background: linear-gradient(180deg, #fffdf8 0%, #faf3e6 100%);
+  }
+  .weekly .wlabel { font-family: 'Gowun Batang', serif; font-size: 12px; color: var(--accent); letter-spacing: .25em; margin-bottom: 14px; }
+  .weekly .wtext {
+    font-family: 'Gowun Batang', serif; font-size: clamp(18px, 4.4vw, 22px);
+    line-height: 1.9; font-weight: 400; word-break: keep-all; margin-bottom: 14px;
+  }
+  .weekly .wref { font-size: 14px; color: var(--accent); font-weight: 600; letter-spacing: .06em; margin-bottom: 16px; }
+  .weekly .wdays { font-size: 12px; color: var(--muted); letter-spacing: .08em; }
+  .weekly .wdays b { color: var(--ink); font-weight: 600; }
+
+  /* bible character */
+  .char-head { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+  .char-emoji { font-size: 38px; line-height: 1; }
+  .char-name { font-family: 'Gowun Batang', serif; font-size: 19px; font-weight: 700; line-height: 1.2; }
+  .char-tag { font-size: 12px; color: var(--muted); letter-spacing: .08em; margin-top: 3px; }
+  .char-story {
+    font-family: 'Noto Serif KR', serif; font-size: 14.5px; line-height: 1.85;
+    color: var(--ink); word-break: keep-all; margin-bottom: 10px;
+  }
+  .char-lesson {
+    font-family: 'Gowun Batang', serif; font-size: 14px; line-height: 1.8;
+    color: var(--accent); word-break: keep-all;
+    padding-left: 12px; border-left: 2px solid var(--accent-soft);
+  }
+
   /* situation chips */
   .chips {
     display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
@@ -100,7 +169,6 @@
     color: var(--muted); font-size: 14px; text-align: center; padding: 12px 0;
     font-family: 'Gowun Batang', serif; letter-spacing: .04em;
   }
-  .situation-card .stag { font-family: 'Gowun Batang', serif; font-size: 12px; color: var(--accent); letter-spacing: .2em; margin-bottom: 10px; }
   .situation-card .st {
     font-family: 'Gowun Batang', serif; font-size: clamp(17px, 4.2vw, 21px);
     line-height: 1.85; font-weight: 400; word-break: keep-all; margin-bottom: 12px;
@@ -126,6 +194,44 @@
   .card .r { font-size: 13.5px; color: var(--accent); font-weight: 600; letter-spacing: .05em; }
   @keyframes rise { to { opacity: 1; transform: none; } }
 
+  /* my notes */
+  .note-area {
+    width: 100%; min-height: 110px; resize: vertical;
+    font-family: 'Noto Serif KR', serif; font-size: 14.5px; line-height: 1.75;
+    color: var(--ink); background: #fffefa; border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px 16px; letter-spacing: .01em;
+    transition: border-color .15s;
+  }
+  .note-area:focus { outline: none; border-color: var(--accent); }
+  .note-status { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 10px; flex-wrap: wrap; }
+  .note-status .saved { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+  .note-status .saved.flash { color: var(--accent); }
+
+  .gratitudes { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .grat-row { display: flex; gap: 8px; }
+  .grat-row input {
+    flex: 1; font-family: 'Noto Serif KR', serif; font-size: 14px;
+    background: #fffefa; border: 1px solid var(--line); border-radius: 10px;
+    padding: 9px 12px; color: var(--ink); letter-spacing: .01em;
+    transition: border-color .15s;
+  }
+  .grat-row input:focus { outline: none; border-color: var(--accent); }
+  .grat-add { font-size: 12.5px; padding: 8px 14px; }
+  .grat-list { display: flex; flex-direction: column; gap: 7px; }
+  .grat-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: #fdfaf2; border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .grat-item .gtext { flex: 1; font-size: 14px; line-height: 1.6; color: var(--ink); word-break: break-word; }
+  .grat-item .gdate { font-size: 11px; color: var(--muted); letter-spacing: .04em; flex-shrink: 0; margin-top: 2px; }
+  .grat-item .grm {
+    background: none; border: none; box-shadow: none; padding: 0 4px;
+    color: var(--muted); font-size: 16px; cursor: pointer; line-height: 1;
+  }
+  .grat-item .grm:hover { color: var(--accent); transform: none; }
+  .grat-empty { font-size: 13px; color: var(--muted); padding: 6px 2px; font-family: 'Gowun Batang', serif; }
+
   .note { margin-top: 22px; font-size: 12px; color: var(--muted); line-height: 1.7; max-width: 460px; opacity: .8; }
   .note a { color: var(--accent); text-decoration: none; }
   footer { text-align: center; padding: 22px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); }
@@ -148,10 +254,50 @@
       </div>
     </section>
 
+    <div class="divider">묵상 가이드</div>
+    <div class="section-card">
+      <div class="stag-row">
+        <span class="stag">관찰 · 해석 · 적용</span>
+        <button class="micro-btn" id="guideAgainBtn">질문 새로 받기</button>
+      </div>
+      <div class="guide-list" id="guideList"></div>
+    </div>
+
+    <div class="divider">오늘의 기도</div>
+    <div class="section-card">
+      <div class="stag-row">
+        <span class="stag" id="prayerTag">기도</span>
+        <button class="micro-btn" id="prayerCopyBtn">복사하기</button>
+      </div>
+      <blockquote class="prayer-body" id="prayerBody"></blockquote>
+      <span class="prayer-amen">— 예수님의 이름으로, 아멘.</span>
+    </div>
+
+    <div class="divider">이번 주 암송 말씀</div>
+    <div class="section-card weekly">
+      <div class="wlabel" id="weeklyLabel">2026년 N주차</div>
+      <blockquote class="wtext" id="weeklyText"><span class="loading">불러오는 중…</span></blockquote>
+      <div class="wref" id="weeklyRef"></div>
+      <div class="wdays">남은 날 <b id="weeklyDays">—</b> · 매일 한 번 천천히 소리내어 읽어보세요</div>
+    </div>
+
     <div class="divider">상황별 맞춤 말씀</div>
     <div class="chips" id="chips"></div>
     <div class="situation-card" id="situationCard">
       <div class="placeholder">지금 마음을 누르는 한 가지를 골라보세요</div>
+    </div>
+
+    <div class="divider">오늘의 성경 인물</div>
+    <div class="section-card">
+      <div class="char-head">
+        <span class="char-emoji" id="charEmoji">✨</span>
+        <div>
+          <div class="char-name" id="charName">—</div>
+          <div class="char-tag" id="charTag">—</div>
+        </div>
+      </div>
+      <p class="char-story" id="charStory">—</p>
+      <p class="char-lesson" id="charLesson">—</p>
     </div>
 
     <div class="divider">오늘의 말씀 모음</div>
@@ -161,10 +307,28 @@
       <button id="copyAllBtn">모두 복사</button>
     </div>
 
+    <div class="divider">나의 묵상 노트</div>
+    <div class="section-card">
+      <div class="stag-row">
+        <span class="stag">오늘의 한 줄</span>
+        <span class="saved" id="noteSaved">—</span>
+      </div>
+      <textarea id="noteArea" class="note-area" placeholder="오늘 말씀에서 마음에 남은 한 줄, 또는 기도 제목을 적어보세요. 자동으로 저장돼요."></textarea>
+
+      <div class="stag-row" style="margin-top:20px">
+        <span class="stag">감사 한 줄 (최근 7일)</span>
+      </div>
+      <div class="grat-row">
+        <input type="text" id="gratInput" placeholder="오늘 감사한 것 한 가지…" maxlength="120">
+        <button class="grat-add" id="gratAddBtn">담기</button>
+      </div>
+      <div class="grat-list" id="gratList"></div>
+    </div>
+
     <p class="note">
       말씀 본문은 <a href="https://bible.helloao.org/" target="_blank" rel="noopener">helloao.org</a>의
       한국어 성경(1910 개역) 무료 API로 매번 새로 불러옵니다.
-      오프라인이거나 응답이 늦으면 캐시된 본문이 잠시 표시될 수 있어요.
+      묵상 노트와 감사 한 줄은 이 기기에만 저장돼요.
     </p>
   </div>
   <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
@@ -179,6 +343,7 @@
     { b:"PSA", c:4, v:"8", r:"시편 4:8", t:"내가 평안히 눕고 자기도 하리니 나를 안전히 거하게 하시는 이는 오직 여호와이시니이다", cat:["안식"] },
     { b:"PSA", c:127, v:"2", r:"시편 127:2", t:"너희가 일찌기 일어나고 늦게 누우며 수고의 떡을 먹음이 헛되도다 그러므로 여호와께서 그 사랑하시는 자에게는 잠을 주시는도다", cat:["안식","위로"] },
     { b:"PSA", c:3, v:"5", r:"시편 3:5", t:"내가 누워 자고 깨었으니 여호와께서 나를 붙드심이로다", cat:["안식","위로"] },
+    { b:"PSA", c:46, v:"10", r:"시편 46:10", t:"이르시기를 너희는 가만히 있어 내가 하나님 됨을 알지어다", cat:["안식","신뢰"] },
 
     // 불안 / 두려움
     { b:"ISA", c:41, v:"10", r:"이사야 41:10", t:"두려워 말라 내가 너와 함께 함이니라 놀라지 말라 나는 네 하나님이 됨이니라 내가 너를 굳세게 하리라 참으로 너를 도와주리라 참으로 나의 의로운 오른손으로 너를 붙들리라", cat:["불안","힘듦"] },
@@ -186,6 +351,7 @@
     { b:"1PE", c:5, v:"7", r:"베드로전서 5:7", t:"너희 염려를 다 주께 맡겨버리라 이는 저가 너희를 권고하심이니라", cat:["불안","위로"] },
     { b:"MAT", c:6, v:"34", r:"마태복음 6:34", t:"그러므로 내일 일을 위하여 염려하지 말라 내일 일은 내일 염려할 것이요 한 날 괴로움은 그 날에 족하니라", cat:["불안"] },
     { b:"1JN", c:4, v:"18", r:"요한일서 4:18", t:"사랑 안에 두려움이 없고 온전한 사랑이 두려움을 내어 쫓나니 두려움에는 형벌이 있음이라 두려워하는 자는 사랑 안에서 온전히 이루지 못하였느니라", cat:["불안","사랑"] },
+    { b:"PSA", c:56, v:"3", r:"시편 56:3", t:"내가 두려워하는 날에는 주를 의지하리이다", cat:["불안","신뢰"] },
 
     // 슬픔 / 위로
     { b:"PSA", c:34, v:"18", r:"시편 34:18", t:"여호와는 마음이 상한 자에게 가까이 하시고 중심에 통회하는 자를 구원하시는도다", cat:["슬픔","위로"] },
@@ -193,6 +359,7 @@
     { b:"JHN", c:14, v:"1", r:"요한복음 14:1", t:"너희는 마음에 근심하지 말라 하나님을 믿으니 또 나를 믿으라", cat:["슬픔","불안"] },
     { b:"PSA", c:30, v:"5", r:"시편 30:5", t:"그 노염은 잠간이요 그 은총은 평생이로다 저녁에는 울음이 기숙할지라도 아침에는 기쁨이 오리로다", cat:["슬픔","위로"] },
     { b:"REV", c:21, v:"4", r:"요한계시록 21:4", t:"모든 눈물을 그 눈에서 씻기시매 다시 사망이 없고 애통하는 것이나 곡하는 것이나 아픈 것이 다시 있지 아니하리니 처음 것들이 다 지나갔음이러라", cat:["슬픔","위로"] },
+    { b:"2CO", c:1, v:"3", r:"고린도후서 1:3", t:"찬송하리로다 그는 우리 주 예수 그리스도의 하나님이시요 자비의 아버지시요 모든 위로의 하나님이시며", cat:["슬픔","위로"] },
 
     // 힘듦 / 능력
     { b:"PHP", c:4, v:"13", r:"빌립보서 4:13", t:"내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라", cat:["힘듦","결단"] },
@@ -200,6 +367,7 @@
     { b:"2CO", c:12, v:"9", r:"고린도후서 12:9", t:"내게 이르시기를 내 은혜가 네게 족하도다 이는 내 능력이 약한 데서 온전하여짐이라 하신지라", cat:["힘듦","위로"] },
     { b:"ROM", c:8, v:"18", r:"로마서 8:18", t:"생각건대 현재의 고난은 장차 우리에게 나타날 영광과 족히 비교할 수 없도다", cat:["힘듦"] },
     { b:"ROM", c:5, v:"3", r:"로마서 5:3", t:"다만 이뿐 아니라 우리가 환난 중에도 즐거워하나니 이는 환난은 인내를", cat:["힘듦"] },
+    { b:"JAS", c:1, v:"2", r:"야고보서 1:2", t:"내 형제들아 너희가 여러 가지 시험을 만나거든 온전히 기쁘게 여기라", cat:["힘듦"] },
 
     // 화 / 관계
     { b:"JAS", c:1, v:"19", r:"야고보서 1:19", t:"내 사랑하는 형제들아 너희가 알거니와 사람마다 듣기는 속히 하고 말하기는 더디 하며 성내기도 더디 하라", cat:["화","관계"] },
@@ -207,18 +375,21 @@
     { b:"EPH", c:4, v:"26", r:"에베소서 4:26", t:"분을 내어도 죄를 짓지 말며 해가 지도록 분을 품지 말고", cat:["화"] },
     { b:"PRO", c:16, v:"32", r:"잠언 16:32", t:"노하기를 더디하는 자는 용사보다 낫고 자기의 마음을 다스리는 자는 성을 빼앗는 자보다 나으니라", cat:["화","관계"] },
     { b:"COL", c:3, v:"13", r:"골로새서 3:13", t:"누가 뉘게 혐의가 있거든 서로 용납하여 피차 용서하되 주께서 너희를 용서하신 것과 같이 너희도 그리하고", cat:["관계","화"] },
+    { b:"MAT", c:5, v:"9", r:"마태복음 5:9", t:"화평케 하는 자는 복이 있나니 저희가 하나님의 아들이라 일컬음을 받을 것임이요", cat:["관계","화"] },
 
     // 감사
     { b:"1TH", c:5, v:"18", r:"데살로니가전서 5:18", t:"범사에 감사하라 이는 그리스도 예수 안에서 너희를 향하신 하나님의 뜻이니라", cat:["감사"] },
     { b:"PSA", c:100, v:"4", r:"시편 100:4", t:"감사함으로 그 문에 들어가며 찬송함으로 그 궁정에 들어가서 그에게 감사하며 그 이름을 송축할지어다", cat:["감사"] },
     { b:"COL", c:3, v:"17", r:"골로새서 3:17", t:"또 무엇을 하든지 말에나 일에나 다 주 예수의 이름으로 하고 그를 힘입어 하나님 아버지께 감사하라", cat:["감사"] },
     { b:"PSA", c:107, v:"1", r:"시편 107:1", t:"여호와께 감사하라 그는 선하시며 그 인자하심이 영원함이로다", cat:["감사"] },
+    { b:"PSA", c:103, v:"2", r:"시편 103:2", t:"내 영혼아 여호와를 송축하며 그 모든 은택을 잊지 말지어다", cat:["감사"] },
 
     // 사랑
     { b:"JHN", c:3, v:"16", r:"요한복음 3:16", t:"하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니 이는 저를 믿는 자마다 멸망치 않고 영생을 얻게 하려 하심이니라", cat:["사랑"] },
     { b:"1CO", c:13, v:"4", r:"고린도전서 13:4", t:"사랑은 오래 참고 사랑은 온유하며 투기하는 자가 되지 아니하며 사랑은 자랑하지 아니하며 교만하지 아니하며", cat:["사랑","관계"] },
     { b:"ROM", c:8, v:"38", r:"로마서 8:38", t:"내가 확신하노니 사망이나 생명이나 천사들이나 권세자들이나 현재 일이나 장래 일이나 능력이나", cat:["사랑"] },
     { b:"1JN", c:4, v:"7", r:"요한일서 4:7", t:"사랑하는 자들아 우리가 서로 사랑하자 사랑은 하나님께 속한 것이니 사랑하는 자마다 하나님께로 나서 하나님을 알고", cat:["사랑","관계"] },
+    { b:"1JN", c:4, v:"19", r:"요한일서 4:19", t:"우리가 사랑함은 그가 먼저 우리를 사랑하셨음이라", cat:["사랑"] },
 
     // 새출발 / 희망
     { b:"ISA", c:43, v:"19", r:"이사야 43:19", t:"보라 내가 새 일을 행하리니 이제 나타낼 것이라 너희가 그것을 알지 못하겠느냐 정녕히 내가 광야에 길과 사막에 강을 내리니", cat:["새출발","희망"] },
@@ -226,6 +397,7 @@
     { b:"PHP", c:3, v:"13", r:"빌립보서 3:13", t:"형제들아 나는 아직 내가 잡은 줄로 여기지 아니하고 오직 한 일 즉 뒤에 있는 것은 잊어버리고 앞에 있는 것을 잡으려고", cat:["새출발","결단"] },
     { b:"JER", c:29, v:"11", r:"예레미야 29:11", t:"나 여호와가 말하노라 너희를 향한 나의 생각을 내가 아나니 재앙이 아니라 곧 평안이요 너희 장래에 소망을 주려하는 생각이라", cat:["새출발","희망"] },
     { b:"LAM", c:3, v:"22", r:"예레미야애가 3:22", t:"여호와의 자비와 긍휼이 무궁하시므로 우리가 진멸되지 아니함이니이다", cat:["새출발","희망"] },
+    { b:"LAM", c:3, v:"23", r:"예레미야애가 3:23", t:"이것이 아침마다 새로우니 주의 성실이 크도소이다", cat:["새출발","희망"] },
 
     // 결단 / 용기
     { b:"JOS", c:1, v:"9", r:"여호수아 1:9", t:"내가 네게 명하지 아니하였느냐 마음을 강하게 하고 담대히 하라 두려워 말며 놀라지 말라 네가 어디로 가든지 네 하나님 여호와가 너와 함께 하느니라", cat:["결단","불안"] },
@@ -255,13 +427,84 @@
     { key:"결단",  ic:"🔥", label:"결단이 필요할 때" }
   ];
 
+  // -------- meditation question pool — 3 perspectives drawn together --------
+  const Q_OBSERVE = [
+    "이 말씀에서 가장 먼저 눈에 들어오는 한 단어는 무엇인가요?",
+    "이 구절은 누구에게, 어떤 상황에서 주어진 말씀일까요?",
+    "반복되거나 강조되는 표현이 있다면 무엇인가요?",
+    "이 말씀이 약속하는 것과 명령하는 것을 한 줄씩 적어본다면?",
+    "이 본문에서 하나님은 어떤 분으로 그려지고 있나요?"
+  ];
+  const Q_INTERPRET = [
+    "이 말씀이 처음 들었던 사람들에게는 어떤 의미였을까요?",
+    "오늘 이 구절에서 가장 마음에 걸리는 한 문장은 무엇인가요?",
+    "이 말씀을 한 줄로 다시 풀어 쓴다면 어떻게 표현하고 싶나요?",
+    "이 말씀이 위로하는 마음과 도전하는 마음은 각각 무엇인가요?",
+    "이 구절이 말하는 ‘진짜 좋은 소식’은 무엇이라고 생각하나요?"
+  ];
+  const Q_APPLY = [
+    "이 말씀에 따라 오늘 하루, 가장 먼저 바꾸고 싶은 한 가지는 무엇인가요?",
+    "이 말씀을 떠올리며 만나야 할 사람이 있다면 누구인가요?",
+    "이 구절이 진짜라면, 지금 내 걱정 중에 내려놓을 수 있는 것은 무엇인가요?",
+    "이 말씀을 오늘 하루 어떤 순간에 다시 떠올리고 싶나요?",
+    "이 말씀을 따라 짧게 드릴 기도 한 문장을 적어본다면?"
+  ];
+
+  // -------- prayer templates per category --------
+  const PRAYERS = {
+    "안식":   "지친 하루의 끝에 주님 앞에 섭니다. 무거운 마음을 내려놓을 자리를 허락해 주시고, 오늘 밤 깊은 잠과 새 힘으로 다시 일어서게 하소서.",
+    "불안":   "마음이 갈피를 잡지 못할 때 주의 손을 붙듭니다. 내일 일을 미리 두려워하지 않게 하시고, 오늘 하루 한 걸음씩 평안 가운데 걷게 하소서.",
+    "슬픔":   "표현하기 어려운 슬픔까지 다 아시는 주님께 마음을 엽니다. 눈물 곁에 가까이 계셔 주시고, 새 아침의 기쁨을 천천히 회복시켜 주소서.",
+    "힘듦":   "혼자 감당하기 어려운 짐 앞에서 주께 도움을 구합니다. 약한 자리에 주의 은혜가 채워지게 하시고, 끝까지 포기하지 않을 인내를 더해 주소서.",
+    "화":     "마음에 일어나는 분을 정직하게 주님께 가져옵니다. 말과 행동으로 옮기기 전에 한 번 멈추게 하시고, 사람을 미워하기보다 문제를 함께 살피게 하소서.",
+    "감사":   "오늘 누린 작은 평범 안에 가득한 은혜를 봅니다. 잊었던 감사를 다시 꺼내게 하시고, 그 감사가 가까운 사람들에게도 흘러가게 하소서.",
+    "사랑":   "사랑이 메마른 자리에 주님의 사랑을 부어 주소서. 먼저 사랑하시는 주님을 닮아, 오늘 한 사람에게라도 진심으로 다가가게 하소서.",
+    "새출발": "지나간 일은 주께 맡기고 오늘 새 출발을 다짐합니다. 망설이는 마음에 용기를 주시고, 작은 한 걸음이라도 오늘 시작하게 하소서.",
+    "결단":   "옳다고 믿는 자리에서 머뭇거리지 않게 하소서. 두려움이 아니라 사랑과 근신의 마음으로 결단하게 하시고, 그 결단을 끝까지 지킬 힘을 주소서.",
+    "위로":   "지친 마음을 알아주시는 위로의 하나님께 기댑니다. 사람의 말로 닿지 못한 곳에 주의 말씀이 닿게 하시고, 오늘 한 줄의 위로로 다시 일어서게 하소서.",
+    "희망":   "보이지 않는 내일이 두려울 때, 주께서 두신 소망을 다시 바라봅니다. 어두운 시간 가운데도 작은 빛을 찾게 하시고, 그 빛을 따라 오늘을 살게 하소서.",
+    "관계":   "함께 살아가는 사람들 안에서 자주 미끄러집니다. 듣기는 속히, 말하기는 더디 하게 하시고, 먼저 용서하고 먼저 다가가는 사람이 되게 하소서.",
+    "신뢰":   "다 이해되지 않아도 주님을 신뢰합니다. 내 명철에 기대지 않고 주의 인도하심을 따르게 하시고, 모르는 그 길에 평안을 더해 주소서.",
+    "기도":   "기도할 말조차 떠오르지 않는 날에도 주께 나아옵니다. 성령께서 친히 탄식으로 도우시고, 마음의 가장 깊은 자리를 주께 맡기게 하소서.",
+    "_default":"오늘 주신 말씀이 그저 읽고 지나가는 글이 되지 않게 하소서. 마음에 새겨 두고, 하루를 살아내는 작은 힘이 되게 하시며, 만나는 사람에게 그 말씀이 흘러가게 하소서."
+  };
+
+  // -------- Bible characters --------
+  const CHARACTERS = [
+    { e:"🌱", n:"아브라함", tag:"믿음의 조상 · 창세기 12~25", s:"75세의 아브라함은 익숙한 고향과 친척을 떠나 ‘내가 네게 보일 땅’으로 가라는 부르심에 그저 순종합니다. 지도도 도착지도 없는 여정 위에서, 그는 약속만 붙들고 걸음을 떼었습니다.", l:"전부를 다 보여 주시지 않아도, 한 걸음을 떼는 그 자리가 이미 믿음의 길입니다." },
+    { e:"🌊", n:"노아", tag:"방주의 사람 · 창세기 6~9", s:"단 한 사람만이 하나님과 동행했던 시대에, 노아는 비가 오지 않는 땅 위에서 100년 가까이 방주를 만들었습니다. 사람들의 비웃음 속에서도 그는 들은 말씀을 잊지 않았습니다.", l:"보이지 않는 것을 오래 붙드는 사람을 통해, 하나님은 새 시작을 여십니다." },
+    { e:"🐑", n:"모세", tag:"광야의 인도자 · 출애굽기 3~", s:"40년 궁중, 40년 광야의 시간을 지나고서야 그는 떨기나무 앞에 섭니다. 말이 어눌하다 핑계하던 사람이 한 민족을 광야로 이끄는 지도자가 되기까지는, 자기 한계를 인정한 자리가 출발이었습니다.", l:"늦은 출발은 없습니다. 지금 이 자리가 부르심의 자리입니다." },
+    { e:"🛡️", n:"여호수아", tag:"강하고 담대한 사람 · 여호수아 1", s:"위대한 스승 모세의 빈자리에서 여호수아는 두려웠습니다. 그러나 ‘강하고 담대하라, 내가 너와 함께 하리라’는 약속을 일곱 번 듣고 마침내 요단강에 발을 내딛습니다.", l:"두렵지 않아서 나아가는 것이 아니라, 함께하시는 분을 믿기에 나아갑니다." },
+    { e:"🌾", n:"룻", tag:"낯선 땅의 충실 · 룻기", s:"남편을 잃은 외국인 여인 룻은 시어머니 나오미를 따라 베들레헴으로 옵니다. 이삭을 줍는 가난한 자리에서, 그녀의 충실한 사랑은 한 가정을 살리고 결국 다윗과 예수의 족보로 이어집니다.", l:"평범한 자리에서의 한결같음이, 가장 큰 이야기를 빚어냅니다." },
+    { e:"📜", n:"한나", tag:"기도의 어머니 · 사무엘상 1", s:"오랫동안 자녀가 없어 마음이 갈래갈래 찢겼던 한나는 성전에서 입술만 움직이며 깊은 기도를 드립니다. 술 취한 줄로 오해받은 그 기도가, 결국 시대를 바꾸는 사무엘을 잉태합니다.", l:"말이 되지 않는 신음의 기도까지도, 하나님은 들으십니다." },
+    { e:"🎵", n:"다윗", tag:"마음을 다 쏟는 사람 · 시편", s:"양치는 막내였다가 왕이 되고, 영광의 자리에서 깊은 실패에 빠지기도 했던 다윗. 그러나 그는 늘 시편을 통해 자신의 분노와 슬픔과 회개를 정직하게 하나님 앞에 쏟아 놓았습니다.", l:"가장 깊은 감정을 숨기지 않고 가져갈 수 있는 그곳이, 가장 가까운 곳입니다." },
+    { e:"👑", n:"솔로몬", tag:"지혜를 구한 왕 · 열왕기상 3", s:"왕이 된 솔로몬에게 ‘무엇이든 구하라’ 하셨을 때, 그는 부와 장수가 아닌 ‘듣는 마음’을 구했습니다. 백성을 옳게 판단할 지혜였습니다.", l:"무엇을 가질지보다, 무엇을 구할지가 그 사람을 보여 줍니다." },
+    { e:"🔥", n:"엘리야", tag:"홀로 선 선지자 · 열왕기상 19", s:"바알 선지자 450명 앞에서 불을 내린 영웅 엘리야는, 곧이어 한 여인의 위협 앞에서 죽기를 구할 만큼 무너집니다. 하나님은 그에게 빵과 잠과 세미한 음성으로 다가오십니다.", l:"가장 큰 승리 뒤에도 마음은 무너질 수 있습니다. 그때 필요한 것은 따뜻한 빵 한 조각일지도 모릅니다." },
+    { e:"🐟", n:"요나", tag:"도망친 선지자 · 요나서", s:"니느웨로 가라는 명령을 피해 정반대 배를 탔던 요나는, 큰 물고기 뱃속에서야 자기 마음을 다시 들여다봅니다. 도망쳤지만 결국 그는 한 도시를 살리는 외침을 합니다.", l:"피하던 그 자리야말로, 하나님이 가장 쓰시려는 자리일 수 있습니다." },
+    { e:"🦁", n:"다니엘", tag:"기도의 일관성 · 다니엘 6", s:"왕의 칙령으로 기도가 금지되었지만, 다니엘은 평소처럼 하루 세 번 창을 열고 기도했습니다. 결국 사자굴에 던져졌지만, 하루도 어김없던 그 평범함이 그를 지켰습니다.", l:"위기를 견디는 힘은 평소의 작은 습관에서 자랍니다." },
+    { e:"🍞", n:"엘리사", tag:"이어받은 사역 · 열왕기하 4", s:"한 가난한 과부의 빈 그릇이 다 채워질 때까지 기름이 멈추지 않았고, 한 남자아이의 식은 몸이 다시 따뜻해졌습니다. 엘리사는 스승의 자리를 이어 받아 작은 사람들의 일상에 깊이 들어갔습니다.", l:"위대한 일은 종종 한 가정의 식탁과 침대 곁에서 일어납니다." },
+    { e:"⭐", n:"에스더", tag:"이때를 위함이라 · 에스더서", s:"왕후가 된 유다 여인 에스더는 자기 민족이 몰살될 위기 앞에서 ‘죽으면 죽으리이다’ 결단합니다. 사흘 금식 끝의 그 한 걸음이 한 민족을 살립니다.", l:"내가 지금 이 자리에 있는 이유가 있을지 모릅니다. 그 ‘이때’를 외면하지 마세요." },
+    { e:"📖", n:"느헤미야", tag:"무너진 성벽 앞에서 · 느헤미야", s:"고향 예루살렘의 무너진 성벽 소식에 그는 며칠을 울며 기도하고, 왕에게 휴직을 청하여 직접 돌아갑니다. 비웃음과 위협 속에서도 52일 만에 성벽을 다시 세웁니다.", l:"마음 아픈 일이 있다면, 그것이 당신이 시작해야 할 일일지 모릅니다." },
+    { e:"🎺", n:"세례 요한", tag:"길을 예비한 사람 · 마태복음 3", s:"낙타털 옷에 메뚜기와 석청을 먹으며 광야에서 외친 사람. 그는 자기를 따르는 무리에게 ‘그는 흥하여야 하겠고 나는 쇠하여야 하리라’ 말하며 기꺼이 뒤로 물러섰습니다.", l:"누군가의 길을 열어 주고 조용히 비켜서는 것도, 큰 사람의 자리입니다." },
+    { e:"🌿", n:"마리아", tag:"순종의 어머니 · 누가복음 1", s:"천사의 갑작스런 말 앞에서 마리아는 ‘주의 여종이오니 말씀대로 내게 이루어지이다’ 답합니다. 모든 것이 흔들리는 자리에서, 그녀는 자기 인생을 통째로 내어 드렸습니다.", l:"‘말씀대로 이루어지이다’ 한 문장이, 한 시대를 엽니다." },
+    { e:"⚓", n:"베드로", tag:"넘어졌다 일어선 사람 · 마태복음·요한복음", s:"가장 큰소리쳤지만 세 번이나 주를 부인했던 베드로. 그러나 부활하신 예수는 그에게 ‘네가 나를 사랑하느냐’ 세 번 묻고, 다시 양 떼를 맡기십니다.", l:"넘어진 횟수보다, 다시 사랑한다고 대답하는 그 한 번이 더 큽니다." },
+    { e:"✉️", n:"바울", tag:"가장 먼 곳으로 간 사도 · 사도행전·서신서", s:"교회를 핍박하던 사울이 다메섹 길에서 빛에 쓰러진 뒤, 평생 매를 맞고 옥에 갇히면서도 복음을 전합니다. 그는 ‘내 약한 것을 자랑한다’ 말합니다.", l:"가장 큰 변화는, 자기 약함을 인정한 사람에게 일어납니다." },
+    { e:"💧", n:"사마리아 여인", tag:"우물가의 만남 · 요한복음 4", s:"한낮 뜨거운 우물가에서 만난 한 여인. 예수는 그녀의 깊은 상처와 갈증을 알면서도 정죄하지 않고 ‘영원히 목마르지 않을 물’을 약속합니다. 그녀는 물동이를 두고 동네로 달려갑니다.", l:"있는 그대로 만나 주시는 한 분 앞에서, 우리는 다시 달려갈 수 있습니다." },
+    { e:"🕊️", n:"막달라 마리아", tag:"첫 부활의 증인 · 요한복음 20", s:"빈 무덤 앞에서 울고 있던 마리아에게 부활하신 예수가 ‘마리아야’ 한마디로 이름을 부르십니다. 그 순간 그녀는 어둠 끝에서 가장 먼저 ‘주님이 살아 계신다’ 외친 사람이 됩니다.", l:"내 이름을 불러 주시는 한 음성이, 모든 슬픔을 통과하게 합니다." },
+    { e:"🧺", n:"한 어린아이", tag:"보리떡 다섯 개 · 요한복음 6", s:"5천 명을 먹여야 하는 자리에 그는 보리떡 다섯 개와 물고기 두 마리가 든 도시락을 내놓습니다. 작아 보였던 그 손바닥이, 모두를 배부르게 한 기적의 시작이었습니다.", l:"가진 것이 작다고 미루지 마세요. 내어 놓을 때, 그것이 충분해집니다." },
+    { e:"🪜", n:"삭개오", tag:"나무 위의 사람 · 누가복음 19", s:"키 작은 세리장 삭개오는 예수를 보려고 뽕나무에 올라갑니다. 사람들이 손가락질하던 그의 집에 예수는 ‘오늘 묵겠다’ 들어가셨고, 삭개오의 삶 전체가 그날로 달라집니다.", l:"보고 싶은 마음 하나로 나무 위로 올라가는 그 작은 발걸음을, 예수는 그냥 지나치지 않으십니다." },
+    { e:"🌅", n:"니고데모", tag:"밤에 찾아온 사람 · 요한복음 3", s:"존경받던 종교 지도자 니고데모는 사람들 시선이 두려워 밤에 몰래 예수를 찾아옵니다. 그러나 그 ‘몰래 한 질문’이 그를 결국 십자가 곁의 사람으로 이끕니다.", l:"작고 머뭇거리는 질문도, 진심이면 한 사람의 인생을 바꿉니다." },
+    { e:"🤝", n:"바나바", tag:"위로의 아들 · 사도행전 4·9", s:"바나바라는 이름은 ‘위로의 아들’이라는 뜻입니다. 그는 모두가 의심하던 회심자 사울을 사도들 앞에 데려가 변호했고, 실패했던 마가에게 한 번 더 기회를 주었습니다.", l:"누군가를 한 번 더 믿어 주는 사람이, 결국 공동체를 살립니다." },
+    { e:"🌳", n:"스데반", tag:"첫 순교자 · 사도행전 7", s:"돌에 맞으면서도 스데반은 하늘이 열린 것을 보았고, 자기를 죽이는 사람들을 위해 ‘이 죄를 저들에게 돌리지 마옵소서’ 기도합니다. 그 곁에 한 청년 사울이 서 있었습니다.", l:"용서의 기도는 사라지지 않고, 누군가의 마음에 분명히 닿습니다." }
+  ];
+
   // -------- helloao API: fetch chapter, extract verse(s) --------
   const API_BASE = "https://bible.helloao.org/api/kor_old";
   const chapterCache = new Map();
 
   function cleanText(s) {
     return String(s)
-      .replace(/[`´]/g, "")  // kor_old uses backticks as quote marks
+      .replace(/[`´]/g, "")
       .replace(/\s+/g, " ")
       .trim();
   }
@@ -284,7 +527,6 @@
   }
 
   async function fetchVerseText(verse) {
-    // verse.v can be "1" or "1-2"
     const parts = String(verse.v).split("-").map(n => parseInt(n, 10));
     const start = parts[0], end = parts[1] || parts[0];
     const content = await fetchChapter(verse.b, verse.c);
@@ -299,8 +541,13 @@
     return lines.length ? lines.join(" ") : null;
   }
 
-  // -------- deterministic seeded random for daily picks --------
+  // -------- deterministic seeded random for daily/weekly picks --------
   function dayNumber(d) { return Math.floor(d.getTime() / 86400000); }
+  function weekNumber(d) {
+    const start = new Date(d.getFullYear(), 0, 1);
+    const diff = (d - start) / 86400000 + start.getDay();
+    return d.getFullYear() * 100 + Math.floor(diff / 7);
+  }
   function seededRand(seed) {
     let h = 2166136261 ^ seed;
     return function () {
@@ -309,6 +556,9 @@
       h += (h << 5);
       return ((h >>> 0) % 1_000_000) / 1_000_000;
     };
+  }
+  function seededPick(seed, arr) {
+    return arr[Math.floor(seededRand(seed + 7)() * arr.length)];
   }
   function pickUnique(seed, count) {
     const rand = seededRand(seed);
@@ -327,6 +577,21 @@
   const chipsEl = document.getElementById('chips');
   const sitCard = document.getElementById('situationCard');
   const listEl = document.getElementById('list');
+  const guideListEl = document.getElementById('guideList');
+  const prayerTagEl = document.getElementById('prayerTag');
+  const prayerBodyEl = document.getElementById('prayerBody');
+  const weeklyLabelEl = document.getElementById('weeklyLabel');
+  const weeklyTextEl = document.getElementById('weeklyText');
+  const weeklyRefEl = document.getElementById('weeklyRef');
+  const weeklyDaysEl = document.getElementById('weeklyDays');
+  const charEmojiEl = document.getElementById('charEmoji');
+  const charNameEl = document.getElementById('charName');
+  const charTagEl = document.getElementById('charTag');
+  const charStoryEl = document.getElementById('charStory');
+  const charLessonEl = document.getElementById('charLesson');
+
+  // currently displayed today's verse (for guide/prayer context)
+  let currentVerse = null;
 
   function renderToday(dateNow) {
     const days = ['일','월','화','수','목','금','토'];
@@ -334,31 +599,101 @@
   }
 
   async function displayVerseInto(verse, textEl, refElTarget) {
-    // show cached fallback first for instant feel
     textEl.style.animation = 'none'; refElTarget.style.animation = 'none';
     void textEl.offsetWidth;
     textEl.textContent = verse.t;
     refElTarget.textContent = verse.r;
     textEl.style.animation = ''; refElTarget.style.animation = '';
-    // refresh with API text if available
     try {
       const fresh = await fetchVerseText(verse);
       if (fresh && fresh.length > 4) textEl.textContent = fresh;
-    } catch (e) { /* keep fallback */ }
+    } catch (e) {}
+  }
+
+  function renderGuide(seed) {
+    const r = seededRand(seed);
+    const pickFrom = (arr) => arr[Math.floor(r() * arr.length)];
+    const items = [
+      { label:"관찰", q: pickFrom(Q_OBSERVE) },
+      { label:"해석", q: pickFrom(Q_INTERPRET) },
+      { label:"적용", q: pickFrom(Q_APPLY) }
+    ];
+    guideListEl.innerHTML = items.map((it, i) => `
+      <div class="guide-item">
+        <div class="guide-num">${i+1}</div>
+        <div class="guide-body">
+          <div class="guide-label">${it.label}</div>
+          <div class="guide-q">${it.q}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderPrayer(verse) {
+    const cats = (verse && verse.cat) ? verse.cat : [];
+    const key = cats.find(c => PRAYERS[c]) || "_default";
+    prayerTagEl.textContent = key === "_default" ? "오늘의 기도" : `${key}의 기도`;
+    prayerBodyEl.textContent = PRAYERS[key];
   }
 
   async function showToday() {
     const now = new Date();
     renderToday(now);
-    const idx = ((dayNumber(now) % VERSES.length) + VERSES.length) % VERSES.length;
-    await displayVerseInto(VERSES[idx], verseEl, refEl);
+    const dn = dayNumber(now);
+    const idx = ((dn % VERSES.length) + VERSES.length) % VERSES.length;
+    currentVerse = VERSES[idx];
+    await displayVerseInto(currentVerse, verseEl, refEl);
+    renderGuide(dn);
+    renderPrayer(currentVerse);
   }
 
   async function showRandom() {
     const idx = Math.floor(Math.random() * VERSES.length);
-    await displayVerseInto(VERSES[idx], verseEl, refEl);
+    currentVerse = VERSES[idx];
+    await displayVerseInto(currentVerse, verseEl, refEl);
+    renderGuide(Math.floor(Math.random() * 1_000_000));
+    renderPrayer(currentVerse);
   }
 
+  // -------- weekly memory verse --------
+  async function showWeekly() {
+    const now = new Date();
+    const wn = weekNumber(now);
+    const idx = ((wn % VERSES.length) + VERSES.length) % VERSES.length;
+    const v = VERSES[idx];
+
+    // friendly week label
+    const start = new Date(now.getFullYear(), 0, 1);
+    const dayOfYear = Math.floor((now - start) / 86400000) + 1;
+    const weekOfYear = Math.ceil((dayOfYear + start.getDay()) / 7);
+    weeklyLabelEl.textContent = `${now.getFullYear()}년 ${weekOfYear}주차 · 이번 주 함께 외워요`;
+
+    // days remaining until Sunday (next week boundary)
+    const today = now.getDay();
+    const daysLeft = today === 0 ? 0 : (7 - today);
+    weeklyDaysEl.textContent = daysLeft === 0 ? "오늘 마지막 날" : `${daysLeft}일`;
+
+    weeklyTextEl.textContent = v.t;
+    weeklyRefEl.textContent = v.r;
+    try {
+      const fresh = await fetchVerseText(v);
+      if (fresh && fresh.length > 4) weeklyTextEl.textContent = fresh;
+    } catch (e) {}
+  }
+
+  // -------- bible character of the day --------
+  function showCharacter() {
+    const now = new Date();
+    const idx = ((dayNumber(now) % CHARACTERS.length) + CHARACTERS.length) % CHARACTERS.length;
+    const c = CHARACTERS[idx];
+    charEmojiEl.textContent = c.e;
+    charNameEl.textContent = c.n;
+    charTagEl.textContent = c.tag;
+    charStoryEl.textContent = c.s;
+    charLessonEl.textContent = `💡 ${c.l}`;
+  }
+
+  // -------- situation chips --------
   function renderChips() {
     chipsEl.innerHTML = CATEGORIES.map(c =>
       `<button class="chip" data-cat="${c.key}"><span class="ic">${c.ic}</span><span>${c.label}</span></button>`
@@ -409,6 +744,7 @@
     });
   }
 
+  // -------- collection --------
   function renderCollection(indexes) {
     listEl.innerHTML = '';
     indexes.forEach((vi, i) => {
@@ -423,7 +759,6 @@
         <div class="r">${v.r}</div>`;
       listEl.appendChild(card);
     });
-    // refresh each card's text from API
     indexes.forEach(async (vi) => {
       const v = VERSES[vi];
       try {
@@ -445,6 +780,89 @@
     renderCollection(pickUnique(seed, 6));
   }
 
+  // -------- my notes (localStorage) --------
+  const NOTE_KEY = "usol.verse.note.v1";
+  const GRAT_KEY = "usol.verse.gratitudes.v1";
+
+  function setupNote() {
+    const area = document.getElementById('noteArea');
+    const saved = document.getElementById('noteSaved');
+    try { area.value = localStorage.getItem(NOTE_KEY) || ''; } catch (e) {}
+    if (area.value) saved.textContent = "저장됨";
+    let timer = null;
+    area.addEventListener('input', () => {
+      saved.textContent = "쓰는 중…";
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        try {
+          localStorage.setItem(NOTE_KEY, area.value);
+          saved.textContent = "저장됨";
+          saved.classList.add('flash');
+          setTimeout(() => saved.classList.remove('flash'), 500);
+        } catch (e) { saved.textContent = "저장 실패"; }
+      }, 400);
+    });
+  }
+
+  function loadGratitudes() {
+    try { return JSON.parse(localStorage.getItem(GRAT_KEY) || "[]"); }
+    catch (e) { return []; }
+  }
+  function saveGratitudes(list) {
+    try { localStorage.setItem(GRAT_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+  function fmtGratDate(ts) {
+    const d = new Date(ts);
+    const today = new Date();
+    const sameDay = d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
+    if (sameDay) return "오늘";
+    return `${d.getMonth()+1}/${d.getDate()}`;
+  }
+  function pruneOld(list) {
+    const cutoff = Date.now() - 7 * 86400000;
+    return list.filter(x => x.ts >= cutoff);
+  }
+  function renderGratitudes() {
+    const listEl = document.getElementById('gratList');
+    let list = pruneOld(loadGratitudes());
+    saveGratitudes(list);
+    if (!list.length) {
+      listEl.innerHTML = `<div class="grat-empty">아직 비어 있어요. 작은 것 하나부터 적어보세요.</div>`;
+      return;
+    }
+    list.sort((a, b) => b.ts - a.ts);
+    listEl.innerHTML = list.map(item => `
+      <div class="grat-item" data-id="${item.id}">
+        <span class="gdate">${fmtGratDate(item.ts)}</span>
+        <span class="gtext">${item.text.replace(/</g, '&lt;')}</span>
+        <button class="grm" title="삭제" aria-label="삭제">×</button>
+      </div>
+    `).join('');
+    listEl.querySelectorAll('.grm').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.parentElement.dataset.id;
+        const next = loadGratitudes().filter(x => String(x.id) !== id);
+        saveGratitudes(next);
+        renderGratitudes();
+      });
+    });
+  }
+  function setupGratitudes() {
+    const input = document.getElementById('gratInput');
+    const add = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      const list = pruneOld(loadGratitudes());
+      list.push({ id: Date.now() + Math.floor(Math.random() * 1000), ts: Date.now(), text });
+      saveGratitudes(list);
+      input.value = '';
+      renderGratitudes();
+    };
+    document.getElementById('gratAddBtn').addEventListener('click', add);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') add(); });
+    renderGratitudes();
+  }
+
   // -------- wiring --------
   document.getElementById('todayBtn').addEventListener('click', showToday);
   document.getElementById('nextBtn').addEventListener('click', showRandom);
@@ -452,6 +870,17 @@
     const text = `${verseEl.textContent} (${refEl.textContent})`;
     navigator.clipboard?.writeText(text).then(() => {
       const btn = document.getElementById('copyBtn');
+      const old = btn.textContent; btn.textContent = '복사됨';
+      setTimeout(() => btn.textContent = old, 1400);
+    });
+  });
+  document.getElementById('guideAgainBtn').addEventListener('click', () => {
+    renderGuide(Math.floor(Math.random() * 1_000_000));
+  });
+  document.getElementById('prayerCopyBtn').addEventListener('click', () => {
+    const text = `${prayerBodyEl.textContent}\n— 예수님의 이름으로, 아멘.`;
+    navigator.clipboard?.writeText(text).then(() => {
+      const btn = document.getElementById('prayerCopyBtn');
       const old = btn.textContent; btn.textContent = '복사됨';
       setTimeout(() => btn.textContent = old, 1400);
     });
@@ -470,7 +899,11 @@
 
   renderChips();
   showToday();
+  showWeekly();
+  showCharacter();
   showCollectionToday();
+  setupNote();
+  setupGratitudes();
 </script>
 </body>
 </html>
