@@ -77,46 +77,11 @@
   .visit .vk { font-weight: 500; opacity: 0.85; font-size: 11px; }
   .visit .vv { font-variant-numeric: tabular-nums; }
 
-  /* auto-rolling recommendation banner */
-  .rec {
-    display: flex; align-items: center; gap: 10px;
-    background: linear-gradient(135deg, #fff7f3 0%, #ffeee6 100%);
-    border: 1px solid var(--accent-soft); border-radius: 12px;
-    padding: 10px 14px; margin-bottom: 12px;
-    text-decoration: none; color: var(--ink);
-    box-shadow: var(--shadow);
-    transition: transform .15s, border-color .15s;
-    overflow: hidden; min-height: 46px;
-  }
-  .rec:hover { border-color: var(--accent); transform: translateY(-1px); }
-  .rec .rec-tag {
-    font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
-    color: var(--accent); text-transform: uppercase;
-    background: #fff; padding: 3px 7px; border-radius: 999px;
-    border: 1px solid var(--accent-soft); flex-shrink: 0;
-  }
-  .rec .rec-body {
-    display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;
-    transition: opacity .35s ease, transform .35s ease;
-  }
-  .rec .rec-body.swap { opacity: 0; transform: translateY(-6px); }
-  .rec .rec-emoji { font-size: 20px; line-height: 1; }
-  .rec .rec-text {
-    font-family: 'Fraunces', serif; font-size: 14.5px; font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .rec .rec-desc {
-    font-size: 11.5px; color: var(--muted); font-weight: 500;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .rec .rec-arrow { color: var(--accent); font-weight: 700; flex-shrink: 0; }
-  @media (max-width: 460px) { .rec .rec-desc { display: none; } }
-
-  /* bottom term-of-the-moment banner — entry point to /ai/terms/ */
+  /* top spotlight banner — rotates through previews of every service */
   .term-banner {
     display: block; text-decoration: none; color: var(--ink);
     background: linear-gradient(135deg, #1f1d18 0%, #2a2723 100%);
-    border-radius: 14px; padding: 14px 16px; margin-top: 16px;
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
     box-shadow: var(--shadow);
     transition: transform .15s;
     overflow: hidden;
@@ -270,14 +235,22 @@
     </span>
   </header>
 
-  <a class="rec reveal" id="recBanner" href="#" style="animation-delay:.07s">
-    <span class="rec-tag">🎲 추천</span>
-    <span class="rec-body" id="recBody">
-      <span class="rec-emoji" id="recEmoji">🕊️</span>
-      <span class="rec-text" id="recText">오늘의 말씀</span>
-      <span class="rec-desc" id="recDesc">날마다 새로운 한 구절</span>
-    </span>
-    <span class="rec-arrow">→</span>
+  <a class="term-banner reveal" id="termBanner" href="/ai/terms/" style="animation-delay:.07s">
+    <div class="tb-head">
+      <span class="tb-tag" id="tbTag">📘 오늘의 AI 용어</span>
+      <span class="tb-actions">
+        <button type="button" class="tb-next" id="tbNextBtn" aria-label="다음 보기">
+          <span class="tb-next-ic">🎲</span><span>다음</span>
+        </button>
+      </span>
+    </div>
+    <div class="tb-body" id="tbBody">
+      <div>
+        <span class="tb-term" id="tbTerm">—</span>
+        <span class="tb-ko" id="tbKo"></span>
+      </div>
+      <div class="tb-def" id="tbDef">—</div>
+    </div>
   </a>
 
   <div class="tabs reveal" style="animation-delay:.08s" role="tablist">
@@ -373,24 +346,6 @@
     </div>
   </div>
 
-  <a class="term-banner reveal" id="termBanner" href="/ai/terms/" style="animation-delay:.16s">
-    <div class="tb-head">
-      <span class="tb-tag">📘 오늘의 AI 용어</span>
-      <span class="tb-actions">
-        <button type="button" class="tb-next" id="tbNextBtn" aria-label="다음 용어 보기">
-          <span class="tb-next-ic">🎲</span><span>다음</span>
-        </button>
-      </span>
-    </div>
-    <div class="tb-body" id="tbBody">
-      <div>
-        <span class="tb-term" id="tbTerm">—</span>
-        <span class="tb-ko" id="tbKo"></span>
-      </div>
-      <div class="tb-def" id="tbDef">—</div>
-    </div>
-  </a>
-
   <footer class="reveal" style="animation-delay:.18s">
     <span>© 2026 U-SOL · 다양한 아이디어를 만들고 실험하는 공간</span>
     <span>made on a Mac mini</span>
@@ -480,36 +435,69 @@
     el.textContent = `${data.count.toLocaleString('ko-KR')}회`;
   })();
 
-  (function setupTermBanner() {
-    const terms = [
-      { term: 'Transformer', ko: '트랜스포머', def: '문장 안의 모든 단어를 한꺼번에 보고, 단어들 간 관계를 어텐션으로 따져 다음 단어를 예측하는 신경망 구조.' },
-      { term: 'RAG', ko: '검색 증강 생성', def: '질문에 답하기 전 외부 자료를 검색해 그 내용을 근거로 답을 생성하는 방식. 환각을 줄이는 표준 패턴.' },
-      { term: 'LoRA', ko: '저랭크 적응', def: '거대 모델 전체를 다시 학습시키지 않고, 작은 추가 행렬만 끼워 넣어 학습 비용을 확 줄이는 파인튜닝 기법.' },
-      { term: 'Embedding', ko: '임베딩', def: '단어·문장·이미지를 의미가 담긴 숫자 벡터로 바꾸는 작업. 의미 기반 검색·추천의 출발점.' },
-      { term: 'Token', ko: '토큰', def: 'LLM이 글을 처리하는 최소 단위. API 요금·응답 속도·컨텍스트 한계가 모두 토큰 단위로 계산된다.' },
-      { term: 'Hallucination', ko: '환각', def: '모델이 그럴듯하지만 사실이 아닌 내용을 자신 있게 만들어내는 현상. LLM의 가장 큰 약점.' },
-      { term: 'Attention', ko: '어텐션', def: '입력 안의 어떤 부분이 지금 처리 중인 부분과 얼마나 관련 있는지를 가중치로 매겨 집중하게 하는 메커니즘.' },
-      { term: 'Fine-tuning', ko: '파인튜닝', def: '이미 학습된 모델을 특정 분야·말투·작업에 맞게 추가 학습시키는 과정.' },
-      { term: 'Quantization', ko: '양자화', def: '모델 가중치를 더 적은 비트로 표현해 용량·속도를 개선하는 기법. 노트북에서 LLM을 돌릴 수 있게 만든 기술.' },
-      { term: 'Agent', ko: '에이전트', def: '도구 호출과 추론을 반복하며 스스로 다단계 작업을 수행하는 LLM 기반 시스템.' }
+  (function setupSpotlightBanner() {
+    const AI = { tag: '📘 오늘의 AI 용어', href: '/ai/terms/' };
+    const items = [
+      { ...AI, term: 'Transformer', ko: '트랜스포머', def: '문장 안의 모든 단어를 한꺼번에 보고, 단어들 간 관계를 어텐션으로 따져 다음 단어를 예측하는 신경망 구조.' },
+      { ...AI, term: 'RAG', ko: '검색 증강 생성', def: '질문에 답하기 전 외부 자료를 검색해 그 내용을 근거로 답을 생성하는 방식. 환각을 줄이는 표준 패턴.' },
+      { ...AI, term: 'LoRA', ko: '저랭크 적응', def: '거대 모델 전체를 다시 학습시키지 않고, 작은 추가 행렬만 끼워 넣어 학습 비용을 확 줄이는 파인튜닝 기법.' },
+      { ...AI, term: 'Embedding', ko: '임베딩', def: '단어·문장·이미지를 의미가 담긴 숫자 벡터로 바꾸는 작업. 의미 기반 검색·추천의 출발점.' },
+      { ...AI, term: 'Token', ko: '토큰', def: 'LLM이 글을 처리하는 최소 단위. API 요금·응답 속도·컨텍스트 한계가 모두 토큰 단위로 계산된다.' },
+      { ...AI, term: 'Hallucination', ko: '환각', def: '모델이 그럴듯하지만 사실이 아닌 내용을 자신 있게 만들어내는 현상. LLM의 가장 큰 약점.' },
+      { ...AI, term: 'Attention', ko: '어텐션', def: '입력 안의 어떤 부분이 지금 처리 중인 부분과 얼마나 관련 있는지를 가중치로 매겨 집중하게 하는 메커니즘.' },
+      { ...AI, term: 'Fine-tuning', ko: '파인튜닝', def: '이미 학습된 모델을 특정 분야·말투·작업에 맞게 추가 학습시키는 과정.' },
+      { ...AI, term: 'Quantization', ko: '양자화', def: '모델 가중치를 더 적은 비트로 표현해 용량·속도를 개선하는 기법. 노트북에서 LLM을 돌릴 수 있게 만든 기술.' },
+      { ...AI, term: 'Agent', ko: '에이전트', def: '도구 호출과 추론을 반복하며 스스로 다단계 작업을 수행하는 LLM 기반 시스템.' },
+
+      { tag: '💬 오늘의 영어 한마디', href: '/english/', term: 'It is what it is.', ko: '', def: '어쩔 수 없지 뭐. / 그게 현실이지.' },
+      { tag: '💬 오늘의 영어 한마디', href: '/english/', term: 'Hang in there.', ko: '', def: '조금만 더 버텨. 힘내.' },
+      { tag: '📖 오늘의 영어 단어', href: '/english/', term: 'serendipity', ko: '세렌디피티', def: '뜻밖의 행운, 우연한 발견.' },
+
+      { tag: '🕊️ 오늘의 말씀', href: '/verse/', term: '시편 23:1', ko: '', def: '여호와는 나의 목자시니 내게 부족함이 없으리로다.' },
+      { tag: '🕊️ 오늘의 말씀', href: '/verse/', term: '마태복음 11:28', ko: '', def: '수고하고 무거운 짐 진 자들아 다 내게로 오라 내가 너희를 쉬게 하리라.' },
+      { tag: '🕊️ 오늘의 말씀', href: '/verse/', term: '이사야 41:10', ko: '', def: '두려워 말라 내가 너와 함께 함이니라.' },
+
+      { tag: '🍲 오늘의 한 상', href: '/table/', term: '된장찌개 한 상', ko: '', def: '구수하고 든든하게 — 단백질과 발효식품을 함께.' },
+      { tag: '🥗 오늘의 한 상', href: '/table/', term: '비빔밥 한 상', ko: '', def: '채소를 골고루 — 여러 색 나물을 한 그릇에.' },
+      { tag: '🐟 오늘의 한 상', href: '/table/', term: '생선구이 한 상', ko: '', def: '오메가-3 가득 — 삼치구이에 잡곡밥 한 공기.' },
+
+      { tag: '👕 신상옷 추천', href: '/streetwear/', term: 'Supreme Box Logo Hoodie', ko: '슈프림', def: '시그니처 박스 로고 — SS26 시즌 핵심템.' },
+      { tag: '🦈 신상옷 추천', href: '/streetwear/', term: 'BAPE Shark Full Zip Hoodie', ko: '베이프', def: '1st 카모 — 후드 올리면 풀페이스 마스크.' },
+      { tag: '👟 신상옷 추천', href: '/streetwear/', term: 'BAPE STA Low', ko: '베이프', def: '베이프스타 로우 — 사이드 별 로고 시그니처 스니커즈.' },
+
+      { tag: '📚 오늘의 소설', href: '/novel/', term: '팀장이 된 어느 날', ko: '', def: '직장 성장 소설 전 10화 — 제1화 「빈 의자」부터.' },
+      { tag: '📖 오늘의 소설', href: '/novel/', term: '제3화 「듣는 일」', ko: '', def: '리더의 그릇과 회복탄력성, 사람을 남기는 일.' },
+
+      { tag: '🎮 짬 날 때 한 판', href: '/game/', term: '네온 테트리스', ko: '', def: '키보드·터치로 즐기는 클래식 테트리스.' },
+      { tag: '🚀 짬 날 때 한 판', href: '/game/', term: '네온 갤러그', ko: '', def: '편대를 격추하는 클래식 슈팅 게임.' },
+
+      { tag: '🍜 내 주변 맛집', href: '/food/', term: '지금 위치 근처로 한 번에', ko: '', def: '맛집·카페·고깃집·일식, 구글맵으로 바로 검색.' },
+
+      { tag: '📰 오늘의 뉴스', href: '/news/', term: 'AI · 인터넷은행 뉴스', ko: '', def: '관심 분야 누르면 바로 최신 뉴스로.' },
+      { tag: '📈 오늘의 뉴스', href: '/news/', term: '투자 · 경제 뉴스', ko: '', def: '분야별 주요 뉴스를 구글·네이버에서 한 번에.' }
     ];
+
     const banner = document.getElementById('termBanner');
     const body = document.getElementById('tbBody');
+    const tagEl = document.getElementById('tbTag');
     const termEl = document.getElementById('tbTerm');
     const koEl = document.getElementById('tbKo');
     const defEl = document.getElementById('tbDef');
     const nextBtn = document.getElementById('tbNextBtn');
     if (!banner || !body) return;
-    for (let i = terms.length - 1; i > 0; i--) {
+
+    for (let i = items.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [terms[i], terms[j]] = [terms[j], terms[i]];
+      [items[i], items[j]] = [items[j], items[i]];
     }
     let idx = 0;
     function render(i) {
-      const t = terms[i];
-      termEl.textContent = t.term;
-      koEl.textContent = t.ko ? `· ${t.ko}` : '';
-      defEl.textContent = t.def;
+      const it = items[i];
+      tagEl.textContent = it.tag;
+      banner.setAttribute('href', it.href);
+      termEl.textContent = it.term;
+      koEl.textContent = it.ko ? `· ${it.ko}` : '';
+      defEl.textContent = it.def;
     }
     function swapTo(i) {
       body.classList.add('swap');
@@ -521,7 +509,7 @@
     function scheduleAuto() {
       if (timer) clearInterval(timer);
       timer = setInterval(() => {
-        idx = (idx + 1) % terms.length;
+        idx = (idx + 1) % items.length;
         swapTo(idx);
       }, 4500);
     }
@@ -531,9 +519,9 @@
       nextBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (terms.length < 2) return;
+        if (items.length < 2) return;
         let nxt;
-        do { nxt = Math.floor(Math.random() * terms.length); } while (nxt === idx);
+        do { nxt = Math.floor(Math.random() * items.length); } while (nxt === idx);
         idx = nxt;
         swapTo(idx);
         nextBtn.classList.add('spin');
@@ -541,45 +529,6 @@
         scheduleAuto();
       });
     }
-  })();
-
-  (function setupRecBanner() {
-    const banner = document.getElementById('recBanner');
-    const body = document.getElementById('recBody');
-    const emojiEl = document.getElementById('recEmoji');
-    const textEl = document.getElementById('recText');
-    const descEl = document.getElementById('recDesc');
-    if (!banner || !body) return;
-    const items = Array.from(document.querySelectorAll('.panel .cat')).map(el => ({
-      href: el.getAttribute('href') || '#',
-      panel: el.closest('.panel')?.dataset.panel || '',
-      emoji: el.querySelector('.emoji')?.textContent?.trim() || '✨',
-      name: el.querySelector('.nm')?.textContent?.trim() || '',
-      desc: el.querySelector('.desc')?.textContent?.trim() || ''
-    })).filter(it => it.name);
-    if (!items.length) { banner.style.display = 'none'; return; }
-    // shuffle once so the order varies between visits
-    for (let i = items.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [items[i], items[j]] = [items[j], items[i]];
-    }
-    let idx = 0;
-    function render(i) {
-      const it = items[i];
-      banner.setAttribute('href', it.href);
-      emojiEl.textContent = it.emoji;
-      textEl.textContent = it.name;
-      descEl.textContent = it.desc;
-    }
-    render(0);
-    setInterval(() => {
-      idx = (idx + 1) % items.length;
-      body.classList.add('swap');
-      setTimeout(() => {
-        render(idx);
-        body.classList.remove('swap');
-      }, 350);
-    }, 3000);
   })();
 </script>
 </body>
