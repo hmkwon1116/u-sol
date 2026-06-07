@@ -138,11 +138,11 @@
   }
   .term-banner .tb-next {
     font-family: 'Spline Sans', system-ui, sans-serif;
-    font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
+    font-size: 13.5px; font-weight: 700; letter-spacing: 0.04em;
     color: #fff; background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,214,200,0.35);
-    padding: 4px 9px; border-radius: 999px;
-    cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+    padding: 8px 16px; border-radius: 999px;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
     transition: background .15s, transform .15s, border-color .15s;
   }
   .term-banner .tb-next:hover {
@@ -151,12 +151,9 @@
   .term-banner .tb-next:active { transform: translateY(0); }
   .term-banner .tb-next .tb-next-ic {
     display: inline-block; transition: transform .4s ease;
+    font-size: 15px;
   }
   .term-banner .tb-next.spin .tb-next-ic { transform: rotate(360deg); }
-  .term-banner .tb-link {
-    font-size: 11.5px; font-weight: 600; color: #ffd6c8;
-    display: inline-flex; align-items: center; gap: 3px;
-  }
   .term-banner .tb-body {
     transition: opacity .35s ease, transform .35s ease;
   }
@@ -376,7 +373,6 @@
         <button type="button" class="tb-next" id="tbNextBtn" aria-label="다음 용어 보기">
           <span class="tb-next-ic">🎲</span><span>다음</span>
         </button>
-        <span class="tb-link">전체 용어집 →</span>
       </span>
     </div>
     <div class="tb-body" id="tbBody">
