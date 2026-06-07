@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="오늘의 밥상 — 최근 날씨와 트렌드에 맞춘 건강식 vs 비건강식 두 가지 버전, 레시피까지 한 번에.">
+<meta name="theme-color" content="#fbfaf7">
+<title>오늘의 밥상 (건강식 vs 비건강식) · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1f1d18; --muted: #7e786c; --line: #e8e2d4;
+    --card: #ffffff; --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 22px rgba(26,25,22,0.06);
+    --green: #4a7a3a; --green-soft: #ecf4e5;
+    --red: #c24b2a; --red-soft: #fbe6dd;
+    --amber: #b07a1d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Noto Sans KR', system-ui, sans-serif; line-height: 1.6;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .back { position: fixed; top: 14px; left: 16px; color: var(--muted); text-decoration: none; font-size: 13px; z-index: 5; }
+  .back:hover { color: var(--red); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 56px 18px 60px; }
+  .crumb { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .crumb a { color: var(--red); text-decoration: none; }
+  h1 {
+    font-family: 'Gowun Batang', serif; font-weight: 700;
+    font-size: clamp(26px, 5vw, 36px); letter-spacing: -0.02em;
+    line-height: 1.2; margin-bottom: 8px;
+  }
+  .lede { color: var(--muted); font-size: 14.5px; margin-bottom: 18px; }
+
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 7px 12px; font-size: 13px;
+    color: var(--ink); box-shadow: var(--shadow);
+  }
+  .chip .k { color: var(--muted); font-weight: 500; }
+  .chip .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .chip.trend { background: linear-gradient(135deg, #fff4ec, #ffe9dc); border-color: #f1d2bc; }
+  .chip.trend .v { color: var(--red); }
+
+  .pair {
+    display: grid; grid-template-columns: 1fr; gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (min-width: 760px) { .pair { grid-template-columns: 1fr 1fr; gap: 18px; } }
+
+  .ver {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    padding: 22px 20px 24px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column;
+    animation: rise .4s ease both;
+  }
+  .ver.h { border-top: 4px solid var(--green); }
+  .ver.b { border-top: 4px solid var(--red); }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .badge {
+    align-self: flex-start;
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .ver.h .badge { background: var(--green-soft); color: var(--green); }
+  .ver.b .badge { background: var(--red-soft); color: var(--red); }
+
+  .dish {
+    font-family: 'Gowun Batang', serif; font-size: 22px; font-weight: 700;
+    line-height: 1.25; margin-bottom: 4px;
+  }
+  .dish .emoji { font-size: 26px; margin-right: 6px; }
+  .tag { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+
+  .stats {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    padding: 12px 0; border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line);
+    margin-bottom: 14px;
+  }
+  .stat { display: flex; flex-direction: column; gap: 2px; min-width: 64px; }
+  .stat .sk { font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+  .stat .sv { font-size: 14px; font-weight: 700; }
+  .ver.h .stat .sv { color: var(--green); }
+  .ver.b .stat .sv { color: var(--red); }
+
+  .section-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--muted); text-transform: uppercase;
+    margin: 14px 0 8px;
+  }
+  .ing { font-size: 14px; line-height: 1.8; color: var(--ink); }
+  .ing li { padding-left: 14px; position: relative; list-style: none; }
+  .ing li::before {
+    content: ""; position: absolute; left: 0; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--muted);
+  }
+  .ver.h .ing li::before { background: var(--green); }
+  .ver.b .ing li::before { background: var(--red); }
+
+  .steps { font-size: 14px; line-height: 1.8; counter-reset: step; }
+  .steps li {
+    list-style: none; position: relative; padding-left: 28px; margin-bottom: 6px;
+    counter-increment: step;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff;
+  }
+  .ver.h .steps li::before { background: var(--green); }
+  .ver.b .steps li::before { background: var(--red); }
+
+  .tip {
+    margin-top: 12px; padding: 10px 12px;
+    background: #faf6ee; border-radius: 10px;
+    font-size: 13px; color: var(--ink); line-height: 1.7;
+  }
+  .tip strong { font-weight: 700; }
+  .ver.h .tip { background: var(--green-soft); }
+  .ver.b .tip { background: var(--red-soft); }
+
+  .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+  .btn {
+    font-family: 'Noto Sans KR', sans-serif; font-size: 14px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    padding: 11px 22px; cursor: pointer; transition: all .15s;
+    box-shadow: var(--shadow); color: var(--ink); font-weight: 500;
+  }
+  .btn:hover { border-color: var(--red); color: var(--red); transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .btn.primary:hover { background: #000; color: #fff; }
+
+  .note { margin-top: 26px; font-size: 12.5px; color: var(--muted); line-height: 1.85; text-align: center; }
+  footer { text-align: center; padding: 20px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 24px; }
+  footer a { color: var(--red); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/">← U-SOL</a>
+  <div class="wrap">
+    <div class="crumb"><a href="/">U-SOL</a> · 오늘의 밥상</div>
+    <h1>🍱 오늘의 밥상</h1>
+    <p class="lede">최근 날씨와 트렌드를 보고 골랐어요. 같은 상황에 어울리는 <strong>건강식</strong>과 <strong>비건강식</strong> 두 버전, 레시피까지 함께.</p>
+
+    <div class="meta">
+      <span class="chip"><span class="k">📅</span><span class="v" id="dateNow">…</span></span>
+      <span class="chip"><span class="k">🌡️</span><span class="v" id="wxTemp">날씨 불러오는 중…</span></span>
+      <span class="chip"><span class="k">☔</span><span class="v" id="wxRain">—</span></span>
+      <span class="chip trend"><span class="k">🔥 트렌드</span><span class="v" id="trendTag">…</span></span>
+    </div>
+
+    <div class="pair" id="pair"></div>
+
+    <div class="actions">
+      <button class="btn primary" id="todayBtn">오늘 추천 다시 보기</button>
+      <button class="btn" id="otherBtn">다른 조합 보여줘</button>
+    </div>
+
+    <p class="note">개인의 건강 상태·알레르기·식이 제한은 고려하지 않았어요. 가볍게 영감 얻는 용도로 봐주세요. 비건강식 버전은 <strong>가끔의 즐거움</strong>으로만!</p>
+  </div>
+  <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
+
+<script>
+  // ─────────────────────────────────────────────────────────────
+  // 날씨 카테고리별 (건강식 / 비건강식) 페어와 트렌드
+  // ─────────────────────────────────────────────────────────────
+  const PAIRS = {
+    hot: [
+      {
+        trend: "여름 비건·저칼로리 한 그릇이 유행",
+        healthy: {
+          name: "콩국수 + 오이 토핑", emoji: "🥣",
+          tag: "식물성 단백질, 시원하고 든든하게",
+          kcal: "약 480 kcal", time: "20분", level: "쉬움",
+          ingredients: [
+            "메주콩 1컵 (또는 시판 콩물 500ml)",
+            "소면 1인분 80g",
+            "오이 1/2개 (채썰기)",
+            "방울토마토 5알, 삶은 달걀 1개",
+            "소금 약간, 검은깨 1티스푼"
+          ],
+          steps: [
+            "콩을 하룻밤 불려 10분 삶고 껍질 살짝 비벼 헹궈요.",
+            "삶은 콩 + 물 400ml + 소금 한 꼬집을 믹서에 곱게 갈아요.",
+            "소면은 6분 삶아 찬물에 헹궈 전분기 빼고 그릇에 담아요.",
+            "콩물을 부은 뒤 오이채, 토마토, 달걀, 검은깨로 마무리.",
+            "얼음 2~3개 띄우면 더 시원해요."
+          ],
+          tip: "콩물에 <strong>아몬드 한 줌</strong>을 함께 갈면 고소함이 한 단계 올라가요."
+        },
+        bad: {
+          name: "에어컨 켜고 양념치킨 + 콜라", emoji: "🍗",
+          tag: "더위엔 역시 치맥(논알콜)이 진리",
+          kcal: "약 1,400 kcal", time: "조리 30분", level: "보통",
+          ingredients: [
+            "닭다리살 600g",
+            "튀김가루 1컵, 전분 3큰술, 차가운 물 1컵",
+            "양념: 고추장 2큰술, 케첩 3큰술, 물엿 2큰술, 간장 1큰술, 다진 마늘 1큰술",
+            "콜라 500ml 1캔",
+            "땅콩 가루, 통깨"
+          ],
+          steps: [
+            "닭다리살을 한입 크기로 잘라 우유에 10분 담갔다 물기 제거.",
+            "튀김가루 + 전분 + 찬물을 묽게 풀어 닭을 푹 적셔요.",
+            "180°C 기름에 1차 5분 튀기고 꺼내 3분 식혀요.",
+            "다시 한 번 180°C에서 2분 더 튀겨 바삭하게.",
+            "팬에 양념 재료를 끓이다 튀긴 닭을 넣고 빠르게 버무린 뒤 깨·땅콩.",
+            "차가운 콜라와 함께 바로 먹기."
+          ],
+          tip: "튀김은 <strong>두 번 튀기는 게 핵심</strong>. 1차로 익히고 2차로 바삭함을 만들어요."
+        }
+      },
+      {
+        trend: "단백질 보울 vs 매콤 마라가 양극단",
+        healthy: {
+          name: "닭가슴살 포케 보울", emoji: "🥗",
+          tag: "고단백 저지방, SNS 인기 보울",
+          kcal: "약 520 kcal", time: "25분", level: "쉬움",
+          ingredients: [
+            "닭가슴살 150g, 소금·후추",
+            "현미밥 한 공기 (또는 퀴노아 1컵)",
+            "방울토마토 6알, 오이 1/3개, 양배추 2장, 아보카도 1/2개",
+            "옥수수 2큰술, 삶은 병아리콩 2큰술",
+            "드레싱: 간장 1큰술 + 레몬즙 1큰술 + 올리브유 1큰술 + 꿀 1티스푼"
+          ],
+          steps: [
+            "닭가슴살에 소금·후추 뿌려 10분 재운 뒤 팬에 약불로 6분씩 굽기.",
+            "양배추는 채썰기, 오이·토마토는 한입 크기, 아보카도는 슬라이스.",
+            "그릇에 현미밥 깔고 채소를 색깔별로 둘레에 배치.",
+            "닭가슴살을 결대로 찢어 가운데에 올려요.",
+            "드레싱을 골고루 뿌리고 통깨로 마무리."
+          ],
+          tip: "닭가슴살 대신 <strong>두부 한 모를 노릇하게 구워</strong> 올리면 비건 보울이 돼요."
+        },
+        bad: {
+          name: "마라탕 + 꿔바로우", emoji: "🌶️",
+          tag: "매콤하고 자극적인 한 끼",
+          kcal: "약 1,600 kcal", time: "40분", level: "보통",
+          ingredients: [
+            "마라탕 소스 1봉 (또는 두반장 2큰술 + 고추기름 2큰술)",
+            "사골육수/치킨스톡 700ml, 마라향료 1티스푼",
+            "건두부, 푸주, 청경채, 숙주, 분모자(당면), 버섯, 양고기 또는 소고기",
+            "꿔바로우용 돼지등심 200g, 전분 1컵, 튀김 기름",
+            "꿔바로우 소스: 식초 3큰술, 설탕 3큰술, 케첩 2큰술, 간장 1큰술"
+          ],
+          steps: [
+            "분모자(당면)는 미리 따뜻한 물에 30분 불려둬요.",
+            "냄비에 고추기름 두르고 마라소스·향료를 볶다 육수를 부어 끓여요.",
+            "단단한 재료(고기·버섯) 먼저, 잎채소는 마지막에 넣고 3분 더 끓이기.",
+            "돼지등심은 한입 크기로 썰어 전분물에 푹 적신 뒤 두 번 튀겨요.",
+            "꿔바로우 소스 재료를 끓이다 튀긴 고기를 빠르게 버무려요.",
+            "마라탕은 큰 그릇에, 꿔바로우는 따로 담아 같이 먹어요."
+          ],
+          tip: "마라탕은 <strong>매운맛 단계 조절</strong>이 핵심. 두반장 양을 절반으로 줄이면 처음에도 부담 적어요."
+        }
+      }
+    ],
+    rainy: [
+      {
+        trend: "비 오는 날엔 따끈한 국물이 SNS 검색 1위",
+        healthy: {
+          name: "들깨 버섯 칼국수", emoji: "🍜",
+          tag: "구수한 들깨와 버섯의 만남",
+          kcal: "약 540 kcal", time: "30분", level: "보통",
+          ingredients: [
+            "칼국수 면 1인분 150g",
+            "표고·느타리·새송이 버섯 합 200g",
+            "다시마 1장(5cm), 멸치 5마리",
+            "들깨가루 3큰술, 들기름 1큰술",
+            "다진 마늘 1큰술, 국간장 1큰술, 부추 한 줌"
+          ],
+          steps: [
+            "냄비에 물 700ml, 다시마, 멸치를 넣고 10분 끓여 육수를 내요.",
+            "건더기는 건져내고 들기름에 버섯을 5분 노릇하게 볶아요.",
+            "볶은 버섯을 육수에 넣고 다진 마늘·국간장으로 간을 맞춰요.",
+            "칼국수 면을 넣고 4~5분 삶다가 들깨가루를 풀어줘요.",
+            "마지막에 부추 송송 올려 한소끔 끓이고 그릇에 담기."
+          ],
+          tip: "들깨는 <strong>오메가-3</strong>가 풍부해요. 한 그릇으로도 든든하고 속이 편해요."
+        },
+        bad: {
+          name: "김치전 + 막걸리 안주 세트", emoji: "🥞",
+          tag: "비 오면 생각나는 그 조합",
+          kcal: "약 1,100 kcal", time: "20분", level: "쉬움",
+          ingredients: [
+            "신김치 1.5컵, 김치국물 3큰술",
+            "부침가루 1컵, 튀김가루 3큰술, 찬물 1컵",
+            "달걀 1개, 청양고추 1개, 대파 1대",
+            "식용유 충분히",
+            "초간장: 간장 2큰술 + 식초 1큰술 + 통깨"
+          ],
+          steps: [
+            "신김치를 잘게 썰고 김치국물·부침가루·튀김가루·찬물·달걀을 섞어요.",
+            "반죽이 너무 되면 물을 조금씩 추가, 살짝 묽은 게 바삭함의 비결.",
+            "팬에 기름을 넉넉히 두르고 반죽을 얇게 펴 중강불에서 굽기.",
+            "한 면 3분, 가장자리가 노릇해지면 뒤집어 다시 2~3분.",
+            "마지막 30초는 강불로 올려 바삭하게 마무리, 초간장 곁들여요."
+          ],
+          tip: "기름을 <strong>아끼지 마세요</strong>. 김치전 가장자리는 살짝 튀기듯 구워야 진짜 바삭해요."
+        }
+      }
+    ],
+    mild: [
+      {
+        trend: "포만감 좋은 한 그릇 비빔밥이 다시 유행",
+        healthy: {
+          name: "오색 나물 비빔밥", emoji: "🥗",
+          tag: "다양한 채소를 한 그릇에",
+          kcal: "약 580 kcal", time: "35분", level: "보통",
+          ingredients: [
+            "현미밥 한 공기",
+            "시금치 한 줌, 콩나물 한 줌, 무 1/4개, 당근 1/3개, 표고버섯 3개",
+            "달걀 1개, 다진 마늘·소금·참기름 약간",
+            "양념장: 고추장 1큰술 + 간장 1티스푼 + 참기름 1티스푼 + 꿀 1티스푼 + 통깨"
+          ],
+          steps: [
+            "시금치는 데쳐 찬물에 헹구고 마늘·소금·참기름으로 무쳐요.",
+            "콩나물은 물 적게 넣고 5분 삶아 같은 방식으로 무쳐요.",
+            "무·당근은 채썰어 소금에 살짝 절였다 물기 짜고 참기름에 볶아요.",
+            "표고는 채썰어 간장 1티스푼으로 향이 나게 볶아요.",
+            "현미밥 위에 나물 다섯 가지를 색깔별로 둘러 담고 가운데 달걀 프라이.",
+            "양념장을 곁들이고 먹기 직전 비벼요."
+          ],
+          tip: "나물은 <strong>각각 따로 무치는 게</strong> 색과 맛이 살아요. 한꺼번에 무치면 다 비슷해져요."
+        },
+        bad: {
+          name: "삼겹살 김치찌개 + 흰밥 곱빼기", emoji: "🥓",
+          tag: "구수한 국물과 기름진 고기",
+          kcal: "약 1,300 kcal", time: "40분", level: "보통",
+          ingredients: [
+            "삼겹살 300g, 신김치 1/4포기",
+            "두부 1/2모, 양파 1/2개, 대파 1대",
+            "고춧가루 2큰술, 다진 마늘 1큰술, 간장 1큰술, 설탕 1티스푼",
+            "쌀뜨물 또는 멸치육수 600ml",
+            "흰쌀밥 곱빼기 1.5공기"
+          ],
+          steps: [
+            "삼겹살을 한입 크기로 썰어 팬에 기름 두르지 않고 노릇하게 볶기.",
+            "기름이 나오면 김치를 넣고 5분간 푹 볶아 신맛을 줄여요.",
+            "고춧가루·다진 마늘 넣고 1분 더 볶다 쌀뜨물을 부어요.",
+            "양파·두부 큼직하게 썰어 넣고 중불에서 15분 끓이기.",
+            "간장·설탕으로 간 맞추고 대파 송송 넣어 5분 더.",
+            "흰밥에 국물 듬뿍 적셔 한 입씩 떠먹어요."
+          ],
+          tip: "<strong>김치를 충분히 볶는 단계</strong>가 김치찌개 맛의 80%를 결정해요. 절대 생략 금지."
+        }
+      }
+    ],
+    cold: [
+      {
+        trend: "보양식 한 그릇이 다시 주목",
+        healthy: {
+          name: "닭곰탕 + 부추무침", emoji: "🍲",
+          tag: "맑고 깊은 국물, 추위 날리는 보양",
+          kcal: "약 480 kcal", time: "60분", level: "보통",
+          ingredients: [
+            "닭 한 마리(또는 닭다리 4개)",
+            "대파 2대, 마늘 한 줌, 양파 1개, 통후추",
+            "소금, 후추, 다진 파",
+            "부추 한 줌, 고춧가루 1티스푼, 간장 1티스푼, 식초 1티스푼, 참기름"
+          ],
+          steps: [
+            "닭은 끓는 물에 1분 데쳐 핏물·기름을 제거해요.",
+            "큰 냄비에 닭, 물 1.5L, 대파, 마늘, 양파, 통후추 넣고 40분 끓여요.",
+            "닭은 건져 살을 먹기 좋게 찢고, 국물은 체에 걸러 맑게.",
+            "국물에 다시 닭살 넣고 소금·후추로 간 맞춰 5분 더.",
+            "부추는 4cm로 썰어 고춧가루·간장·식초·참기름에 살짝 버무려요.",
+            "그릇에 닭살과 국물 담고 다진 파, 부추무침을 곁들여요."
+          ],
+          tip: "<strong>한 번 데치는 과정</strong>으로 국물이 훨씬 맑고 깔끔해져요."
+        },
+        bad: {
+          name: "치즈 듬뿍 부대찌개 + 라면사리", emoji: "🍳",
+          tag: "추울 땐 자극적이고 진한 한 끼",
+          kcal: "약 1,500 kcal", time: "30분", level: "쉬움",
+          ingredients: [
+            "스팸 1/2캔, 비엔나 소시지 8개, 베이컨 4줄",
+            "신김치 1컵, 두부 1/2모, 양파 1/2개, 대파 1대",
+            "고추장 1큰술, 고춧가루 2큰술, 다진 마늘 1큰술, 간장 1큰술",
+            "라면사리 1봉, 슬라이스 치즈 2장",
+            "콩나물 한 줌, 다시팩 1개, 물 700ml"
+          ],
+          steps: [
+            "큰 냄비에 다시팩과 물 700ml 넣고 10분 끓여 육수를 내요.",
+            "스팸·소시지·베이컨은 먹기 좋게 썰어 한쪽에 가지런히 담아요.",
+            "김치, 두부, 양파, 대파, 콩나물도 가지런히 둘러 담기.",
+            "가운데에 고추장·고춧가루·마늘·간장 양념을 올려요.",
+            "육수를 붓고 끓이다 라면사리 넣고 3분, 치즈를 마지막에 올려요.",
+            "치즈가 녹기 시작하면 바로 떠 먹기."
+          ],
+          tip: "<strong>치즈는 마지막에</strong> 올려야 모양도 맛도 살아요. 너무 일찍 넣으면 다 풀어져요."
+        }
+      }
+    ]
+  };
+
+  // ─────────────────────────────────────────────────────────────
+  // 날짜, 날씨, 트렌드 표시
+  // ─────────────────────────────────────────────────────────────
+  function fmtDate(d) {
+    const days = ['일','월','화','수','목','금','토'];
+    return `${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}. (${days[d.getDay()]})`;
+  }
+  document.getElementById('dateNow').textContent = fmtDate(new Date());
+
+  function getQuickPosition() {
+    return new Promise(resolve => {
+      if (!navigator.geolocation) { resolve(null); return; }
+      let done = false;
+      const finish = v => { if (!done) { done = true; resolve(v); } };
+      navigator.geolocation.getCurrentPosition(
+        p => finish({ lat: p.coords.latitude, lon: p.coords.longitude }),
+        () => finish(null),
+        { enableHighAccuracy: false, timeout: 4000, maximumAge: 10 * 60 * 1000 }
+      );
+      setTimeout(() => finish(null), 4500);
+    });
+  }
+
+  // 날씨에 따라 카테고리 결정
+  function categorize(temp, rainProb) {
+    if (rainProb != null && rainProb >= 60) return 'rainy';
+    if (temp == null) return 'mild';
+    if (temp >= 26) return 'hot';
+    if (temp <= 8) return 'cold';
+    return 'mild';
+  }
+
+  const STATE = { category: 'mild', pairIndex: 0, lastTemp: null, lastRain: null };
+
+  async function loadWeather() {
+    let lat = 37.5665, lon = 126.9780, tz = 'Asia%2FSeoul';
+    const pos = await getQuickPosition();
+    if (pos) { lat = pos.lat; lon = pos.lon; tz = 'auto'; }
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=precipitation_probability_max,temperature_2m_max,temperature_2m_min&timezone=${tz}&forecast_days=1`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const c = data.current;
+      const d = data.daily;
+      const t = Math.round(c.temperature_2m);
+      const rain = d.precipitation_probability_max[0];
+      STATE.lastTemp = t;
+      STATE.lastRain = rain;
+      document.getElementById('wxTemp').textContent = `${t}℃`;
+      document.getElementById('wxRain').textContent = (rain != null ? `강수 ${rain}%` : '강수 정보 없음');
+      STATE.category = categorize(t, rain);
+      pickPair();
+    } catch (e) {
+      document.getElementById('wxTemp').textContent = '날씨 정보 없음';
+      document.getElementById('wxRain').textContent = '—';
+      STATE.category = 'mild';
+      pickPair();
+    }
+  }
+
+  function pickPair() {
+    const list = PAIRS[STATE.category] || PAIRS.mild;
+    const days = Math.floor(Date.now() / 86400000);
+    STATE.pairIndex = ((days % list.length) + list.length) % list.length;
+    render();
+  }
+
+  function pickOther() {
+    const list = PAIRS[STATE.category] || PAIRS.mild;
+    if (list.length <= 1) {
+      // 다른 카테고리에서 임의 선택
+      const cats = Object.keys(PAIRS).filter(c => c !== STATE.category);
+      STATE.category = cats[Math.floor(Math.random() * cats.length)];
+      const otherList = PAIRS[STATE.category];
+      STATE.pairIndex = Math.floor(Math.random() * otherList.length);
+    } else {
+      STATE.pairIndex = (STATE.pairIndex + 1) % list.length;
+    }
+    render();
+  }
+
+  function dishCard(d, kind) {
+    const label = kind === 'h' ? '🥬 건강식' : '🍔 비건강식';
+    const ing = d.ingredients.map(i => `<li>${i}</li>`).join('');
+    const steps = d.steps.map(s => `<li>${s}</li>`).join('');
+    return `
+      <div class="ver ${kind}">
+        <span class="badge">${label}</span>
+        <div class="dish"><span class="emoji">${d.emoji}</span>${d.name}</div>
+        <div class="tag">${d.tag}</div>
+        <div class="stats">
+          <div class="stat"><span class="sk">대략 열량</span><span class="sv">${d.kcal}</span></div>
+          <div class="stat"><span class="sk">조리 시간</span><span class="sv">${d.time}</span></div>
+          <div class="stat"><span class="sk">난이도</span><span class="sv">${d.level}</span></div>
+        </div>
+        <div class="section-title">재료 (1인분 기준)</div>
+        <ul class="ing">${ing}</ul>
+        <div class="section-title">만드는 법</div>
+        <ol class="steps">${steps}</ol>
+        <div class="tip">💡 ${d.tip}</div>
+      </div>
+    `;
+  }
+
+  function render() {
+    const list = PAIRS[STATE.category] || PAIRS.mild;
+    const pair = list[STATE.pairIndex];
+    document.getElementById('trendTag').textContent = pair.trend;
+    const wrap = document.getElementById('pair');
+    wrap.style.opacity = 0;
+    setTimeout(() => {
+      wrap.innerHTML = dishCard(pair.healthy, 'h') + dishCard(pair.bad, 'b');
+      wrap.style.transition = 'opacity .3s ease';
+      wrap.style.opacity = 1;
+    }, 100);
+  }
+
+  document.getElementById('todayBtn').addEventListener('click', () => {
+    if (STATE.lastTemp != null) STATE.category = categorize(STATE.lastTemp, STATE.lastRain);
+    pickPair();
+  });
+  document.getElementById('otherBtn').addEventListener('click', pickOther);
+
+  loadWeather();
+</script>
+</body>
+</html>
