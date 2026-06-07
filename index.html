@@ -31,14 +31,12 @@
   }
   .wrap { max-width: 920px; margin: 0 auto; padding: 10px 14px 22px; }
 
-  /* one-line widget stripe (horizontal scroll if too narrow) */
+  /* widget stripe — wraps to two lines instead of scrolling */
   .stripe {
-    display: flex; gap: 5px; align-items: center;
-    overflow-x: auto; -webkit-overflow-scrolling: touch;
-    margin-bottom: 10px; padding-bottom: 2px;
-    scrollbar-width: none;
+    display: flex; gap: 5px 5px; align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
   }
-  .stripe::-webkit-scrollbar { display: none; }
   .pill {
     display: inline-flex; align-items: center; gap: 4px;
     background: var(--card); border: 1px solid var(--line);
@@ -68,15 +66,51 @@
     font-family: 'Fraunces', serif; font-size: clamp(11px, 2vw, 12.5px);
     font-style: italic; color: var(--muted); font-weight: 400;
   }
-  .pick-btn {
+  .visit {
     display: inline-flex; align-items: center; gap: 5px;
-    background: var(--ink); color: #fff; border: none;
+    background: var(--ink); color: #fff;
     font-family: 'Spline Sans', system-ui, sans-serif;
     font-size: 12px; font-weight: 600; padding: 7px 12px;
-    border-radius: 999px; cursor: pointer; flex-shrink: 0;
-    transition: transform .15s ease, background .15s; box-shadow: var(--shadow);
+    border-radius: 999px; flex-shrink: 0;
+    box-shadow: var(--shadow);
   }
-  .pick-btn:hover { background: var(--accent); transform: translateY(-1px); }
+  .visit .vk { font-weight: 500; opacity: 0.85; font-size: 11px; }
+  .visit .vv { font-variant-numeric: tabular-nums; }
+
+  /* auto-rolling recommendation banner */
+  .rec {
+    display: flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, #fff7f3 0%, #ffeee6 100%);
+    border: 1px solid var(--accent-soft); border-radius: 12px;
+    padding: 10px 14px; margin-bottom: 12px;
+    text-decoration: none; color: var(--ink);
+    box-shadow: var(--shadow);
+    transition: transform .15s, border-color .15s;
+    overflow: hidden; min-height: 46px;
+  }
+  .rec:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .rec .rec-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
+    color: var(--accent); text-transform: uppercase;
+    background: #fff; padding: 3px 7px; border-radius: 999px;
+    border: 1px solid var(--accent-soft); flex-shrink: 0;
+  }
+  .rec .rec-body {
+    display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  .rec .rec-body.swap { opacity: 0; transform: translateY(-6px); }
+  .rec .rec-emoji { font-size: 20px; line-height: 1; }
+  .rec .rec-text {
+    font-family: 'Fraunces', serif; font-size: 14.5px; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .rec .rec-desc {
+    font-size: 11.5px; color: var(--muted); font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .rec .rec-arrow { color: var(--accent); font-weight: 700; flex-shrink: 0; }
+  @media (max-width: 460px) { .rec .rec-desc { display: none; } }
 
   /* tabs — naver-news style */
   .tabs {
@@ -168,10 +202,21 @@
       <div class="logo">U-SOL<span class="dot">.</span></div>
       <div class="tagline">다양한 아이디어를 만들고 실험하는 공간</div>
     </div>
-    <button type="button" class="pick-btn" id="pickBtn" aria-label="오늘의 추천 새로 고르기">
-      <span>🎲</span><span>오늘의 추천</span>
-    </button>
+    <span class="visit" id="visitBox" aria-label="오늘 접속 건수">
+      <span class="vk">📊 오늘 접속</span>
+      <span class="vv" id="visitCount">…</span>
+    </span>
   </header>
+
+  <a class="rec reveal" id="recBanner" href="#" style="animation-delay:.07s">
+    <span class="rec-tag">🎲 추천</span>
+    <span class="rec-body" id="recBody">
+      <span class="rec-emoji" id="recEmoji">🕊️</span>
+      <span class="rec-text" id="recText">오늘의 말씀</span>
+      <span class="rec-desc" id="recDesc">날마다 새로운 한 구절</span>
+    </span>
+    <span class="rec-arrow">→</span>
+  </a>
 
   <div class="tabs reveal" style="animation-delay:.08s" role="tablist">
     <button class="tab active" data-tab="daily" role="tab">매일 한 입</button>
@@ -325,26 +370,55 @@
     });
   })();
 
-  (function setupPick() {
-    const btn = document.getElementById('pickBtn');
-    if (!btn) return;
+  (function setupVisitCount() {
+    const el = document.getElementById('visitCount');
+    if (!el) return;
+    const today = new Date().toISOString().slice(0, 10);
+    let data;
+    try { data = JSON.parse(localStorage.getItem('usol.visits') || 'null'); } catch (_) { data = null; }
+    if (!data || data.date !== today) data = { date: today, count: 0 };
+    data.count += 1;
+    try { localStorage.setItem('usol.visits', JSON.stringify(data)); } catch (_) {}
+    el.textContent = `${data.count.toLocaleString('ko-KR')}회`;
+  })();
+
+  (function setupRecBanner() {
+    const banner = document.getElementById('recBanner');
+    const body = document.getElementById('recBody');
+    const emojiEl = document.getElementById('recEmoji');
+    const textEl = document.getElementById('recText');
+    const descEl = document.getElementById('recDesc');
+    if (!banner || !body) return;
     const items = Array.from(document.querySelectorAll('.panel .cat')).map(el => ({
-      el,
-      panel: el.closest('.panel')?.dataset.panel || ''
-    })).filter(it => it.panel);
-    if (!items.length) { btn.style.display = 'none'; return; }
-    let lastIdx = -1;
-    btn.addEventListener('click', () => {
-      let idx = Math.floor(Math.random() * items.length);
-      if (items.length > 1 && idx === lastIdx) idx = (idx + 1) % items.length;
-      lastIdx = idx;
-      const pick = items[idx];
-      activateTab(pick.panel);
-      document.querySelectorAll('.cat').forEach(c => c.classList.remove('flash'));
-      void pick.el.offsetWidth;
-      pick.el.classList.add('flash');
-      pick.el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
+      href: el.getAttribute('href') || '#',
+      panel: el.closest('.panel')?.dataset.panel || '',
+      emoji: el.querySelector('.emoji')?.textContent?.trim() || '✨',
+      name: el.querySelector('.nm')?.textContent?.trim() || '',
+      desc: el.querySelector('.desc')?.textContent?.trim() || ''
+    })).filter(it => it.name);
+    if (!items.length) { banner.style.display = 'none'; return; }
+    // shuffle once so the order varies between visits
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    let idx = 0;
+    function render(i) {
+      const it = items[i];
+      banner.setAttribute('href', it.href);
+      emojiEl.textContent = it.emoji;
+      textEl.textContent = it.name;
+      descEl.textContent = it.desc;
+    }
+    render(0);
+    setInterval(() => {
+      idx = (idx + 1) % items.length;
+      body.classList.add('swap');
+      setTimeout(() => {
+        render(idx);
+        body.classList.remove('swap');
+      }, 350);
+    }, 3000);
   })();
 </script>
 </body>
