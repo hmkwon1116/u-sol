@@ -148,9 +148,34 @@
     padding: 10px 12px; border-radius: 8px;
     background: rgba(255,255,255,0.02);
     word-break: keep-all;
+    margin-bottom: 14px;
   }
   .card.sup .style-tip { background: var(--sup-soft); }
   .card.bape .style-tip { background: var(--bape-soft); }
+
+  .buy-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+    margin-top: auto;
+  }
+  .buy-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: 'Archivo Black', sans-serif; font-size: 11.5px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 11px 8px; border-radius: 8px; text-decoration: none;
+    transition: transform .15s, opacity .15s, background .15s;
+    border: 1px solid var(--line); color: var(--ink);
+  }
+  .buy-btn:hover { transform: translateY(-1px); opacity: .92; }
+  .buy-btn.primary.sup { background: var(--sup); border-color: var(--sup); color: #fff; }
+  .buy-btn.primary.bape { background: var(--bape); border-color: var(--bape); color: #fff; }
+  .buy-btn.secondary {
+    background: rgba(255,255,255,0.04); color: var(--ink);
+  }
+  .buy-btn .ico { font-size: 13px; }
+  .buy-note {
+    font-size: 10.5px; color: var(--muted); margin-top: 6px; text-align: center;
+    letter-spacing: 0.02em;
+  }
 
   .divider {
     display: flex; align-items: center; gap: 14px;
@@ -242,6 +267,18 @@
       </ul>
     </div>
 
+    <div class="divider"><span class="label">WHERE TO BUY · 구매처 안내</span></div>
+    <div class="combo" style="background: linear-gradient(135deg, rgba(214,40,40,0.08), rgba(47,125,59,0.08));">
+      <div class="combo-title">🛒 공식몰 · 리셀 한눈에</div>
+      <p class="combo-desc">정가는 공식몰 · 품절템은 리셀에서. 한국 배송 가능 여부는 사이트별로 다르니 결제 전 확인 필수.</p>
+      <ul class="combo-list">
+        <li><b>Supreme 공식 —</b> <a href="https://www.supremenewyork.com/shop" target="_blank" rel="noopener noreferrer" style="color:var(--sup); text-decoration: underline;">supremenewyork.com</a> (목요일 11AM EST 드롭, 한국 배송 X · 배대지 필수)</li>
+        <li><b>BAPE 공식 —</b> <a href="https://us.bape.com" target="_blank" rel="noopener noreferrer" style="color:var(--bape); text-decoration: underline;">us.bape.com</a> · <a href="https://bape.com/" target="_blank" rel="noopener noreferrer" style="color:var(--bape); text-decoration: underline;">bape.com (JP)</a> (한국 직배송 가능, 관부가세 별도)</li>
+        <li><b>리셀 / 정품 인증 —</b> <a href="https://stockx.com" target="_blank" rel="noopener noreferrer" style="color:var(--gold); text-decoration: underline;">StockX</a> · <a href="https://www.goat.com" target="_blank" rel="noopener noreferrer" style="color:var(--gold); text-decoration: underline;">GOAT</a> · <a href="https://kream.co.kr" target="_blank" rel="noopener noreferrer" style="color:var(--gold); text-decoration: underline;">KREAM (KR)</a></li>
+        <li><b>국내 정식 매장 —</b> 베이프 강남·홍대, 슈프림은 국내 매장 없음 (전부 해외 직구 또는 리셀)</li>
+      </ul>
+    </div>
+
     <p class="tip">신상 드롭은 매주 목요일(미국 EST 11AM) · 발매 직후 리셀가가 정가의 1.5~3배까지 뛰는 품목도 많아요.<br>구매 전 사이즈 차트와 정품 인증(BAPE QR 태그, Supreme 시즌 라벨) 꼭 확인하세요.</p>
   </div>
   <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
@@ -254,7 +291,8 @@
       kor: "박스 로고 후디 — SS26 시즌",
       price: "$198", weight: "헤비웨이트 380gsm", fit: "박시핏",
       desc: "슈프림의 <strong>시그니처 박스 로고</strong> 후드. 매 시즌 가장 빨리 품절되는 핵심 아이템. 이번 시즌은 Ash Grey · Cardinal · Forest 세 컬러가 강세.",
-      tip: "정사이즈보다 한 치수 다운하면 더 깔끔. 카고팬츠나 와이드 데님과 매칭하면 정석 스트리트 룩."
+      tip: "정사이즈보다 한 치수 다운하면 더 깔끔. 카고팬츠나 와이드 데님과 매칭하면 정석 스트리트 룩.",
+      buy: { official: "https://www.supremenewyork.com/shop/all/sweatshirts", resell: "https://stockx.com/search?s=supreme+box+logo+hooded" }
     },
     {
       brand: "bape", emoji: "🦈",
@@ -263,7 +301,8 @@
       kor: "샤크 풀집 후디 — 1st 카모",
       price: "$498", weight: "미디엄웨이트 320gsm", fit: "오버사이즈",
       desc: "베이프의 가장 상징적인 아이템. <strong>상어 얼굴 후드</strong>를 올리면 풀페이스 마스크. 그린·퍼플·블랙 3컬러 발매 중.",
-      tip: "단독으로도 충분히 임팩트 있어서 하의는 무지 블랙·그레이로. 후드 올린 채로 사진 한 컷은 필수."
+      tip: "단독으로도 충분히 임팩트 있어서 하의는 무지 블랙·그레이로. 후드 올린 채로 사진 한 컷은 필수.",
+      buy: { official: "https://us.bape.com/collections/hoodies", resell: "https://stockx.com/search?s=bape+shark+full+zip+hoodie" }
     },
     {
       brand: "sup", emoji: "🧥",
@@ -272,7 +311,8 @@
       kor: "코치 자켓 — 백 프린트 그래픽",
       price: "$168", weight: "라이트웨이트 나일론", fit: "레귤러핏",
       desc: "환절기 필수템. 백 프린트가 강렬한 <strong>그래픽 코치 자켓</strong>. 안에 후디·롱슬리브 다 받아주는 만능 아우터.",
-      tip: "어깨 라인이 떨어지는 디자인이라 인너로 두꺼운 후디를 입어도 답답하지 않아요. 봄·가을 데일리 1순위."
+      tip: "어깨 라인이 떨어지는 디자인이라 인너로 두꺼운 후디를 입어도 답답하지 않아요. 봄·가을 데일리 1순위.",
+      buy: { official: "https://www.supremenewyork.com/shop/all/jackets", resell: "https://stockx.com/search?s=supreme+coaches+jacket" }
     },
     {
       brand: "bape", emoji: "👟",
@@ -281,7 +321,8 @@
       kor: "베이프스타 로우 — 화이트/네이비",
       price: "$329", weight: "—", fit: "정사이즈",
       desc: "나이키 에어포스1에서 영감 받은 <strong>베이프의 시그니처 스니커즈</strong>. 사이드 별 로고와 페이턴트 가죽 디테일이 포인트.",
-      tip: "와이드 팬츠 밑단을 살짝 덮어 신으면 비율 가장 좋아요. 흰색 가죽 부분은 방수 스프레이 필수."
+      tip: "와이드 팬츠 밑단을 살짝 덮어 신으면 비율 가장 좋아요. 흰색 가죽 부분은 방수 스프레이 필수.",
+      buy: { official: "https://us.bape.com/collections/footwear", resell: "https://stockx.com/search?s=bape+sta+low" }
     },
     {
       brand: "sup", emoji: "🧢",
@@ -290,7 +331,8 @@
       kor: "뉴에라 박스 로고 캡 — 시즌 컬러",
       price: "$58", weight: "—", fit: "조절형",
       desc: "<strong>가장 가성비 좋은 슈프림 입문템</strong>. 어떤 옷에도 무난하게 어울리고, 시즌 한정 컬러는 리셀가도 안 떨어져요.",
-      tip: "챙은 살짝만 굽혀서 자연스럽게. 검정·네이비는 데일리, 레드는 포인트용으로 한 개씩 두면 좋아요."
+      tip: "챙은 살짝만 굽혀서 자연스럽게. 검정·네이비는 데일리, 레드는 포인트용으로 한 개씩 두면 좋아요.",
+      buy: { official: "https://www.supremenewyork.com/shop/all/hats", resell: "https://stockx.com/search?s=supreme+new+era+box+logo" }
     },
     {
       brand: "bape", emoji: "👖",
@@ -299,7 +341,8 @@
       kor: "릴렉스 카모 스웻팬츠",
       price: "$248", weight: "헤비웨이트 코튼", fit: "릴렉스핏",
       desc: "ABC 카모 패턴이 다리 한쪽에만 들어간 <strong>밸런스형 스웻팬츠</strong>. 풀카모가 부담스러운 분께 추천.",
-      tip: "상의는 무조건 무지 솔리드로. 화이트 티 + 이 팬츠 + BAPE STA 조합이 가장 안 망하는 공식."
+      tip: "상의는 무조건 무지 솔리드로. 화이트 티 + 이 팬츠 + BAPE STA 조합이 가장 안 망하는 공식.",
+      buy: { official: "https://us.bape.com/collections/pants", resell: "https://stockx.com/search?s=bape+camo+sweatpants" }
     },
     {
       brand: "sup", emoji: "👕",
@@ -308,7 +351,8 @@
       kor: "스몰 박스 티 — 헤비웨이트",
       price: "$48", weight: "헤비웨이트 220gsm", fit: "박시핏",
       desc: "박스 로고 후디가 비싸다면 이거. <strong>가장 무난한 슈프림 입문 티</strong>. 면 두께감 있어서 비치지 않고 형태도 잘 잡혀요.",
-      tip: "여름엔 단독, 환절기엔 셔츠 안에 레이어드. 화이트·블랙·헤더그레이 세 컬러는 사두면 평생 입어요."
+      tip: "여름엔 단독, 환절기엔 셔츠 안에 레이어드. 화이트·블랙·헤더그레이 세 컬러는 사두면 평생 입어요.",
+      buy: { official: "https://www.supremenewyork.com/shop/all/tops_sweaters", resell: "https://stockx.com/search?s=supreme+small+box+tee" }
     },
     {
       brand: "bape", emoji: "🦈",
@@ -317,7 +361,8 @@
       kor: "샤크 야광 반팔 티 — 한정판",
       price: "$135", weight: "미디엄웨이트", fit: "레귤러핏",
       desc: "밤에 빛나는 <strong>샤크 그래픽 야광 티</strong>. 어두운 곳에서 상어 입이 그대로 떠올라요. 페스티벌·클럽 시즌 필수템.",
-      tip: "낮엔 평범한 그래픽 티지만 밤엔 시선 강탈. 흰색보다 블랙 컬러가 야광 대비 효과 훨씬 좋아요."
+      tip: "낮엔 평범한 그래픽 티지만 밤엔 시선 강탈. 흰색보다 블랙 컬러가 야광 대비 효과 훨씬 좋아요.",
+      buy: { official: "https://us.bape.com/collections/tees", resell: "https://stockx.com/search?s=bape+shark+tee+glow" }
     }
   ];
 
@@ -341,6 +386,14 @@
         <div class="desc">${it.desc}</div>
         <div class="style-title">Styling Tip</div>
         <div class="style-tip">${it.tip}</div>
+        <div class="buy-row">
+          <a class="buy-btn primary ${it.brand}" href="${it.buy.official}" target="_blank" rel="noopener noreferrer">
+            <span class="ico">🛒</span> 공식몰
+          </a>
+          <a class="buy-btn secondary" href="${it.buy.resell}" target="_blank" rel="noopener noreferrer">
+            <span class="ico">🔁</span> StockX
+          </a>
+        </div>
       </article>
     `).join('');
   }
