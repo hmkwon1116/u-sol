@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="오늘의 연구사례 — AI·머신러닝 분야의 주요 논문 30편을 매일 한 편씩, 배경·핵심 아이디어·영향력·원문 링크를 한 페이지에.">
+<meta name="description" content="오늘의 연구사례 — AI·머신러닝 분야의 주요 논문 36편을 매일 한 편씩, 배경·핵심 아이디어·영향력·원문 링크를 한 페이지에.">
 <meta name="theme-color" content="#eef4ff">
 <title>오늘의 연구사례 · U-SOL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -335,7 +335,7 @@
   <div class="title-row">
     <h1>오늘의 <span class="accent">연구사례</span></h1>
   </div>
-  <p class="lede">AI·머신러닝의 흐름을 바꾼 주요 논문 30편을 매일 하나씩. 배경 · 핵심 아이디어 · 영향력 · 원문까지 한 페이지에 깊이 있게.</p>
+  <p class="lede">AI·머신러닝의 흐름을 바꾼 주요 논문 36편을 매일 하나씩. 배경 · 핵심 아이디어 · 영향력 · 원문까지 한 페이지에 깊이 있게.</p>
 
   <div class="date-strip">
     <span class="chip"><span class="dot-accent"></span><span class="k">오늘</span><span class="v" id="todayDate">—</span></span>
@@ -399,10 +399,10 @@
     <button class="btn" id="todayBtn"><span class="em">📅</span> 오늘의 연구로</button>
   </div>
 
-  <p class="hint">매일 자정에 새로 갱신돼요 — 30편을 순환하며 한 편씩 보여드립니다.</p>
+  <p class="hint">매일 자정에 새로 갱신돼요 — 36편을 순환하며 한 편씩 보여드립니다.</p>
 
   <div class="all-section">
-    <div class="all-title">전체 연구 30편</div>
+    <div class="all-title">전체 연구 36편</div>
     <div class="all-sub">눌러서 바로 보기</div>
     <div class="mini-grid" id="miniGrid"></div>
   </div>
@@ -1189,6 +1189,162 @@ const RESEARCH = [
     why: "<b>'얼마나 더 키워야 할까'에 정량적 답을 준 논문</b>. AI 산업의 자본 투자 결정을 수학적으로 정당화시켰고, NVIDIA의 시총이 세계 1위까지 오른 거시적 배경 중 하나로 평가받아요.",
     link: "https://arxiv.org/abs/2001.08361",
     tags: ["Scaling", "OpenAI", "Theory", "LLM"]
+  },
+  {
+    title: "GPT-4 Technical Report",
+    sub: "이미지·텍스트를 함께 다루는 멀티모달 프런티어",
+    field: "🤖 거대언어모델 · 멀티모달",
+    emoji: "🌐",
+    year: "2023",
+    org: "OpenAI",
+    authors: "OpenAI (300+ contributors)",
+    lead: "<strong>이미지와 텍스트를 동시에 입력받는</strong> 최초의 상용 GPT 모델. 미국 변호사 시험 상위 10%, SAT·LSAT·GRE 다수 항목에서 인간 평균을 크게 상회. ChatGPT-4·GitHub Copilot Chat·Bing의 기반이 됐고, 산업 전체에 '프런티어 AI' 개념을 정착시켰어요.",
+    stats: [
+      { sv: "상위 10%", sl: "미국 변호사 시험 (Uniform Bar)" },
+      { sv: "1.76T*", sl: "추정 파라미터 (비공개·MoE 추정)" },
+      { sv: "$100M+", sl: "추정 1회 학습 비용" }
+    ],
+    background: "GPT-3·3.5(2020~2022)는 인상적이었지만 환각·추론 한계가 분명했어요. 이미지 이해는 별도 모델의 영역이었고, 사실성·시험 통과력 같은 '실용 지능' 표준 평가도 부재했죠. <b>한 모델로 거의 모든 텍스트·이미지 과제를 처리</b>한다는 야심에서 GPT-4 프로젝트가 시작됐어요.",
+    summary: [
+      { ico: "🖼️", txt: "<b>비전 입력 지원</b> — 표·그래프·다이어그램이 포함된 이미지를 보고 추론. 의료 영상·수학 문제 풀이까지 한 모델로 처리." },
+      { ico: "📚", txt: "<b>광범위한 시험 통과력</b> — 변호사 시험·의사면허(USMLE)·GRE·SAT 등 30개 이상 시험에서 GPT-3.5 대비 큰 폭 향상." },
+      { ico: "🛡️", txt: "<b>RLHF + 시스템 메시지 + Refusal 학습</b>으로 안전성을 한 단계 끌어올림. 'red-team' 평가가 학습 파이프라인에 본격 도입." },
+      { ico: "🔒", txt: "<b>학습 데이터·아키텍처 비공개</b>로 전환 — 이전 GPT 시리즈와 다른 폐쇄 노선이 산업 표준의 분기점이 됨." }
+    ],
+    impact: "<b>ChatGPT-4·MS Copilot·Bing Chat</b>의 핵심 엔진으로 수억 명이 사용. Anthropic Claude 3·Google Gemini 1·xAI Grok 등 모든 프런티어 모델이 GPT-4를 기준으로 경쟁하는 시대를 열었어요. '<b>프런티어 AI 거버넌스</b>' 논의(EU AI Act·미국 행정명령)도 GPT-4 등장 이후 본격화됐어요.",
+    why: "<b>'AI가 전문직 시험을 통과한다'</b>는 사회적 충격을 만든 결정적 사건. 학계·산업·정책 모두를 동시에 흔든 단일 모델 발표로는 ChatGPT 다음으로 큰 사건이며, '폐쇄형 vs 오픈웨이트' 논쟁의 출발점이기도 해요.",
+    link: "https://arxiv.org/abs/2303.08774",
+    tags: ["GPT-4", "Multimodal", "Frontier", "OpenAI"]
+  },
+  {
+    title: "The Llama 3 Herd of Models",
+    sub: "405B 오픈웨이트 프런티어 모델",
+    field: "🦙 오픈웨이트 LLM",
+    emoji: "🦙",
+    year: "2024",
+    org: "Meta AI",
+    authors: "Llama Team (500+ contributors)",
+    lead: "<strong>4,050억 파라미터·15조 토큰 학습</strong>의 오픈웨이트 거대모델. GPT-4·Claude 3.5에 근접한 성능을 누구나 다운로드·파인튜닝할 수 있게 공개해, 오픈웨이트 진영에 가장 큰 균형추가 됐어요.",
+    stats: [
+      { sv: "405B", sl: "최대 모델 파라미터" },
+      { sv: "15T", sl: "사전학습 토큰 수" },
+      { sv: "128K", sl: "확장된 컨텍스트 윈도우" }
+    ],
+    background: "GPT-4 등장 이후 폐쇄형 모델이 빠르게 앞서가며 '오픈 진영은 따라잡을 수 없다'는 회의가 커졌어요. Llama 2(2023, 70B)는 좋은 출발이었지만 GPT-4와의 격차가 컸고, 학계·스타트업이 자유롭게 실험할 수 있는 프런티어급 모델이 부재한 상황이었습니다.",
+    summary: [
+      { ico: "📏", txt: "<b>15조 토큰</b> 대규모 학습 — Chinchilla 법칙을 넘어선 '데이터 과잉' 전략으로 추론 시 효율을 끌어올림." },
+      { ico: "🌍", txt: "<b>다국어·코드·수학 균형</b> — 영어 비중을 낮추고 한국어·일본어 포함 8개 언어 데이터 비중을 의도적으로 끌어올림." },
+      { ico: "🛠️", txt: "<b>도구 사용·함수 호출·긴 컨텍스트(128K)</b>를 기본 탑재 — Agent·RAG 응용에 즉시 활용 가능한 형태로 공개." },
+      { ico: "📜", txt: "<b>상세한 모델 카드와 학습 레시피 공개</b> — 데이터 큐레이션·평가·RLHF 절차까지 공개해 후속 연구의 기준점이 됨." }
+    ],
+    impact: "Llama 3.1·3.2·3.3은 <b>HuggingFace 다운로드 수억 회</b>를 기록하며 사실상 '오픈 LLM의 기본값'이 됐어요. DeepSeek·Qwen·Mistral 등 후속 오픈 모델이 Llama 3 학습 레시피를 적극 참고했고, 한국 기업·정부의 '소버린 AI' 정책도 Llama 3 파인튜닝에서 출발하는 경우가 많아요.",
+    why: "<b>'오픈웨이트가 프런티어급에 도달할 수 있다'</b>는 것을 증명한 결정적 모델. 폐쇄형과의 성능 격차가 좁혀지면서 AI 산업의 권력 균형이 재편됐고, 누구나 자체 LLM을 가질 수 있는 시대를 열었어요.",
+    link: "https://arxiv.org/abs/2407.21783",
+    tags: ["Llama", "OpenWeight", "Meta", "Frontier"]
+  },
+  {
+    title: "Learning to Reason with LLMs (OpenAI o1)",
+    sub: "추론 시간을 늘려서 답을 더 잘 푸는 모델",
+    field: "🧮 추론 모델",
+    emoji: "🧮",
+    year: "2024",
+    org: "OpenAI",
+    authors: "OpenAI o1 team",
+    lead: "<strong>답을 내기 전에 '오래 생각'하는 사슬추론(Chain-of-Thought)을 강화학습으로 내재화</strong>한 첫 상용 모델. AIME 수학 올림피아드 예선에서 GPT-4o 대비 정답률이 13%→83%로 폭증했고, '<b>추론 시간 스케일링</b>'이라는 새 패러다임을 열었어요.",
+    stats: [
+      { sv: "83.3%", sl: "AIME 2024 (vs GPT-4o 13%)" },
+      { sv: "89.0%", sl: "Codeforces 백분위" },
+      { sv: "78.0%", sl: "GPQA Diamond (PhD-급 QA)" }
+    ],
+    background: "GPT-4 이후 '더 크게'라는 사전학습 스케일링은 비용 대비 효율이 떨어지기 시작했어요. 한편 Chain-of-Thought 프롬프트로 추론력이 크게 오른다는 발견이 누적되며, '<b>추론할 때 더 많은 계산을 쓰면 더 잘 풀까</b>'라는 새 질문이 떠올랐죠. o1은 이를 본격적으로 학습 단계에 통합한 결과물입니다.",
+    summary: [
+      { ico: "🧠", txt: "<b>강화학습 기반 사슬추론</b> — 답이 맞을 때 보상을 주며 모델 스스로 효과적인 사고 과정을 발견하게 함. 검증·자기교정·역추적이 자연스럽게 등장." },
+      { ico: "⏱️", txt: "<b>추론 시간 스케일링 법칙</b> — 답을 내기 전 더 오래 생각할수록 정답률이 로그선형으로 올라간다는 관계를 실험적으로 입증." },
+      { ico: "🏅", txt: "<b>수학·과학·코딩에서 박사 수준</b> — AIME·GPQA·Codeforces에서 인간 전문가 평균을 넘어섬. '계산기'가 아닌 '<b>풀이 과정 자체</b>'를 평가." },
+      { ico: "🙈", txt: "<b>'생각 과정'은 비공개</b> — 사용자에게는 요약만 노출하며 안전성·경쟁우위를 모두 확보하려는 새로운 정보 비대칭 전략." }
+    ],
+    impact: "<b>OpenAI o1 → o3 → GPT-5의 직접적 계보</b>이며, 이후 DeepSeek-R1·Claude 3.7 Sonnet·Gemini 2.5 Thinking 등 모든 프런티어 추론 모델의 출발점이 됐어요. '<b>추론 시간 계산(Inference-time compute)</b>'이 사전학습만큼 중요한 자원이라는 산업 인식을 만들었어요.",
+    why: "<b>사전학습 스케일링의 한계</b>가 보이기 시작한 시점에서 새로운 성능 향상 축을 제시한 패러다임 전환점. AI 데이터센터 투자 방향(추론 워크로드 비중 급증)과 칩 설계(GPU 메모리·KV 캐시 최적화)에도 직접 영향을 줬어요.",
+    link: "https://openai.com/index/learning-to-reason-with-llms/",
+    tags: ["o1", "Reasoning", "RL", "TestTimeCompute"]
+  },
+  {
+    title: "Gemini 1.5: Unlocking Multimodal Long Context",
+    sub: "1,000만 토큰 컨텍스트 · 멀티모달 MoE",
+    field: "🔭 멀티모달 · 긴 컨텍스트",
+    emoji: "🔭",
+    year: "2024",
+    org: "Google DeepMind",
+    authors: "Gemini Team (1,000+ contributors)",
+    lead: "<strong>최대 1,000만 토큰의 초장문 컨텍스트</strong>를 안정적으로 처리하는 멀티모달 MoE 모델. 영화 한 편(45분 비디오)·코드베이스 전체·소설 수십 권을 한 번에 입력해도 정밀하게 검색·요약·추론할 수 있음을 보였어요.",
+    stats: [
+      { sv: "10M", sl: "최대 컨텍스트 토큰" },
+      { sv: "99.7%", sl: "1M 컨텍스트 needle 검색 정확도" },
+      { sv: "44분", sl: "한 번에 처리 가능한 비디오 길이" }
+    ],
+    background: "GPT-4·Claude 2의 컨텍스트는 8K~100K 수준이었고, 그 이상은 정확도가 급격히 떨어지는 'haystack' 문제가 해결되지 않은 상태였어요. 한편 RAG는 외부 인프라가 복잡하고 멀티모달 처리가 어려웠죠. '<b>그냥 모델 안에 다 넣을 수 있다면?</b>'이라는 발상에서 출발한 연구입니다.",
+    summary: [
+      { ico: "📜", txt: "<b>10M 토큰 컨텍스트</b>를 안정 처리 — Needle-in-Haystack 평가에서 99% 이상 정확도를 다양한 깊이에서 유지." },
+      { ico: "🎬", txt: "<b>비디오·오디오·이미지·코드</b>를 한 번에 처리 — 영화 한 편·콘서트 음원·전체 깃 리포지토리를 동시에 입력 가능." },
+      { ico: "🧱", txt: "<b>희소(MoE) 아키텍처</b> — 활성 파라미터만 사용해 거대한 모델을 비교적 저렴한 추론 비용으로 운영." },
+      { ico: "🗣️", txt: "<b>제로샷 신규 언어 학습</b> — 700만 명만 사용하는 칼라망(Kalamang) 언어의 문법서·사전을 입력으로 받아 번역을 수행." }
+    ],
+    impact: "Gemini 1.5는 <b>Google Workspace·Android·Search·NotebookLM</b>의 핵심 엔진이 되며 수억 사용자 일상에 진입. 이후 Anthropic Claude 3.5(200K)·OpenAI GPT-4.1(1M)도 컨텍스트 확장 경쟁에 합류하며 '<b>긴 컨텍스트 = 새로운 RAG</b>' 패러다임이 자리잡았어요.",
+    why: "<b>RAG·튜닝 없이 거대 컨텍스트로 직접 해결</b>한다는 새 가능성을 연 모델. '<b>모델이 곧 데이터베이스</b>'라는 발상은 검색·문서 처리·코드 어시스턴트 시장 구조를 바꾸기 시작했어요.",
+    link: "https://arxiv.org/abs/2403.05530",
+    tags: ["Gemini", "LongContext", "Multimodal", "MoE"]
+  },
+  {
+    title: "AlphaGeometry: Olympiad-Level Math via Neuro-Symbolic AI",
+    sub: "신경망 + 기호논리로 IMO 기하 문제를 푸는 시스템",
+    field: "📐 수학 · 신경기호",
+    emoji: "📐",
+    year: "2024",
+    org: "Google DeepMind",
+    authors: "Trinh, Wu, Le, He, Luong",
+    lead: "<strong>국제 수학 올림피아드(IMO) 기하 문제 30개 중 25개를 풀어</strong> 금메달 수상자 평균(25.9)에 도달한 시스템. <b>신경망 직관 + 기호논리 추론</b>을 결합한 신경기호 AI의 가장 인상적인 실증 사례예요.",
+    stats: [
+      { sv: "25/30", sl: "IMO 기하 문제 정답률" },
+      { sv: "25.9", sl: "금메달 수상자 평균 정답 수" },
+      { sv: "100M", sl: "합성 학습 문제 수" }
+    ],
+    background: "수학 올림피아드는 '<b>창의적 보조선 그리기</b>'처럼 사람의 직관이 필요한 영역으로, 순수 기호논리 시스템(LP·Z3 등)으로는 풀기 어려웠어요. 한편 LLM은 엄밀한 증명 단계를 검증하는 데 약했고, 학습 데이터(IMO 풀이)도 매우 적었습니다.",
+    summary: [
+      { ico: "🤝", txt: "<b>신경망 + 기호 엔진의 협업</b> — LLM은 새 보조선·점·각도를 제안, 기호 엔진은 그것이 풀이로 이어지는지 엄밀히 검증." },
+      { ico: "🧪", txt: "<b>합성 데이터 1억 건 생성</b> — 사람 풀이가 부족해 무작위 도형에서 자동으로 정리·증명을 생성, 그 위에서 신경망을 학습." },
+      { ico: "🧭", txt: "<b>'시도-검증' 루프</b>로 정답 보장 — 잘못된 추측은 즉시 거부되므로 LLM 환각 문제를 회피하면서 창의적 탐색은 유지." },
+      { ico: "🥇", txt: "<b>금메달급 성능</b> — 2024년 IMO 6문제 중 4문제 풀이를 보인 AlphaGeometry 2·AlphaProof로 확장됨." }
+    ],
+    impact: "AI가 <b>형식적 증명</b>이 필요한 영역(수학·검증·법적 추론·약물 설계)에서도 인간 전문가급에 도달할 수 있음을 보인 분기점. <b>Lean·Coq</b>를 활용한 자동 정리 증명 연구가 활성화됐고, 'LLM + 검증기' 패턴이 코딩 에이전트·SQL 합성·과학 발견 시스템에 광범위하게 도입됐어요.",
+    why: "<b>LLM의 환각 문제를 검증기로 보완</b>하면 어떤 능력까지 갈 수 있는지를 가장 인상적으로 보여준 작품. AGI 논쟁에서 '<b>창의성도 학습 가능한가</b>'라는 질문을 다시 점화시킨 연구이기도 해요.",
+    link: "https://www.nature.com/articles/s41586-023-06747-5",
+    tags: ["AlphaGeometry", "Math", "NeuroSymbolic", "DeepMind"]
+  },
+  {
+    title: "Generative Agents: Interactive Simulacra of Human Behavior",
+    sub: "25명의 AI 캐릭터가 자율적으로 살아가는 마을",
+    field: "🎭 멀티에이전트",
+    emoji: "🎭",
+    year: "2023",
+    org: "Stanford · Google Research",
+    authors: "Park, O'Brien, Cai, Morris, Liang, Bernstein",
+    lead: "<strong>LLM 기반 AI 25명이 마을(Smallville)에서 스스로 일정·관계·기억을 형성하며 살아가는</strong> 시뮬레이션. '<b>기억·반추·계획</b>' 3단 구조만으로 발렌타인 파티가 자발적으로 열리는 등 창발적 사회 행동이 관찰됐어요.",
+    stats: [
+      { sv: "25명", sl: "독립적으로 행동하는 에이전트 수" },
+      { sv: "2일", sl: "시뮬레이션 게임 시간" },
+      { sv: "Top", sl: "인간 평가에서 진짜 사람 답변보다 더 '믿을 만함'" }
+    ],
+    background: "LLM은 한 번의 대화는 잘 하지만 <b>일관된 인격·장기 기억·자발적 행동</b>은 어려웠어요. 게임·시뮬레이션·NPC 분야에서 '<b>사람처럼 행동하는 AI 캐릭터</b>'에 대한 수요가 컸지만, 단순한 상태 기계로는 깊이가 부족했죠. LLM을 행위 주체로 어떻게 운용할지에 대한 청사진이 필요했습니다.",
+    summary: [
+      { ico: "📔", txt: "<b>Memory Stream</b> — 모든 관찰·대화·행동을 자연어로 누적 저장. 관련성·최근성·중요도 점수로 검색해 행동에 반영." },
+      { ico: "🪞", txt: "<b>Reflection</b> — 일정 시간마다 LLM이 자신의 기억을 요약·추상화해 '<b>나는 외향적이다</b>' 같은 메타기억을 생성." },
+      { ico: "🗓️", txt: "<b>Planning</b> — 하루 단위로 일정을 생성, 상황 변화에 따라 동적으로 재계획. 우연한 만남이 약속·이벤트로 발전." },
+      { ico: "💑", txt: "<b>창발적 사회 행동</b> — 한 캐릭터의 '<b>파티 열고 싶다</b>'는 의도가 입소문·초대장·실제 모임으로 자발적으로 확산." }
+    ],
+    impact: "<b>Voyager·AutoGPT·BabyAGI·Devin</b> 등 후속 자율 에이전트 연구의 직접적 청사진. 게임 NPC(<b>Inworld·Convai</b>)·교육·심리실험·도시 시뮬레이션 분야에 LLM 에이전트 붐을 일으켰고, 'LLM = 도구'에서 '<b>LLM = 행위자</b>'라는 인식 전환을 만들었어요.",
+    why: "<b>LLM이 단일 응답 생성기를 넘어 사회적 주체가 될 수 있다</b>는 가능성을 가장 생생하게 보여준 연구. 2024~2025년 'Agent의 해'라 불리는 흐름의 출발점에 해당해요.",
+    link: "https://arxiv.org/abs/2304.03442",
+    tags: ["Agents", "LLM", "Simulation", "Stanford"]
   }
 ];
 
