@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="오늘의 연구사례 — AI·머신러닝 분야의 주요 논문 30편을 매일 한 편씩, 제목·요약·원문 링크를 한 페이지에.">
+<meta name="description" content="오늘의 연구사례 — AI·머신러닝 분야의 주요 논문 30편을 매일 한 편씩, 배경·핵심 아이디어·영향력·원문 링크를 한 페이지에.">
 <meta name="theme-color" content="#eef4ff">
 <title>오늘의 연구사례 · U-SOL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,6 +18,8 @@
     --ink2: #2e3a55;
     --blue: #3a6df0; --blue-soft: #e2ecff;
     --leaf: #4aa376; --leaf-soft: #d8efe1;
+    --plum: #8b5cf6; --plum-soft: #ede4fd;
+    --amber: #d97706; --amber-soft: #fef3c7;
     --shadow: 0 1px 2px rgba(26,25,22,0.025), 0 4px 12px rgba(26,25,22,0.06);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -61,7 +63,7 @@
   h1 .accent { color: var(--blue); }
   .lede {
     text-align: center; color: var(--muted); font-size: 14px;
-    max-width: 520px; margin: 12px auto 22px; line-height: 1.75;
+    max-width: 540px; margin: 12px auto 22px; line-height: 1.75;
     word-break: keep-all;
   }
   .date-strip {
@@ -125,6 +127,12 @@
     font-weight: 500; letter-spacing: .02em;
     word-break: keep-all;
   }
+  .paper-authors {
+    position: relative; z-index: 1;
+    font-size: 12px; opacity: 0.86; margin-top: 4px;
+    font-style: italic; font-family: 'Fraunces', serif;
+    word-break: keep-all;
+  }
   .paper-meta {
     position: relative; z-index: 1;
     display: flex; gap: 8px; flex-wrap: wrap;
@@ -144,14 +152,34 @@
     filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
   }
 
-  .hero-body { padding: 22px 24px 24px; }
+  .hero-body { padding: 22px 24px 26px; }
   .lead {
-    font-size: 15.5px; line-height: 1.8; word-break: keep-all;
+    font-size: 15.5px; line-height: 1.85; word-break: keep-all;
     color: var(--ink); margin-bottom: 18px;
   }
   .lead strong { color: var(--blue); font-weight: 700; }
 
-  .section { margin-top: 18px; }
+  /* stats row */
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 8px; margin: 6px 0 18px;
+  }
+  .stat-box {
+    background: linear-gradient(135deg, #fafbff 0%, #eef3ff 100%);
+    border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px 12px; text-align: left;
+  }
+  .stat-box .sv {
+    font-family: 'Fraunces', serif; font-weight: 800;
+    font-size: 18px; line-height: 1.15; color: var(--blue);
+    letter-spacing: -0.01em;
+  }
+  .stat-box .sl {
+    font-size: 11px; color: var(--muted); margin-top: 2px;
+    line-height: 1.35; word-break: keep-all;
+  }
+
+  .section { margin-top: 20px; }
   .section-label {
     display: inline-flex; align-items: center; gap: 6px;
     font-family: 'Fraunces', serif; font-weight: 700; font-style: italic;
@@ -160,7 +188,19 @@
   }
   .section-label.accent { color: var(--accent); }
   .section-label.leaf { color: var(--leaf); }
+  .section-label.plum { color: var(--plum); }
+  .section-label.amber { color: var(--amber); }
   .section-label .bar { width: 18px; height: 2px; background: currentColor; border-radius: 2px; opacity: .55; }
+
+  .bg-box {
+    background: linear-gradient(180deg, #fff8f1 0%, #fff1e6 100%);
+    border-left: 3px solid var(--amber);
+    border-radius: 8px;
+    padding: 13px 16px;
+    font-size: 14.5px; line-height: 1.8; word-break: keep-all;
+    color: #4a3a20;
+  }
+  .bg-box b { color: var(--amber); font-weight: 700; }
 
   .points {
     display: flex; flex-direction: column; gap: 10px;
@@ -172,6 +212,7 @@
   }
   .point.accent { background: var(--accent-soft); }
   .point.leaf { background: var(--leaf-soft); }
+  .point.plum { background: var(--plum-soft); }
   .point .ico {
     flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
     background: #fff; display: flex; align-items: center; justify-content: center;
@@ -186,9 +227,19 @@
     border-left: 3px solid var(--leaf);
     border-radius: 8px;
     padding: 14px 16px;
-    font-size: 14.5px; line-height: 1.8; word-break: keep-all;
+    font-size: 14.5px; line-height: 1.85; word-break: keep-all;
   }
   .why b { color: var(--leaf); font-weight: 700; }
+
+  .impact-box {
+    background: linear-gradient(180deg, #faf6ff 0%, #f0e9ff 100%);
+    border-left: 3px solid var(--plum);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 14.5px; line-height: 1.85; word-break: keep-all;
+    color: #3d2c5f;
+  }
+  .impact-box b { color: var(--plum); font-weight: 700; }
 
   /* link card */
   .link-card {
@@ -284,7 +335,7 @@
   <div class="title-row">
     <h1>오늘의 <span class="accent">연구사례</span></h1>
   </div>
-  <p class="lede">AI·머신러닝의 흐름을 바꾼 주요 논문 30편을 매일 하나씩. 제목 · 요약 · 원문 링크 순서로.</p>
+  <p class="lede">AI·머신러닝의 흐름을 바꾼 주요 논문 30편을 매일 하나씩. 배경 · 핵심 아이디어 · 영향력 · 원문까지 한 페이지에 깊이 있게.</p>
 
   <div class="date-strip">
     <span class="chip"><span class="dot-accent"></span><span class="k">오늘</span><span class="v" id="todayDate">—</span></span>
@@ -298,6 +349,7 @@
       <div class="paper-emoji" id="paperEmoji">📄</div>
       <h2 class="paper-name" id="paperTitle">연구를 불러오는 중…</h2>
       <div class="paper-sub" id="paperSub">—</div>
+      <div class="paper-authors" id="paperAuthors">—</div>
       <div class="paper-meta">
         <span class="mchip" id="paperYear">—</span>
         <span class="mchip" id="paperOrg">—</span>
@@ -307,9 +359,21 @@
     <div class="hero-body">
       <p class="lead" id="paperLead">잠시만 기다려주세요.</p>
 
+      <div class="stats" id="statsRow"></div>
+
       <div class="section">
-        <div class="section-label"><span class="bar"></span>요약</div>
+        <div class="section-label amber"><span class="bar"></span>시대적 배경</div>
+        <p class="bg-box" id="bgText">—</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label"><span class="bar"></span>핵심 아이디어</div>
         <div class="points" id="pointsList"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label plum"><span class="bar"></span>이후의 영향력</div>
+        <p class="impact-box" id="impactText">—</p>
       </div>
 
       <div class="section">
@@ -352,14 +416,23 @@ const RESEARCH = [
     field: "🤖 자연어처리 · 아키텍처",
     emoji: "🧠",
     year: "2017",
-    org: "Google Brain",
-    lead: "<strong>RNN·CNN 없이 어텐션만으로</strong> 시퀀스 모델을 구성한 트랜스포머 구조를 제안. 현재 GPT·BERT·Llama의 토대가 된 논문이에요.",
-    summary: [
-      { ico: "📐", txt: "<b>Self-Attention</b> — 입력 시퀀스 안의 모든 토큰 쌍의 관계를 한 번에 계산." },
-      { ico: "⚡", txt: "<b>병렬 학습</b> 가능 — RNN의 순차 처리 한계를 깨고 GPU에서 대규모 학습 가능." },
-      { ico: "🏆", txt: "WMT 영-독 번역에서 <b>28.4 BLEU</b>로 당시 SOTA 갱신." }
+    org: "Google Brain · Google Research",
+    authors: "Vaswani, Shazeer, Parmar 외 8인",
+    lead: "<strong>RNN·CNN을 완전히 버리고 어텐션만으로</strong> 시퀀스 모델을 구성한 트랜스포머 구조를 제안한 논문. 이 한 편이 오늘날 GPT·BERT·Llama·Claude를 비롯한 거의 모든 거대언어모델의 토대가 되었어요.",
+    stats: [
+      { sv: "150,000+", sl: "인용 횟수 (2025년 기준)" },
+      { sv: "28.4 BLEU", sl: "WMT 영-독 번역 SOTA" },
+      { sv: "3.5일", sl: "8 GPU 학습 시간" }
     ],
-    why: "<b>오늘날 모든 거대언어모델의 출발점</b>. 이 논문 이전과 이후로 NLP의 시대가 갈립니다.",
+    background: "2017년 당시 NLP는 LSTM·GRU 같은 <b>순환신경망(RNN)</b>이 지배했지만 순차 처리로 인해 학습이 느리고 긴 문장의 의존관계를 잡기 어려웠어요. CNN 기반 시도도 있었지만 거리가 먼 단어 사이 관계를 포착하는 데 한계가 있었습니다.",
+    summary: [
+      { ico: "📐", txt: "<b>Self-Attention</b> — 입력 시퀀스 안의 모든 토큰 쌍의 관계를 한 번의 행렬 곱으로 계산. 거리에 무관하게 의미적 연결을 잡아요." },
+      { ico: "⚡", txt: "<b>완전 병렬 학습</b> — RNN의 순차 처리 한계를 깨고 GPU·TPU에서 대규모 병렬 학습이 가능해진 결정적 변화." },
+      { ico: "🎭", txt: "<b>Multi-Head Attention</b> — 여러 어텐션 헤드가 각기 다른 관계(문법·의미·위치)를 동시에 포착." },
+      { ico: "🏆", txt: "WMT 영-독 번역에서 <b>28.4 BLEU</b>로 SOTA 갱신, 학습 시간은 기존 모델 대비 <b>1/100 수준</b>으로 단축." }
+    ],
+    impact: "이 논문 직후 <b>BERT(2018)·GPT(2018)·GPT-2·3·4·Llama·Claude·Gemini</b>까지 거의 모든 거대언어모델이 트랜스포머 변형. 비전 분야(ViT)·음성(Whisper)·단백질(AlphaFold)·이미지 생성(DiT)까지 영역을 넘나들며 사실상 <b>'AI의 표준 아키텍처'</b>가 됐어요.",
+    why: "<b>오늘날 모든 거대언어모델의 출발점</b>. NLP 학계에서는 이 논문 이전과 이후로 시대가 갈린다고 표현할 정도로, 단일 논문이 한 분야 전체를 재편한 드문 사례. <b>현대 AI의 빅뱅</b>에 해당해요.",
     link: "https://arxiv.org/abs/1706.03762",
     tags: ["Transformer", "NLP", "DeepLearning", "Classic"]
   },
@@ -370,13 +443,22 @@ const RESEARCH = [
     emoji: "🤖",
     year: "2020",
     org: "OpenAI",
-    lead: "<strong>1,750억 파라미터 모델</strong>이 별도 파인튜닝 없이 예시 몇 개만 보고도 새 작업을 수행할 수 있음을 보였어요.",
-    summary: [
-      { ico: "📊", txt: "<b>인컨텍스트 러닝</b> — 프롬프트에 예시를 넣으면 가중치 업데이트 없이 작업 수행." },
-      { ico: "📈", txt: "<b>모델 크기 ↑ → 능력 ↑</b>의 스케일링 법칙을 광범위한 벤치마크로 입증." },
-      { ico: "🌍", txt: "<b>번역·QA·산수·코드 생성</b>까지 한 모델로 — 범용 AI 가능성의 첫 신호." }
+    authors: "Brown, Mann, Ryder 외 31인",
+    lead: "<strong>1,750억 파라미터의 거대 모델</strong>이 별도의 파인튜닝 없이 프롬프트의 예시 몇 개만 보고도 새 작업을 수행할 수 있음을 광범위한 벤치마크로 입증. '모델 크기'가 곧 능력이라는 새 시대를 연 논문이에요.",
+    stats: [
+      { sv: "175B", sl: "총 파라미터 수" },
+      { sv: "$4.6M", sl: "추정 1회 학습 비용" },
+      { sv: "300B", sl: "학습 토큰 수" }
     ],
-    why: "<b>'더 큰 모델이 더 똑똑하다'</b>는 명제를 산업 전반에 자리잡게 한 논문. ChatGPT 시대의 직접적 도화선.",
+    background: "2020년 이전까지는 각 작업마다 라벨 데이터로 파인튜닝하는 게 표준이었어요. GPT-2(1.5B)가 비지도 학습만으로도 가능성을 보였지만, 실용성은 아직 부족했습니다. <b>'모델을 100배 키우면 어떻게 될까?'</b>라는 단순한 질문에서 출발한 연구였어요.",
+    summary: [
+      { ico: "📊", txt: "<b>인컨텍스트 러닝(ICL)</b> — 프롬프트에 예시 1~32개를 넣으면 가중치 업데이트 없이도 새 작업을 수행. 학습이 아니라 '추론 시 패턴 매칭'이에요." },
+      { ico: "📈", txt: "<b>스케일링 법칙의 강력한 검증</b> — 125M·1.3B·13B·175B 등 8개 크기에서 일관되게 성능이 멱법칙으로 향상됨을 실험으로 입증." },
+      { ico: "🌍", txt: "<b>번역·QA·산수·코드 생성</b>까지 한 모델로 — 작업별 모델이 아닌 '범용 AI'의 가능성을 처음으로 진지하게 제시." },
+      { ico: "🚨", txt: "<b>편향·환각·악용 위험성</b>도 솔직하게 다룬 'Broader Impacts' 섹션으로 AI 안전 연구의 출발점이 되기도 함." }
+    ],
+    impact: "GPT-3는 <b>OpenAI API와 GitHub Copilot의 기반</b>이 됐고, 후에 InstructGPT → ChatGPT(2022)로 진화. 산업 전반에 <b>'더 크게, 더 많은 데이터로'</b>라는 패러다임을 자리잡게 했으며, 구글 PaLM·Meta Llama·Anthropic Claude의 연구 동기를 직접적으로 자극했어요.",
+    why: "<b>'더 큰 모델이 더 똑똑하다'</b>는 명제를 산업 전반에 자리잡게 한 논문. ChatGPT 시대의 직접적 도화선이자, 'AGI는 멀지 않을 수 있다'는 분위기를 만든 출발점이에요.",
     link: "https://arxiv.org/abs/2005.14165",
     tags: ["GPT", "LLM", "Scaling", "FewShot"]
   },
@@ -386,14 +468,23 @@ const RESEARCH = [
     field: "🤖 자연어처리",
     emoji: "📖",
     year: "2018",
-    org: "Google AI",
-    lead: "<strong>양쪽 문맥을 동시에 보는 마스크드 LM</strong>으로 사전학습한 뒤 파인튜닝하는 패러다임을 정착시켰어요.",
-    summary: [
-      { ico: "🔍", txt: "<b>Masked Language Model</b> — 문장의 일부를 가리고 맞히는 방식으로 양방향 표현 학습." },
-      { ico: "🎯", txt: "<b>GLUE 벤치마크 11개 작업</b>에서 SOTA — NLP 파인튜닝의 표준이 됨." },
-      { ico: "🧩", txt: "<b>Next Sentence Prediction</b>으로 문장 간 관계까지 학습." }
+    org: "Google AI Language",
+    authors: "Devlin, Chang, Lee, Toutanova",
+    lead: "<strong>양쪽 문맥을 동시에 보는 마스크드 LM</strong>으로 사전학습한 뒤 작업별로 파인튜닝하는 패러다임을 정착시킨 논문. 검색·분류·QA 등 모든 NLP 응용의 표준 워크플로가 됐어요.",
+    stats: [
+      { sv: "11개", sl: "GLUE 작업에서 SOTA" },
+      { sv: "340M", sl: "BERT-large 파라미터" },
+      { sv: "100+", sl: "BERT 파생 모델 종류" }
     ],
-    why: "<b>'사전학습 → 파인튜닝' 워크플로</b>를 산업 표준으로 만든 논문. 검색·분류·개체명인식 전반에 영향.",
+    background: "2018년 당시 ELMo·GPT-1 등 사전학습 모델이 등장했지만 대부분 <b>단방향</b>이었어요. 즉, 왼쪽 문맥만 보고 다음 단어를 예측하는 방식이었죠. 문장 의미를 완전히 이해하려면 양쪽 문맥이 모두 필요하다는 직관이 BERT의 출발점이었습니다.",
+    summary: [
+      { ico: "🔍", txt: "<b>Masked Language Model (MLM)</b> — 문장의 15% 토큰을 가리고 맞히는 방식으로 양방향 표현 학습. 좌우 문맥을 동시에 활용해요." },
+      { ico: "🧩", txt: "<b>Next Sentence Prediction (NSP)</b> — 두 문장이 연속된 문장인지 예측하게 해 문장 간 관계까지 학습." },
+      { ico: "🎯", txt: "<b>GLUE 벤치마크 11개 작업 SOTA</b> — 감정 분류·문장 유사도·QA·자연어 추론 등에서 단일 모델로 모두 1위." },
+      { ico: "🔄", txt: "<b>사전학습 → 파인튜닝</b>이라는 두 단계 파이프라인을 표준화 — 산업 NLP의 사실상 워크플로가 됨." }
+    ],
+    impact: "Google 검색 엔진에 BERT가 도입되며 <b>검색 품질이 크게 개선</b>되었고, RoBERTa·ALBERT·DistilBERT·KoBERT 등 수많은 파생 모델을 낳았어요. 지금도 <b>임베딩 모델·문서 분류·개체명 인식</b>의 실무 표준은 BERT 계열이에요.",
+    why: "<b>'사전학습 → 파인튜닝' 워크플로</b>를 산업 표준으로 만든 논문. 학계와 산업을 동시에 변화시킨 NLP의 결정적 변곡점이며, 한국 자연어처리 학계도 KoBERT를 기점으로 본격적인 도약을 시작했어요.",
     link: "https://arxiv.org/abs/1810.04805",
     tags: ["BERT", "NLP", "PreTraining", "Google"]
   },
@@ -403,14 +494,23 @@ const RESEARCH = [
     field: "💭 추론 · 프롬프팅",
     emoji: "💭",
     year: "2022",
-    org: "Google Brain",
-    lead: "<strong>'단계별로 생각해보자(Let's think step by step)'</strong> 한 줄을 프롬프트에 넣자 수학·논리 문제 정답률이 폭발적으로 올랐어요.",
-    summary: [
-      { ico: "🧮", txt: "<b>GSM8K 산수 문제</b>에서 PaLM-540B 기준 18% → 57%로 점프." },
-      { ico: "📝", txt: "<b>중간 추론 단계</b>를 명시적으로 생성하게 하는 단순한 프롬프트 기법." },
-      { ico: "📐", txt: "모델 크기가 클수록 효과가 커지는 <b>이머전트 능력</b>의 대표 사례." }
+    org: "Google Brain (Wei et al.)",
+    authors: "Wei, Wang, Schuurmans 외 6인",
+    lead: "<strong>'단계별로 생각해보자(Let's think step by step)'</strong> 한 줄을 프롬프트에 넣자 수학·논리 문제 정답률이 폭발적으로 올랐어요. 모델의 '잠재된 추론력'을 끌어내는 단순하지만 강력한 트릭을 발견한 논문.",
+    stats: [
+      { sv: "18% → 57%", sl: "GSM8K 산수 정답률" },
+      { sv: "540B", sl: "효과가 극대화된 모델 크기" },
+      { sv: "0개", sl: "추가 학습·데이터 필요량" }
     ],
-    why: "<b>프롬프트 엔지니어링의 시대를 연 논문</b>. ReAct·Tree-of-Thoughts 등 모든 추론 기법의 뿌리.",
+    background: "2021~22년까지 LLM은 한 번에 답을 내뱉는 방식이었고, 다단계 추론이 필요한 수학·논리 문제에서 정답률이 매우 낮았어요. 모델이 '생각'하는 과정을 명시적으로 출력하게 하면 어떨까 하는 단순한 가설에서 시작된 실험이에요.",
+    summary: [
+      { ico: "🧮", txt: "<b>GSM8K 산수 문제</b>에서 PaLM-540B 기준 18% → 57%로 점프 — 같은 모델에 프롬프트만 바꿔서 얻은 폭발적 향상." },
+      { ico: "📝", txt: "<b>Few-shot CoT</b> — 예시 답안에 '풀이 과정'을 같이 보여주면 모델도 풀이를 생성하며 답함." },
+      { ico: "🪄", txt: "<b>Zero-shot CoT</b> (Kojima 2022) — 예시 없이 '단계별로 생각해보자' 한 줄만 추가해도 효과. 후속 논문에서 발견." },
+      { ico: "📐", txt: "모델 크기가 클수록 효과가 극적인 <b>이머전트 능력(emergent ability)</b>의 대표 사례 — 100B 미만에서는 효과가 미미." }
+    ],
+    impact: "이 논문 이후 <b>ReAct·Tree-of-Thoughts·Self-Consistency·Reflexion</b> 등 수많은 프롬프팅 기법이 줄지어 등장. <b>OpenAI o1·DeepSeek R1</b> 같은 '추론 모델'도 본질적으로는 CoT를 학습 단계에 내재화한 것이며, 프롬프트 엔지니어링이라는 새 직군까지 탄생시켰어요.",
+    why: "<b>프롬프트 엔지니어링 시대를 연 결정적 논문</b>. 모델을 더 크게 만들지 않고도 능력을 끌어낼 수 있다는 점에서 추론 시점(inference-time)의 가능성을 제시했고, 현대 추론 모델의 사상적 뿌리가 됐어요.",
     link: "https://arxiv.org/abs/2201.11903",
     tags: ["CoT", "Reasoning", "Prompting", "LLM"]
   },
@@ -420,14 +520,23 @@ const RESEARCH = [
     field: "🔍 검색 증강 생성",
     emoji: "📚",
     year: "2020",
-    org: "Meta AI (FAIR)",
-    lead: "<strong>외부 지식 베이스에서 관련 문서를 검색해 근거로 활용</strong>하는 RAG 구조를 제안. LLM 환각 문제의 표준 해법으로 자리잡았어요.",
-    summary: [
-      { ico: "🗄️", txt: "<b>Dense Retriever + Seq2Seq Generator</b>를 종단간(end-to-end) 학습." },
-      { ico: "📊", txt: "<b>오픈도메인 QA 4개 데이터셋</b>에서 SOTA, 사실 기반 응답 품질 향상." },
-      { ico: "🔄", txt: "<b>지식 업데이트가 쉬움</b> — 모델 재학습 없이 인덱스만 갱신." }
+    org: "Meta AI (FAIR) · UCL",
+    authors: "Lewis, Perez, Piktus 외 6인",
+    lead: "<strong>외부 지식 베이스에서 관련 문서를 검색해 근거로 활용</strong>하는 RAG 구조를 제안. 모델의 파라미터에 모든 지식을 욱여넣는 대신 '검색 + 생성'으로 분리해 LLM의 환각 문제에 대한 표준 해법을 제시했어요.",
+    stats: [
+      { sv: "21M", sl: "Wikipedia 문서 인덱스" },
+      { sv: "4개", sl: "오픈QA SOTA 데이터셋" },
+      { sv: "0회", sl: "지식 갱신 시 재학습" }
     ],
-    why: "<b>기업용 LLM 도입의 사실상 표준 아키텍처</b>. 사내 문서 챗봇·고객지원·검색 강화의 토대.",
+    background: "거대 모델은 학습 시점의 지식이 그대로 굳어버리고, 사실관계를 그럴듯하게 지어내는 <b>환각(hallucination)</b> 문제가 심각했어요. 모델 자체를 더 키워도 한계가 있었고, 학습 후 새 지식을 반영하기도 어려웠습니다. 이 두 문제를 동시에 풀려는 시도였어요.",
+    summary: [
+      { ico: "🗄️", txt: "<b>Dense Retriever + Seq2Seq Generator</b>를 종단간(end-to-end) 학습해 검색과 생성을 함께 최적화." },
+      { ico: "📊", txt: "<b>오픈도메인 QA 4개 데이터셋</b>(NQ·TriviaQA·WebQ·CuratedTrec)에서 SOTA — 사실 기반 응답 품질 크게 향상." },
+      { ico: "🔄", txt: "<b>지식 업데이트가 쉬움</b> — 모델 재학습 없이 인덱스만 갱신하면 새 정보 반영 가능." },
+      { ico: "🎯", txt: "<b>RAG-Sequence vs RAG-Token</b> — 문서별 마지널라이즈 방식 두 가지를 제안해 응용에 맞춰 선택 가능." }
+    ],
+    impact: "<b>기업용 LLM 도입의 사실상 표준 아키텍처</b>로 자리잡음. LangChain·LlamaIndex·Pinecone·Weaviate 등 RAG 인프라 생태계가 폭발적으로 성장했고, <b>ChatGPT 검색·Claude Projects·Perplexity·Notion AI</b> 모두 RAG 변형. 사내 문서 챗봇·고객지원 자동화의 기반.",
+    why: "<b>LLM을 '지식 베이스'가 아닌 '추론 엔진'으로 보는 관점의 전환</b>. 환각 문제의 가장 실용적 해법이자, 기업이 자체 데이터를 LLM에 안전하게 결합할 수 있는 길을 열었어요.",
     link: "https://arxiv.org/abs/2005.11401",
     tags: ["RAG", "Retrieval", "Hallucination", "Meta"]
   },
@@ -437,14 +546,23 @@ const RESEARCH = [
     field: "🛠️ 파인튜닝 · 효율",
     emoji: "🪡",
     year: "2021",
-    org: "Microsoft",
-    lead: "<strong>전체 가중치 고정, 작은 저랭크 행렬만 추가 학습</strong>해도 성능이 거의 그대로. 파인튜닝 비용을 1만 분의 1까지 줄였어요.",
-    summary: [
-      { ico: "🧩", txt: "<b>ΔW = BA</b> (저랭크 분해) — A·B만 학습, 학습 파라미터 99.9% 감소." },
-      { ico: "💾", txt: "<b>VRAM 사용량 3배 감소</b>, 어댑터 파일 수십 MB로 배포 가능." },
-      { ico: "🎯", txt: "GPT-3 175B 풀 파인튜닝과 <b>거의 동등한 성능</b>을 단 0.01% 파라미터로." }
+    org: "Microsoft Research",
+    authors: "Hu, Shen, Wallis 외 4인",
+    lead: "<strong>전체 가중치는 고정하고 작은 저랭크 행렬만 추가 학습</strong>해도 성능이 거의 그대로. 파인튜닝 비용과 메모리를 1만 분의 1까지 줄이며 개인 GPU에서도 LLM을 다듬을 수 있게 만든 결정적 기법이에요.",
+    stats: [
+      { sv: "0.01%", sl: "학습 파라미터 비율" },
+      { sv: "3배 ↓", sl: "GPU 메모리 사용량" },
+      { sv: "수십 MB", sl: "LoRA 어댑터 파일 크기" }
     ],
-    why: "<b>개인 GPU에서도 LLM 파인튜닝이 가능해진 결정적 계기</b>. Stable Diffusion LoRA, Llama QLoRA 등 모든 효율 학습의 시작.",
+    background: "GPT-3 같은 175B 모델을 파인튜닝하려면 <b>수백 대의 A100 GPU</b>가 필요했어요. 일반 연구실·기업은 손도 못 댔고, 특정 작업마다 모델 전체 복사본을 저장해야 해서 비효율의 끝판왕이었습니다. '꼭 전부 학습해야만 할까?'에 대한 의문에서 출발.",
+    summary: [
+      { ico: "🧩", txt: "<b>ΔW = BA</b> (저랭크 분해) — 원본 가중치는 동결하고 작은 두 행렬 A·B만 학습. 학습 파라미터 99.9% 감소." },
+      { ico: "💾", txt: "<b>VRAM 사용량 3배 감소</b>, 어댑터 파일 수십 MB로 배포 가능 — 작업마다 모델 복사본을 만들 필요 없음." },
+      { ico: "🎯", txt: "GPT-3 175B 풀 파인튜닝과 <b>거의 동등하거나 더 나은 성능</b>을 단 0.01% 파라미터로 달성." },
+      { ico: "🔌", txt: "<b>추론 시간 추가 비용 없음</b> — 학습 후 BA를 W에 합쳐버리면 원본과 동일한 속도로 동작." }
+    ],
+    impact: "<b>QLoRA</b>(4-bit + LoRA)로 발전해 24GB 소비자용 GPU에서도 65B 모델 파인튜닝 가능. <b>Stable Diffusion LoRA</b>는 캐릭터·화풍 미세조정의 표준이 됐고, Hugging Face PEFT 라이브러리·Civitai 생태계의 핵심. 사실상 모든 오픈소스 LLM 파인튜닝의 기본 도구.",
+    why: "<b>개인 GPU에서도 LLM 파인튜닝이 가능해진 결정적 계기</b>. AI의 '대중화'를 기술적으로 가능하게 한 논문 중 하나로, 학계·인디 개발자·중소기업이 LLM 시대에 진입할 수 있게 해줬어요.",
     link: "https://arxiv.org/abs/2106.09685",
     tags: ["LoRA", "FineTuning", "Efficient", "PEFT"]
   },
@@ -455,13 +573,22 @@ const RESEARCH = [
     emoji: "🌫️",
     year: "2020",
     org: "UC Berkeley",
-    lead: "<strong>순수한 노이즈에서 점진적으로 디노이징</strong>해 이미지를 생성하는 디퓨전 모델을 정착시켰어요. Stable Diffusion·DALL·E의 원형.",
-    summary: [
-      { ico: "🌀", txt: "<b>Forward Process</b>: 이미지에 점진적으로 가우시안 노이즈 추가." },
-      { ico: "🔄", txt: "<b>Reverse Process</b>: 신경망이 노이즈를 한 단계씩 제거하며 복원." },
-      { ico: "🏆", txt: "<b>CIFAR-10에서 SOTA 9.46 IS</b>, GAN을 능가하는 안정적인 학습." }
+    authors: "Ho, Jain, Abbeel",
+    lead: "<strong>순수한 노이즈에서 점진적으로 디노이징</strong>해 이미지를 생성하는 디퓨전 모델을 실제로 작동하게 만든 결정적 논문. 2015년에 제안됐지만 묻혀 있던 아이디어를 살려, Stable Diffusion·DALL·E·Midjourney의 원형이 됐어요.",
+    stats: [
+      { sv: "9.46 IS", sl: "CIFAR-10 SOTA (GAN 능가)" },
+      { sv: "1000+", sl: "디노이징 스텝 수" },
+      { sv: "256×256", sl: "안정적 고해상도 생성" }
     ],
-    why: "<b>현재 모든 이미지·영상 생성 AI의 알고리즘적 뿌리</b>. Midjourney·Sora·Stable Diffusion이 모두 이 구조에서 출발.",
+    background: "2014~2020년 이미지 생성은 <b>GAN(생성적 적대 신경망)</b>이 지배했지만 학습이 불안정하고 모드 붕괴 같은 고질병이 있었어요. 디퓨전 모델은 2015년 Sohl-Dickstein 논문에서 제안됐지만 사실상 잊혔다가, Ho et al.이 안정적으로 작동하게 만들면서 부활했습니다.",
+    summary: [
+      { ico: "🌀", txt: "<b>Forward Process</b>: 깨끗한 이미지에 1000여 단계에 걸쳐 점진적으로 가우시안 노이즈를 추가." },
+      { ico: "🔄", txt: "<b>Reverse Process</b>: 신경망이 노이즈를 한 단계씩 제거하며 이미지를 복원 — 학습 목표가 매우 안정적." },
+      { ico: "🏆", txt: "<b>CIFAR-10에서 9.46 IS</b>로 GAN을 능가하는 SOTA, 256×256 해상도 LSUN에서도 우수한 품질." },
+      { ico: "🧮", txt: "<b>U-Net 기반 디노이저</b>를 단순 MSE 손실로 학습 — GAN의 불안정한 적대 학습을 안정적인 회귀로 대체." }
+    ],
+    impact: "이후 <b>Latent Diffusion(Stable Diffusion)·Imagen·DALL·E 2·Midjourney·Sora</b>까지 모든 주요 이미지·영상 생성 AI가 디퓨전 기반. 단백질 구조(RFdiffusion), 분자 설계, 로봇 정책 생성에도 확장. 생성 AI의 <b>'GAN 시대 → 디퓨전 시대'</b> 전환점.",
+    why: "<b>현재 모든 이미지·영상 생성 AI의 알고리즘적 뿌리</b>. 학습 안정성·품질·다양성에서 GAN의 한계를 뛰어넘으며, 텍스트→이미지 폭발의 기술적 토대를 마련한 결정적 논문.",
     link: "https://arxiv.org/abs/2006.11239",
     tags: ["Diffusion", "Generative", "ImageGen", "DDPM"]
   },
@@ -472,13 +599,22 @@ const RESEARCH = [
     emoji: "🔗",
     year: "2021",
     org: "OpenAI",
-    lead: "<strong>4억 쌍의 이미지-텍스트 데이터로 대조 학습</strong>해 이미지와 문장을 같은 임베딩 공간에 매핑. 텍스트로 이미지를 검색·분류할 수 있게 됐어요.",
-    summary: [
-      { ico: "🎯", txt: "<b>Zero-shot 이미지 분류</b> — ImageNet에서 ResNet-50과 동등한 정확도." },
-      { ico: "🔍", txt: "<b>텍스트로 이미지 검색</b>, 이미지로 텍스트 찾기 양방향 가능." },
-      { ico: "🧬", txt: "Stable Diffusion·DALL·E의 <b>텍스트 인코더로 채택</b>되어 산업 전반 확산." }
+    authors: "Radford, Kim, Hallacy 외 9인",
+    lead: "<strong>4억 쌍의 이미지-텍스트 데이터로 대조 학습</strong>해 이미지와 문장을 같은 임베딩 공간에 매핑. 텍스트로 이미지를 검색하거나, 모르는 카테고리도 자연어 설명만으로 분류할 수 있게 됐어요.",
+    stats: [
+      { sv: "400M", sl: "이미지-텍스트 쌍" },
+      { sv: "76.2%", sl: "ImageNet 제로샷 정확도" },
+      { sv: "30개+", sl: "벤치마크 제로샷 평가" }
     ],
-    why: "<b>'언어로 이미지를 다룬다'는 패러다임의 시작</b>. 멀티모달 AI의 출발점이 된 모델.",
+    background: "기존 비전 모델은 ImageNet의 1000개 클래스 같은 <b>고정된 라벨</b>로만 학습돼서 새 카테고리에는 무용지물이었어요. 자연어가 가진 무한한 표현력을 비전에 결합할 수 없을까? 인터넷의 이미지-캡션 쌍이 사실상 무한한 학습 데이터라는 통찰에서 시작.",
+    summary: [
+      { ico: "🎯", txt: "<b>Zero-shot 이미지 분류</b> — ImageNet에서 학습 없이 76.2%로 ResNet-50 지도학습과 동등." },
+      { ico: "🔍", txt: "<b>양방향 검색</b> — 텍스트로 이미지 검색, 이미지로 텍스트 찾기 모두 가능. 임베딩 거리만 계산하면 됨." },
+      { ico: "🧬", txt: "<b>Stable Diffusion·DALL·E의 텍스트 인코더로 채택</b>되어 생성 AI의 '언어 이해' 부품으로 산업 전반 확산." },
+      { ico: "📊", txt: "<b>분포 외 일반화(OOD generalization)</b>가 강력 — 스케치·만화·렌더링 같은 변형에도 견고함." }
+    ],
+    impact: "Stable Diffusion·DALL·E·Midjourney의 텍스트→이미지 매핑 핵심 부품. <b>OpenCLIP·SigLIP·EVA-CLIP</b> 등 후속 모델이 줄지어 등장. 멀티모달 LLM(GPT-4V·Claude 3·Gemini)의 비전 인코더도 대부분 CLIP 계열에서 출발했어요.",
+    why: "<b>'언어로 이미지를 다룬다'는 패러다임의 시작</b>. 텍스트와 이미지가 같은 공간에 살게 되면서 생성·검색·편집·분류 모든 응용이 자연어로 통제 가능해진 멀티모달 시대의 출발점.",
     link: "https://arxiv.org/abs/2103.00020",
     tags: ["CLIP", "Multimodal", "Vision", "ZeroShot"]
   },
@@ -488,14 +624,23 @@ const RESEARCH = [
     field: "🦙 오픈소스 LLM",
     emoji: "🦙",
     year: "2023",
-    org: "Meta AI",
-    lead: "<strong>7B/13B/70B 파라미터 모델을 상업적으로 무료 공개</strong>. 폐쇄형 GPT-4 시대에 오픈소스 LLM 생태계의 중심이 되었어요.",
-    summary: [
-      { ico: "📦", txt: "<b>2조 토큰</b>으로 사전학습, 4K → 32K로 컨텍스트 확장." },
-      { ico: "💬", txt: "<b>RLHF로 정렬된 Llama 2 Chat</b> — 안전성과 도움성의 균형." },
-      { ico: "🌐", txt: "<b>상업 이용 허용 라이선스</b> — 스타트업·기업이 자체 LLM을 만들 수 있는 토대." }
+    org: "Meta AI (GenAI)",
+    authors: "Touvron, Martin, Stone 외 70+인",
+    lead: "<strong>7B/13B/70B 파라미터 모델을 상업적으로 무료 공개</strong>한 메타의 결정. 폐쇄형 GPT-4가 시장을 독점하던 시기에 오픈소스 진영의 중심이 되었고, AI 산업의 권력 구조를 재편한 분수령이에요.",
+    stats: [
+      { sv: "2조", sl: "사전학습 토큰 수" },
+      { sv: "32K", sl: "확장된 컨텍스트 길이" },
+      { sv: "수백만+", sl: "다운로드 누적" }
     ],
-    why: "<b>'GPT-4 vs 오픈소스'의 격차가 좁혀진 결정적 모델</b>. Code Llama·Llama 3·Mistral·DeepSeek 모두의 출발점.",
+    background: "GPT-4 출시 직후 폐쇄형 API에 종속되는 데 대한 불안이 커졌어요. Llama 1(2023.2)이 연구용으로만 공개됐지만 weights가 유출되며 오픈소스 생태계가 폭발했고, 메타는 그 흐름을 공식화해 Llama 2를 상업용으로 풀었습니다.",
+    summary: [
+      { ico: "📦", txt: "<b>2조 토큰</b>으로 사전학습, 컨텍스트 4K → 32K(Code Llama)로 확장." },
+      { ico: "💬", txt: "<b>RLHF로 정렬된 Llama 2 Chat</b> — SFT + Rejection Sampling + PPO의 세심한 안전성·도움성 균형." },
+      { ico: "🌐", txt: "<b>상업 이용 허용 라이선스</b>(7억 MAU 미만 기업) — 스타트업·기업이 자체 LLM을 만들 수 있는 토대." },
+      { ico: "🔬", txt: "<b>학습 데이터·평가·안전성 분석을 70+페이지로 상세 공개</b> — 오픈 사이언스의 모범 사례." }
+    ],
+    impact: "<b>Llama 3·3.1·3.2·3.3·4</b>로 진화하며 오픈모델 최강 자리 유지. Code Llama·Mistral·Mixtral·DeepSeek·Qwen·Solar·EXAONE 등 후속 오픈모델 생태계 전체의 출발점. Hugging Face 다운로드 1위 모델군이며, 인디 개발자·중소기업의 LLM 도입 장벽을 완전히 무너뜨렸어요.",
+    why: "<b>'GPT-4 vs 오픈소스'의 격차가 좁혀진 결정적 모델</b>. AI가 빅테크 몇 곳의 독점이 아니라 누구나 활용 가능한 공공재가 될 수 있다는 가능성을 입증했고, 실제 산업 구조를 그 방향으로 끌어당겼어요.",
     link: "https://arxiv.org/abs/2307.09288",
     tags: ["Llama", "OpenSource", "Meta", "Foundation"]
   },
@@ -505,14 +650,23 @@ const RESEARCH = [
     field: "🎯 정렬 · RLHF",
     emoji: "⚖️",
     year: "2023",
-    org: "Stanford",
-    lead: "<strong>강화학습 없이 단순한 분류 손실</strong>로 인간 선호도를 학습. RLHF의 복잡성을 한 줄의 손실 함수로 대체했어요.",
-    summary: [
-      { ico: "🧮", txt: "<b>보상 모델 + PPO 없이</b> 정책을 직접 최적화하는 손실 유도." },
-      { ico: "🏆", txt: "RLHF 대비 <b>학습 안정성·재현성·성능</b> 모두 우위." },
-      { ico: "⚡", txt: "구현 복잡도가 1/10 — <b>오픈소스 정렬의 사실상 표준</b>으로 자리잡음." }
+    org: "Stanford University",
+    authors: "Rafailov, Sharma, Mitchell 외 3인",
+    lead: "<strong>강화학습 없이 단순한 분류 손실</strong>로 인간 선호도를 학습하는 방법을 제시. RLHF의 복잡한 보상모델 + PPO 파이프라인을 한 줄의 손실 함수로 대체하며 오픈소스 정렬의 사실상 표준이 됐어요.",
+    stats: [
+      { sv: "1/10", sl: "RLHF 대비 구현 복잡도" },
+      { sv: "≥", sl: "RLHF 대비 성능 동등 이상" },
+      { sv: "1 GPU", sl: "7B 모델 정렬 가능" }
     ],
-    why: "<b>오픈소스 진영의 LLM 정렬을 단순화시킨 핵심 기법</b>. Zephyr·Tulu 등 거의 모든 최신 오픈모델이 채택.",
+    background: "InstructGPT 이후 RLHF(보상모델 + PPO)가 표준이 됐지만 <b>학습이 매우 불안정</b>하고 하이퍼파라미터 튜닝이 어려웠어요. 보상모델이 잘못되면 정책 모델이 보상 해킹을 시도하기도 했죠. '강화학습 단계 자체를 없앨 수는 없을까?'에서 시작.",
+    summary: [
+      { ico: "🧮", txt: "<b>보상 모델 + PPO 없이</b> Bradley-Terry 선호 모델을 정책에 직접 대입해 닫힌 형식의 손실 유도." },
+      { ico: "🏆", txt: "RLHF 대비 <b>학습 안정성·재현성·성능</b>이 모두 우위 — 학습률에도 강건함." },
+      { ico: "⚡", txt: "구현 복잡도가 1/10 — <b>오픈소스 정렬의 사실상 표준</b>으로 자리잡음." },
+      { ico: "🔄", txt: "<b>참조 모델 + 정책 모델</b> 두 개만 있으면 됨 — 메모리·학습 비용이 RLHF의 절반 이하." }
+    ],
+    impact: "Zephyr·Tulu·Notus·SOLAR-Instruct·Llama 3 Instruct 등 거의 모든 최신 오픈모델이 DPO 또는 그 변형(IPO·KTO·SimPO·ORPO·sDPO) 채택. Hugging Face TRL 라이브러리의 핵심 알고리즘이며, <b>오픈소스 진영이 폐쇄형 모델에 빠르게 따라붙은 핵심 무기</b>.",
+    why: "<b>오픈소스 LLM 정렬을 단순화·민주화시킨 핵심 기법</b>. 거대 기업의 RLHF 인프라 없이도 정렬 가능한 모델을 만들 수 있게 했고, 후속 정렬 알고리즘 연구의 출발점이 됐어요.",
     link: "https://arxiv.org/abs/2305.18290",
     tags: ["DPO", "Alignment", "RLHF", "Stanford"]
   },
@@ -522,14 +676,23 @@ const RESEARCH = [
     field: "⚡ 시스템 · 효율",
     emoji: "⚡",
     year: "2022",
-    org: "Stanford",
-    lead: "<strong>GPU 메모리 계층(HBM ↔ SRAM) 이동을 최소화</strong>하는 IO-aware 어텐션. 메모리는 줄고 속도는 빨라지고 정확도는 그대로.",
-    summary: [
-      { ico: "🧱", txt: "<b>Tiling + Recomputation</b>으로 어텐션 행렬을 전체 저장하지 않음." },
-      { ico: "⏱️", txt: "GPT-2 학습 <b>3배 가속</b>, 시퀀스 길이 16K에서도 안정적 동작." },
-      { ico: "📐", txt: "<b>수치적으로 동일한 결과</b> — 근사 없이 정확한 어텐션." }
+    org: "Stanford University",
+    authors: "Dao, Fu, Ermon, Rudra, Ré",
+    lead: "<strong>GPU 메모리 계층(HBM ↔ SRAM) 사이 데이터 이동을 최소화</strong>하는 IO-aware 어텐션 구현. 메모리는 줄고 속도는 빨라지고 정확도는 그대로 — 모든 거대 모델 학습·추론의 기반 인프라가 됐어요.",
+    stats: [
+      { sv: "3배", sl: "GPT-2 학습 속도 향상" },
+      { sv: "16K", sl: "안정적 시퀀스 길이" },
+      { sv: "정확", sl: "근사 없는 동일 결과" }
     ],
-    why: "<b>장문 컨텍스트 LLM의 인프라 기반</b>. Llama·GPT-4의 32K~128K 컨텍스트가 이 기법 위에서 작동.",
+    background: "표준 어텐션은 N×N 어텐션 행렬을 GPU 메모리에 그대로 저장해서 <b>시퀀스가 길어지면 메모리가 제곱으로 폭발</b>했어요. 16K 컨텍스트는 사실상 불가능했고, 기존 효율화는 모두 '근사'라서 정확도 손실이 있었습니다. 시스템 관점에서 접근한 게 핵심.",
+    summary: [
+      { ico: "🧱", txt: "<b>Tiling + Recomputation</b>으로 어텐션 행렬을 전체 저장하지 않고 SRAM에서 블록 단위로 처리." },
+      { ico: "⏱️", txt: "GPT-2 학습 <b>3배 가속</b>, BERT-large는 15%, 시퀀스 길이 16K에서도 안정적 동작." },
+      { ico: "📐", txt: "<b>수치적으로 동일한 결과</b> — 기존 효율 어텐션의 근사 한계를 극복한 정확 알고리즘." },
+      { ico: "🔄", txt: "<b>FlashAttention-2·3</b>로 발전 — H100 GPU에서 740 TFLOPs로 75% 효율 달성." }
+    ],
+    impact: "<b>PyTorch·JAX·Megatron·DeepSpeed</b>의 기본 어텐션 구현으로 채택. Llama·Mistral·GPT-4·Claude 등 거의 모든 대규모 모델의 32K~128K~1M 컨텍스트가 FlashAttention 위에서 작동. 저자 Tri Dao는 Together AI 공동 창업.",
+    why: "<b>장문 컨텍스트 LLM의 인프라 기반</b>. 알고리즘이 아닌 시스템 최적화가 AI 능력의 한계를 결정한다는 점을 보인 대표 사례이자, '어떻게 만들 것인가'가 '무엇을 만들 것인가'만큼 중요함을 입증.",
     link: "https://arxiv.org/abs/2205.14135",
     tags: ["FlashAttention", "Efficient", "GPU", "Systems"]
   },
@@ -539,31 +702,49 @@ const RESEARCH = [
     field: "🤖 에이전트",
     emoji: "🛠️",
     year: "2022",
-    org: "Princeton + Google",
-    lead: "<strong>LLM이 '생각 → 행동 → 관찰' 루프</strong>로 외부 도구를 호출하며 작업을 수행하는 프레임워크. 모든 AI 에이전트의 출발점.",
-    summary: [
-      { ico: "🔄", txt: "<b>Thought → Action → Observation</b> 사이클을 텍스트로 표현." },
-      { ico: "🔧", txt: "<b>검색 API·계산기</b> 등 외부 도구 사용으로 LLM 한계 보완." },
-      { ico: "📊", txt: "HotpotQA·Fever에서 <b>CoT 단독 대비 환각률 50% 감소</b>." }
+    org: "Princeton + Google Research",
+    authors: "Yao, Zhao, Yu 외 5인",
+    lead: "<strong>LLM이 '생각(Thought) → 행동(Action) → 관찰(Observation)' 루프</strong>로 외부 도구를 호출하며 작업을 수행하는 프레임워크. 모든 현대 AI 에이전트의 사상적 출발점이에요.",
+    stats: [
+      { sv: "50%", sl: "HotpotQA 환각률 감소" },
+      { sv: "34%", sl: "AlfWorld 성공률 (vs 6%)" },
+      { sv: "0개", sl: "추가 학습 필요량" }
     ],
-    why: "<b>LangChain·AutoGPT·Claude Tool Use의 직접적 뿌리</b>. 현대 AI 에이전트 설계의 청사진.",
+    background: "CoT는 모델 내부 추론은 잘 했지만 <b>외부 세계와 상호작용</b>은 못 했어요. 모르는 사실은 끝까지 환각으로 채웠고, 행동을 취해야 하는 환경(웹·게임·로봇)에서는 무력했습니다. '생각'과 '행동'을 한 프롬프트에 결합하자는 단순한 아이디어가 출발점.",
+    summary: [
+      { ico: "🔄", txt: "<b>Thought → Action → Observation</b> 사이클을 텍스트 프롬프트로 표현 — 모델이 도구 호출을 '생성'." },
+      { ico: "🔧", txt: "<b>검색 API·계산기·환경 시뮬레이터</b> 등 외부 도구를 자유롭게 호출해 LLM의 지식·능력 한계를 보완." },
+      { ico: "📊", txt: "HotpotQA·Fever에서 <b>CoT 단독 대비 환각률 50% 감소</b>, AlfWorld 가상 환경에서 성공률 6배 향상." },
+      { ico: "🧩", txt: "<b>'사고와 행동의 시너지'</b>를 입증 — 어느 한쪽만 있을 때보다 둘이 결합될 때 훨씬 강력." }
+    ],
+    impact: "<b>LangChain·AutoGPT·BabyAGI·Anthropic Claude Tool Use·OpenAI Function Calling</b>의 직접적 뿌리. 모든 'AI 에이전트' 제품(Devin·Cursor·Manus 등)이 ReAct 변형 위에서 동작. 코딩 에이전트·웹 자동화·고객지원 자동화 등 산업 응용의 표준 패턴.",
+    why: "<b>LLM을 '대화하는 모델'에서 '행동하는 에이전트'로 전환시킨 결정적 논문</b>. 현대 AI 에이전트 설계의 청사진이자, '에이전트 시대' 담론의 기술적 출발점이에요.",
     link: "https://arxiv.org/abs/2210.03629",
     tags: ["Agent", "ReAct", "ToolUse", "Reasoning"]
   },
   {
-    title: "Mixture of Experts (Mixtral / Switch Transformer)",
+    title: "Mixtral / Switch Transformer (Mixture of Experts)",
     sub: "활성화되는 전문가만 계산한다",
     field: "🧩 모델 아키텍처",
     emoji: "🧩",
-    year: "2022",
-    org: "Google + Mistral",
-    lead: "<strong>여러 전문가(FFN) 중 일부만 활성화</strong>해 추론. 전체 파라미터는 거대해도 실제 계산량은 작은 효율적 거대 모델.",
-    summary: [
-      { ico: "🚪", txt: "<b>라우터가 토큰별로 Top-2 전문가</b> 선택, 나머지는 비활성화." },
-      { ico: "📈", txt: "Mixtral 8×7B: 활성 12.9B 파라미터로 <b>Llama-70B와 동등한 성능</b>." },
-      { ico: "⚡", txt: "<b>총 파라미터 ↑, 추론 비용 ↓</b>의 패러독스 — 큰 모델을 싸게 운영." }
+    year: "2024",
+    org: "Mistral AI · Google Research",
+    authors: "Jiang, Sablayrolles 외 / Fedus 외",
+    lead: "<strong>여러 전문가(FFN) 중 일부만 활성화</strong>해 추론하는 Sparse Mixture of Experts 구조. 전체 파라미터는 거대해도 실제 계산량은 작은 효율적 거대 모델이며, GPT-4·Claude·Gemini의 공공연한 비밀 무기.",
+    stats: [
+      { sv: "8×7B", sl: "Mixtral의 전문가 구성" },
+      { sv: "12.9B", sl: "추론 시 활성 파라미터" },
+      { sv: "70B급", sl: "체감 성능 수준" }
     ],
-    why: "<b>GPT-4·Claude·Gemini가 채택한 비공개 핵심 기술</b>. 1조 파라미터 시대를 가능케 한 구조.",
+    background: "모델을 키울수록 성능은 좋아지지만 추론 비용도 같이 폭발했어요. <b>'모든 입력에 모든 파라미터를 쓸 필요가 있을까?'</b>라는 질문에서 출발. Switch Transformer(2021)가 1.6T 파라미터 모델을 보였지만 학습 안정성·실용성 문제가 있었고, Mixtral이 산업 친화적 형태로 정착시켰어요.",
+    summary: [
+      { ico: "🚪", txt: "<b>라우터가 토큰별로 Top-2 전문가</b>를 선택, 나머지 6개는 비활성화 — 계산은 작게, 표현력은 크게." },
+      { ico: "📈", txt: "Mixtral 8×7B: 활성 12.9B 파라미터로 <b>Llama-70B와 동등 이상 성능</b>, 추론 속도는 5배 빠름." },
+      { ico: "⚡", txt: "<b>총 파라미터 ↑, 추론 비용 ↓</b>의 패러독스 — 거대 모델을 싸게 운영할 수 있는 핵심 트릭." },
+      { ico: "🎯", txt: "<b>로드 밸런싱 손실</b>로 특정 전문가에만 토큰이 몰리는 문제를 학습 단계에서 완화." }
+    ],
+    impact: "<b>GPT-4·Claude 3.5/4·Gemini 1.5/2·DeepSeek-V2/V3·Qwen 1.5 MoE</b>가 모두 MoE 채택(공개되거나 추정). 추론 비용을 1/10 수준으로 낮추며 거대 모델의 상용화를 현실화. Mistral은 이 한 모델로 유럽 AI 챔피언 자리에 올랐어요.",
+    why: "<b>1조 파라미터 시대를 가능케 한 구조</b>. 더 큰 모델을 더 싸게 운영한다는 두 마리 토끼를 잡은 결정적 혁신이며, 거대 모델 산업화의 핵심 기술 토대.",
     link: "https://arxiv.org/abs/2401.04088",
     tags: ["MoE", "Mixtral", "Efficient", "Sparse"]
   },
@@ -574,13 +755,22 @@ const RESEARCH = [
     emoji: "🎙️",
     year: "2022",
     org: "OpenAI",
-    lead: "<strong>웹에서 수집한 68만 시간의 다국어 음성</strong>으로 학습. 99개 언어에 대해 사람 수준의 자동 음성 인식을 달성했어요.",
-    summary: [
-      { ico: "🌍", txt: "<b>99개 언어 인식 + 영어 번역</b>을 하나의 모델에서." },
-      { ico: "📡", txt: "잡음·억양·외래어에 대한 <b>robustness</b>가 기존 모델 대비 2배." },
-      { ico: "📦", txt: "<b>오픈소스 공개</b> — 자막·통역·회의록 산업에 즉시 도입." }
+    authors: "Radford, Kim, Xu, Brockman 외",
+    lead: "<strong>웹에서 수집한 68만 시간의 다국어 음성</strong>으로 학습. 99개 언어에 대해 사람 수준의 자동 음성 인식을 달성하고 무료 공개해, 자막·통역·회의록 산업을 단숨에 재편했어요.",
+    stats: [
+      { sv: "680,000h", sl: "학습 음성 데이터" },
+      { sv: "99개", sl: "지원 언어 수" },
+      { sv: "50%", sl: "잡음 환경 WER 감소" }
     ],
-    why: "<b>구글 STT·아마존 Transcribe를 단숨에 따라잡은 오픈모델</b>. 영상 자막·실시간 통역 서비스 대부분이 이 위에서 동작.",
+    background: "음성 인식은 <b>도메인·억양·잡음</b>에 매우 취약했고, 영어 외 언어는 품질이 들쭉날쭉이었어요. Wav2Vec 2.0·HuBERT 같은 자기지도 모델이 있었지만 다국어·다도메인 강건성은 부족했습니다. '인터넷 음성 전부를 학습 데이터로'라는 단순한 접근.",
+    summary: [
+      { ico: "🌍", txt: "<b>99개 언어 인식 + 영어 번역</b>을 하나의 인코더-디코더 트랜스포머에서 동시 처리." },
+      { ico: "📡", txt: "잡음·억양·외래어·음악 배경에 대한 <b>robustness</b>가 기존 모델 대비 2배 — 실제 환경에 강함." },
+      { ico: "📦", txt: "<b>모델·가중치 완전 오픈소스</b> 공개 — Tiny(39M)부터 Large-v3(1.5B)까지 5종." },
+      { ico: "🎯", txt: "<b>약지도 학습(weak supervision)</b> — 인터넷의 자막 데이터를 완벽 정제 없이 그대로 학습에 사용." }
+    ],
+    impact: "<b>YouTube 자동 자막·Zoom·Notion AI 회의록·MacWhisper·Spotify Podcasts·Twilio</b> 등 음성 처리 제품 대부분이 Whisper 기반. faster-whisper·whisper.cpp 등 최적화 구현이 활발. <b>음성 인식 산업의 게임 체인저</b>로 평가받아요.",
+    why: "<b>구글 STT·아마존 Transcribe를 단숨에 따라잡은 오픈모델</b>. 영상 자막·실시간 통역·접근성 기술의 보편화를 가속했고, 음성 인식이 더 이상 차별화 기술이 아닌 공공재가 됐음을 알린 사건.",
     link: "https://arxiv.org/abs/2212.04356",
     tags: ["Whisper", "ASR", "Speech", "Multilingual"]
   },
@@ -590,14 +780,23 @@ const RESEARCH = [
     field: "🖼️ 컴퓨터 비전",
     emoji: "✂️",
     year: "2023",
-    org: "Meta AI",
-    lead: "<strong>11억 개 마스크로 학습한 범용 세그멘테이션 모델</strong>. 한 번 클릭하면 그 객체를 정확히 분리해 줘요.",
-    summary: [
-      { ico: "🖱️", txt: "<b>포인트·박스·텍스트 프롬프트</b>로 객체 마스크 즉시 생성." },
-      { ico: "🌐", txt: "<b>훈련 안 한 도메인(의료·위성·현미경)</b>에서도 제로샷 동작." },
-      { ico: "📦", txt: "모델·데이터셋·코드 <b>모두 오픈소스 공개</b>." }
+    org: "Meta AI (FAIR)",
+    authors: "Kirillov, Mintun, Ravi 외 9인",
+    lead: "<strong>11억 개 마스크로 학습한 범용 세그멘테이션 모델</strong>. 한 번 클릭하거나 박스를 그리면 그 객체를 정확히 분리해 줘요. 비전 분야의 'GPT 모먼트'라 불릴 만큼 도메인을 무너뜨린 모델.",
+    stats: [
+      { sv: "1.1B", sl: "학습용 마스크 수" },
+      { sv: "11M", sl: "이미지 데이터셋(SA-1B)" },
+      { sv: "Zero-shot", sl: "23개 도메인 평가" }
     ],
-    why: "<b>비전 분야의 'GPT 모먼트'</b>로 평가되는 모델. 의료영상·자율주행·이미지 편집의 즉시 가능한 기반.",
+    background: "이미지 세그멘테이션은 도메인별(의료·자율주행·위성)로 따로 모델을 만들어야 했어요. 데이터 라벨링 비용이 매우 비싸서 학습 데이터셋 규모도 제한적이었습니다. '비전계의 GPT-3'를 만들겠다는 야심에서 출발한 프로젝트.",
+    summary: [
+      { ico: "🖱️", txt: "<b>포인트·박스·텍스트 프롬프트</b>로 객체 마스크 즉시 생성 — 인터랙티브 세그멘테이션." },
+      { ico: "🌐", txt: "<b>훈련 안 한 도메인(의료·위성·현미경·만화)</b>에서도 제로샷 동작 — 진정한 파운데이션 모델." },
+      { ico: "🏭", txt: "<b>SA-1B 데이터셋</b> — 11M 이미지에 1.1B 마스크를 모델-루프(model-in-the-loop) 방식으로 자동 생성." },
+      { ico: "⚡", txt: "<b>실시간 동작</b>(50ms/이미지) — 이미지 인코더가 한 번 임베딩하면 다양한 프롬프트를 거의 무비용으로 처리." }
+    ],
+    impact: "<b>SAM 2(2024)</b>가 영상까지 확장. 의료영상(폐결절·종양 분할)·자율주행·이미지 편집(Adobe Photoshop Generative Fill·Canva)·만화 채색 등에서 즉시 활용. <b>Grounded-SAM·SAM-Med·EfficientSAM</b> 등 파생 모델 폭발. 라벨링 비용을 1/10로 줄여 비전 데이터 산업 자체를 재편.",
+    why: "<b>비전 분야의 'GPT 모먼트'</b>로 평가되는 모델. '한 도메인 한 모델' 시대를 끝내고, 비전에도 파운데이션 모델 시대가 왔음을 입증한 결정적 사례.",
     link: "https://arxiv.org/abs/2304.02643",
     tags: ["SAM", "Segmentation", "Vision", "Foundation"]
   },
@@ -608,13 +807,22 @@ const RESEARCH = [
     emoji: "🐍",
     year: "2023",
     org: "CMU + Princeton",
-    lead: "<strong>선택적 상태공간(Selective SSM)</strong>으로 시퀀스를 처리. 트랜스포머의 어텐션을 대체할 가능성을 보였어요.",
-    summary: [
-      { ico: "📏", txt: "<b>시퀀스 길이에 선형 시간</b> — 어텐션의 O(n²)을 극복." },
-      { ico: "🧠", txt: "<b>입력 의존적 SSM</b>으로 콘텐츠 인지형 정보 흐름 제어." },
-      { ico: "🏆", txt: "동일 파라미터에서 <b>트랜스포머 대비 동등 이상 성능</b>, 5배 빠른 추론." }
+    authors: "Gu, Dao",
+    lead: "<strong>선택적 상태공간(Selective SSM)</strong>으로 시퀀스를 처리해 트랜스포머의 어텐션을 대체할 가능성을 보인 모델. 시퀀스 길이에 선형으로 비례하는 비용으로 백만 토큰급 처리에 새 가능성을 열었어요.",
+    stats: [
+      { sv: "O(n)", sl: "시퀀스 길이 대비 비용" },
+      { sv: "5배", sl: "트랜스포머 대비 추론 속도" },
+      { sv: "1M+", sl: "처리 가능 토큰 길이" }
     ],
-    why: "<b>'트랜스포머 이후'를 노리는 가장 유력한 후보</b>. 장문·DNA·오디오 등 긴 시퀀스에서 게임체인저 가능성.",
+    background: "트랜스포머의 어텐션은 시퀀스 길이의 <b>제곱(O(n²))</b>에 비례해 비용이 폭증해요. 100만 토큰 같은 초장문은 메모리·계산이 비현실적. 상태공간 모델(SSM)은 RNN처럼 선형 시간이지만 정보 선별 능력이 부족했는데, Mamba가 그 한계를 해결했어요.",
+    summary: [
+      { ico: "📏", txt: "<b>시퀀스 길이에 선형 시간</b> — 어텐션의 O(n²)을 극복하고 백만 토큰급 시퀀스 처리 가능." },
+      { ico: "🧠", txt: "<b>입력 의존적 SSM</b> — 콘텐츠에 따라 상태 업데이트 파라미터가 동적으로 변해 정보 선별 가능." },
+      { ico: "🏆", txt: "동일 파라미터에서 <b>트랜스포머 대비 동등 이상 성능</b>, 5배 빠른 추론 속도." },
+      { ico: "🧬", txt: "<b>DNA·오디오·시계열</b>처럼 매우 긴 시퀀스에서 어텐션이 다루지 못하는 영역에서 우위." }
+    ],
+    impact: "<b>Mamba-2·Jamba(MoE+Mamba)·Falcon Mamba·Zamba</b> 등 후속 모델이 줄지어 등장. AI21·Together·Cartesia 등이 하이브리드 모델로 상용화. 단백질·DNA·음악 같은 초장문 도메인에서 트랜스포머를 대체하는 사례가 늘고 있어요.",
+    why: "<b>'트랜스포머 이후'를 노리는 가장 유력한 후보</b>. 어텐션이 절대 진리가 아니며, 다른 아키텍처가 우위를 가질 수 있다는 가능성을 입증해 AI 아키텍처 다양성을 회복시킨 논문.",
     link: "https://arxiv.org/abs/2312.00752",
     tags: ["Mamba", "SSM", "Architecture", "PostTransformer"]
   },
@@ -625,13 +833,22 @@ const RESEARCH = [
     emoji: "📜",
     year: "2022",
     org: "Anthropic",
-    lead: "<strong>인간 라벨러 없이 '헌법'(원칙 리스트)을 따라 AI가 스스로 응답을 비판·수정</strong>. Claude의 핵심 정렬 기법이 됐어요.",
-    summary: [
-      { ico: "📋", txt: "<b>원칙 리스트 + AI 자기 비판</b>으로 무해성 학습 데이터 자동 생성." },
-      { ico: "🔄", txt: "<b>RLAIF (AI Feedback)</b>으로 인간 피드백을 부분 대체." },
-      { ico: "🎯", txt: "독성·편향 감소와 동시에 <b>도움성 유지</b>의 균형 달성." }
+    authors: "Bai, Kadavath, Kundu 외 30+인",
+    lead: "<strong>인간 라벨러 없이 '헌법'(원칙 리스트)을 따라 AI가 스스로 응답을 비판·수정</strong>하는 정렬 방식. RLHF의 인적 비용을 대폭 줄이면서도 정렬 품질을 유지한 Anthropic의 핵심 기법이자 Claude의 정체성을 만든 논문이에요.",
+    stats: [
+      { sv: "16개", sl: "헌법 원칙 수" },
+      { sv: "RLAIF", sl: "AI 피드백 기반 강화학습" },
+      { sv: "↓ 독성 + ↑ 도움", sl: "트레이드오프 해소" }
     ],
-    why: "<b>Claude의 정체성을 만든 논문이자 AI 안전성 연구의 대표 사례</b>. RLHF 외 정렬 방법론의 다양화.",
+    background: "RLHF는 강력했지만 <b>인간 라벨러의 인지·심리적 부담</b>이 크고 비용이 천문학적이었어요. 또한 '무해성'을 강조하면 모델이 지나치게 회피적이 되는 트레이드오프가 있었습니다. 인간의 가치를 명시적인 텍스트로 적어두면 AI가 그걸 따라가게 할 수 있을까?",
+    summary: [
+      { ico: "📋", txt: "<b>16개 원칙 리스트</b>(UN 인권선언·Apple 가이드라인 등 참조)를 모델에 제시하고 자기 비판·수정 데이터 생성." },
+      { ico: "🔄", txt: "<b>RLAIF (Reinforcement Learning from AI Feedback)</b> — 인간 피드백을 AI 피드백으로 부분 대체." },
+      { ico: "🎯", txt: "독성·편향 감소와 동시에 <b>도움성 유지</b>의 균형 달성 — 회피적 응답 문제 완화." },
+      { ico: "🔍", txt: "<b>투명성·검증가능성</b> — 어떤 원칙으로 모델이 학습됐는지 텍스트로 명시 가능." }
+    ],
+    impact: "<b>Claude 1·2·3·4의 핵심 정렬 방법</b>이자, RLHF 외 대안을 보여준 결정적 사례. OpenAI·DeepMind·Meta도 자체 원칙 기반 정렬을 채택했고, EU AI Act·AI 거버넌스 논의에서 '명시적 원칙'의 중요성이 부각되는 데 기여.",
+    why: "<b>Claude의 정체성을 만든 논문이자 AI 안전성 연구의 대표 사례</b>. AI를 다듬는 방법 자체가 AI의 핵심 차별점이 된다는 점을 입증했고, 정렬 방법론의 다양화를 이끌었어요.",
     link: "https://arxiv.org/abs/2212.08073",
     tags: ["Anthropic", "Safety", "Constitutional", "Alignment"]
   },
@@ -642,13 +859,22 @@ const RESEARCH = [
     emoji: "🧬",
     year: "2021",
     org: "DeepMind",
-    lead: "<strong>50년간 풀리지 않던 단백질 3D 구조 예측 문제</strong>를 원자 단위 정확도로 풀어낸 모델. Nature 표지 + 2024 노벨화학상.",
-    summary: [
-      { ico: "🔬", txt: "<b>다중 시퀀스 정렬(MSA) + 진화 정보</b>를 어텐션 기반 모듈로 통합." },
-      { ico: "📊", txt: "<b>CASP14에서 정확도 평균 92.4 GDT</b> — 사실상 실험과 동등한 수준." },
-      { ico: "🌍", txt: "<b>2억 개 단백질 구조 무료 공개</b> — 신약 개발·생명과학 패러다임 전환." }
+    authors: "Jumper, Evans, Pritzel 외 30+인",
+    lead: "<strong>50년간 풀리지 않던 단백질 3D 구조 예측 문제</strong>를 원자 단위 정확도로 풀어낸 모델. Nature 표지 + 2024년 노벨화학상 수상으로 'AI가 노벨상 받는 시대'를 직접 증명했어요.",
+    stats: [
+      { sv: "92.4 GDT", sl: "CASP14 평균 정확도" },
+      { sv: "200M+", sl: "공개된 단백질 구조 수" },
+      { sv: "노벨상", sl: "2024년 화학상 수상" }
     ],
-    why: "<b>AI가 노벨상을 받는 시대의 신호탄</b>. 생물학 50년 난제 해결, 의학·신약 연구 가속.",
+    background: "단백질이 어떻게 3D 구조로 접히는지는 <b>1972년부터 'Protein Folding Problem'</b>으로 불린 분자생물학 최대 난제. 1개 단백질 구조 결정에 X-ray 결정학으로 수년·수억 원이 들었어요. 2년마다 열리는 CASP 경진대회에서 AlphaFold 1(2018)이 가능성을 보였고, AlphaFold 2가 사실상 문제를 풀어버렸습니다.",
+    summary: [
+      { ico: "🔬", txt: "<b>다중 시퀀스 정렬(MSA) + 진화 정보</b>를 어텐션 기반 Evoformer 모듈로 통합 — 진화가 남긴 단서를 모델이 학습." },
+      { ico: "📊", txt: "<b>CASP14에서 정확도 평균 92.4 GDT</b> — 사실상 실험과 동등한 수준, 2위와의 격차 압도적." },
+      { ico: "🌍", txt: "<b>2억 개 단백질 구조 무료 공개</b>(AlphaFold Database) — 인류가 알던 모든 단백질의 구조도가 하룻밤에 완성." },
+      { ico: "🧪", txt: "<b>신약 개발 워크플로 재편</b> — 표적 단백질 구조 파악이 즉시 가능해져 약물 설계 속도 비약적 향상." }
+    ],
+    impact: "<b>AlphaFold 3(2024)</b>가 단백질-DNA-RNA-분자 복합체로 확장. RoseTTAFold·ESMFold 등 후속 모델 등장. <b>코로나19 치료제·암 표적 발굴·항체 설계</b>에 직접 활용되고 있고, 생물학·의학 분야의 데이터 수집 방식 자체를 바꿨어요.",
+    why: "<b>AI가 노벨상을 받는 시대의 신호탄</b>. 생물학 50년 난제를 푼 단일 모델로, AI가 과학적 발견의 도구가 아닌 발견자 자체가 될 수 있음을 입증. 의학·신약·생명과학의 패러다임을 영구히 바꿨어요.",
     link: "https://www.nature.com/articles/s41586-021-03819-2",
     tags: ["AlphaFold", "Biology", "Nobel", "DeepMind"]
   },
@@ -658,14 +884,23 @@ const RESEARCH = [
     field: "💭 추론",
     emoji: "🌳",
     year: "2023",
-    org: "Princeton + DeepMind",
-    lead: "<strong>단일 추론 경로(CoT)를 넘어 여러 사고 가지를 탐색</strong>하고 자기 평가로 가지치기. 복잡한 문제 해결력이 크게 향상.",
-    summary: [
-      { ico: "🌿", txt: "<b>BFS/DFS로 사고 트리 탐색</b> + LLM 자체로 노드 평가." },
-      { ico: "🎮", txt: "<b>24 게임</b>에서 CoT 4% → ToT 74%로 정답률 18배 향상." },
-      { ico: "🧩", txt: "<b>창의적 글쓰기·미니 크로스워드</b>에서도 일관된 성능 향상." }
+    org: "Princeton + Google DeepMind",
+    authors: "Yao, Yu, Zhao 외 5인",
+    lead: "<strong>단일 추론 경로(CoT)를 넘어 여러 사고 가지를 탐색</strong>하고 자기 평가로 가지치기하는 프레임워크. 복잡한 문제에서 '한 번에 답하기'가 아닌 '신중하게 탐색하기'를 가능하게 한 논문이에요.",
+    stats: [
+      { sv: "4% → 74%", sl: "24 게임 정답률 (CoT→ToT)" },
+      { sv: "BFS/DFS", sl: "사고 트리 탐색 알고리즘" },
+      { sv: "Self-eval", sl: "노드 평가도 LLM이 직접" }
     ],
-    why: "<b>'한 번에 답하는 LLM'에서 '탐색하는 LLM'으로의 전환점</b>. OpenAI o1·DeepSeek R1의 사고 사슬 설계의 직접 영감.",
+    background: "CoT는 강력했지만 <b>한 번 잘못된 길로 빠지면 되돌아오지 못</b>했어요. 사람도 어려운 문제는 여러 시도를 비교하며 푸는데, LLM은 토큰을 순차적으로 생성하기만 했죠. 인간의 '문제 탐색' 방식을 LLM에 적용한 시도.",
+    summary: [
+      { ico: "🌿", txt: "<b>BFS/DFS로 사고 트리 탐색</b> + LLM 자체로 노드(중간 사고) 평가 + 유망한 가지만 확장." },
+      { ico: "🎮", txt: "<b>24 게임</b>(숫자 4개로 24 만들기)에서 CoT 4% → ToT 74%로 정답률 18배 향상." },
+      { ico: "🧩", txt: "<b>창의적 글쓰기·미니 크로스워드</b>에서도 일관된 성능 향상 — 탐색이 필요한 모든 문제에 적용 가능." },
+      { ico: "🔁", txt: "<b>가지치기·되돌리기</b>가 가능해 모델이 막다른 길에서 다른 경로를 시도할 수 있음." }
+    ],
+    impact: "<b>OpenAI o1·DeepSeek R1·Claude의 Extended Thinking</b> 같은 '추론 모델'의 사상적 뿌리. Self-Consistency·Graph of Thoughts·Algorithm of Thoughts 등 추론 알고리즘 연구의 토대가 됐고, '추론 시간 컴퓨팅(inference-time compute)'이 새로운 스케일링 축이 됐어요.",
+    why: "<b>'한 번에 답하는 LLM'에서 '탐색하는 LLM'으로의 전환점</b>. 모델을 더 크게 만드는 대신 추론 시점에 더 많이 생각하게 만드는 방향을 열었고, 현대 추론 모델 설계의 직접 영감.",
     link: "https://arxiv.org/abs/2305.10601",
     tags: ["ToT", "Reasoning", "Search", "LLM"]
   },
@@ -676,13 +911,22 @@ const RESEARCH = [
     emoji: "🔁",
     year: "2020",
     org: "Google Research",
-    lead: "<strong>같은 이미지의 두 변형을 가깝게, 다른 이미지는 멀리</strong> 배치하는 단순한 대조 학습. 레이블 없이 비전 표현을 얻는 표준이 됐어요.",
-    summary: [
-      { ico: "🎲", txt: "<b>강한 데이터 증강 + 큰 배치 + 프로젝션 헤드</b>의 3박자가 핵심." },
-      { ico: "📊", txt: "ImageNet에서 <b>레이블 1%만으로 지도학습 동등 성능</b>." },
-      { ico: "🌐", txt: "<b>CLIP·DINOv2 등 모든 비전 파운데이션 모델</b>의 학습 원리." }
+    authors: "Chen, Kornblith, Norouzi, Hinton",
+    lead: "<strong>같은 이미지의 두 변형은 가깝게, 다른 이미지는 멀리</strong> 배치하는 단순한 대조 학습 프레임워크. 레이블 없이도 강력한 시각 표현을 얻을 수 있음을 입증해 비전 분야의 자기지도학습 시대를 열었어요.",
+    stats: [
+      { sv: "76.5%", sl: "ImageNet 선형 평가" },
+      { sv: "1%", sl: "필요 라벨로 지도학습 동등" },
+      { sv: "4096", sl: "효과적 배치 크기" }
     ],
-    why: "<b>'레이블 없는 데이터가 보물'</b>임을 비전 분야에 확신시킨 논문. 멀티모달 시대의 시각 표현 학습 토대.",
+    background: "비전 모델은 ImageNet 같은 라벨 데이터에 의존했지만 <b>라벨링 비용이 천문학적</b>이었어요. NLP는 BERT처럼 라벨 없이 사전학습이 가능해진 반면 비전은 답을 못 찾고 있었습니다. 대조 학습 아이디어가 여러 방식으로 시도됐지만 SimCLR이 단순하고 강력한 레시피를 정착시켰어요.",
+    summary: [
+      { ico: "🎲", txt: "<b>강한 데이터 증강(crop·color jitter·blur)</b> + <b>큰 배치(4096+)</b> + <b>프로젝션 헤드</b>의 3박자가 핵심." },
+      { ico: "📊", txt: "ImageNet에서 <b>라벨 1%만으로 지도학습 동등 성능</b>, 10%면 능가 — 라벨 없는 데이터의 가치 입증." },
+      { ico: "🌐", txt: "<b>CLIP·DINO·DINOv2·MAE·I-JEPA</b> 등 모든 비전 파운데이션 모델의 학습 원리." },
+      { ico: "📐", txt: "<b>NT-Xent 손실</b>(정규화된 온도조절 크로스 엔트로피)로 학습 안정성·성능 모두 확보." }
+    ],
+    impact: "비전에서 자기지도학습이 산업 표준이 됨. <b>MoCo·BYOL·SimSiam·DINO·MAE</b>로 발전. CLIP·SAM·Stable Diffusion의 비전 인코더 학습 방식이 모두 자기지도 기반. <b>의료영상·자율주행 데이터셋 구축 비용</b>을 1/10 이하로 낮춰 산업 응용을 확산.",
+    why: "<b>'레이블 없는 데이터가 보물'</b>임을 비전 분야에 확신시킨 논문. 멀티모달·파운데이션 모델 시대의 시각 표현 학습 토대이며, 비전이 NLP의 사전학습 패러다임을 따라잡은 결정적 순간.",
     link: "https://arxiv.org/abs/2002.05709",
     tags: ["SimCLR", "SelfSupervised", "Vision", "Contrastive"]
   },
@@ -692,14 +936,23 @@ const RESEARCH = [
     field: "🎨 생성 모델",
     emoji: "🖌️",
     year: "2022",
-    org: "LMU Munich + Stability AI",
-    lead: "<strong>VAE로 압축한 잠재공간에서 디퓨전</strong>을 수행해 계산량을 100분의 1로 줄임. 일반 GPU에서 이미지 생성 가능 시대를 열었어요.",
-    summary: [
-      { ico: "🗜️", txt: "<b>VAE 인코더로 8배 다운샘플</b> 후 잠재공간에서 디퓨전 학습." },
-      { ico: "🖥️", txt: "<b>VRAM 8~10GB로 동작</b> — 개인 GPU에서 실시간 가까운 생성." },
-      { ico: "📦", txt: "<b>모델·가중치 완전 오픈소스</b> — 이미지 생성 AI 폭발의 출발점." }
+    org: "LMU Munich + Stability AI + Runway",
+    authors: "Rombach, Blattmann, Lorenz 외 3인",
+    lead: "<strong>VAE로 압축한 잠재공간에서 디퓨전을 수행</strong>해 계산량을 100분의 1로 줄임. 일반 GPU에서 이미지 생성이 가능한 시대를 열었고, 모델 가중치를 완전 공개해 AI 이미지 생성의 폭발적 대중화를 일으켰어요.",
+    stats: [
+      { sv: "8배", sl: "VAE 공간 압축 비율" },
+      { sv: "8~10GB", sl: "동작 VRAM" },
+      { sv: "10M+", sl: "오픈소스 파생 모델/체크포인트" }
     ],
-    why: "<b>'AI 이미지 생성을 만인의 것으로'</b> 만든 논문. Midjourney·Krea·ComfyUI 등 모든 후속 모델의 기반.",
+    background: "DALL·E 2·Imagen 같은 디퓨전 모델은 <b>픽셀 공간에서 직접 동작</b>해 학습·추론에 수백 GB VRAM이 필요했어요. 빅테크만 다룰 수 있었고, 일반 사용자는 API로만 접근 가능했죠. '왜 모든 픽셀을 직접 다뤄야 하나'에서 출발한 시도.",
+    summary: [
+      { ico: "🗜️", txt: "<b>VAE 인코더로 8배 다운샘플</b> 후 잠재공간에서 디퓨전 학습 — 계산량 98% 감소, 품질은 거의 보존." },
+      { ico: "🖥️", txt: "<b>VRAM 8~10GB로 동작</b> — RTX 3060 같은 소비자용 GPU에서 실시간 가까운 생성." },
+      { ico: "📦", txt: "<b>모델·가중치 완전 오픈소스</b> 공개(CompVis·Stability AI) — 이미지 생성 AI 폭발의 출발점." },
+      { ico: "🎛️", txt: "<b>크로스 어텐션으로 텍스트 조건화</b>(CLIP 임베딩) + ControlNet·LoRA 등 확장성 풍부." }
+    ],
+    impact: "<b>Midjourney·Krea·Leonardo·Civitai·ComfyUI·Automatic1111</b> 등 거대 생태계의 토대. <b>SDXL·SD 3·FLUX</b>로 진화. 일러스트·웹툰·게임·광고·영화 콘셉트아트 산업이 급변. ControlNet·IP-Adapter·LoRA 같은 확장 기술과 결합해 사실상 '비주얼 GPT'가 됐어요.",
+    why: "<b>'AI 이미지 생성을 만인의 것으로'</b> 만든 논문. API 기반 폐쇄형 모델 일변도였던 시장을 오픈모델 중심으로 재편했고, 인디 크리에이터·중소 스튜디오의 창작 도구로 자리잡았어요.",
     link: "https://arxiv.org/abs/2112.10752",
     tags: ["StableDiffusion", "LDM", "Generative", "OpenSource"]
   },
@@ -710,30 +963,48 @@ const RESEARCH = [
     emoji: "♟️",
     year: "2016",
     org: "DeepMind",
-    lead: "<strong>딥러닝 + 몬테카를로 트리 서치 + 자가 대국 강화학습</strong>. 2016년 이세돌 9단을 4-1로 꺾으며 AI 패러다임을 바꿨어요.",
-    summary: [
-      { ico: "🎯", txt: "<b>정책망 + 가치망</b>의 이중 네트워크 구조로 수읽기 깊이 확장." },
-      { ico: "🔍", txt: "<b>MCTS</b>로 효율적 탐색, 수백만 후보 중 의미 있는 수만 평가." },
-      { ico: "🧠", txt: "<b>이세돌의 '신의 한 수' 78수</b>를 만들어낸 그 시합의 모델." }
+    authors: "Silver, Huang, Maddison 외 17인",
+    lead: "<strong>딥러닝 + 몬테카를로 트리 서치 + 자가 대국 강화학습</strong>으로 바둑을 정복한 모델. 2016년 이세돌 9단을 4-1로 꺾으며 일반 대중에게 'AI 시대 도래'를 각인시킨 역사적 사건의 주인공이에요.",
+    stats: [
+      { sv: "4-1", sl: "이세돌 9단과의 대국 결과" },
+      { sv: "78수", sl: "이세돌의 신의 한 수 (4국)" },
+      { sv: "1920", sl: "학습에 사용된 CPU 수" }
     ],
-    why: "<b>일반 대중에게 '딥러닝 시대 도래'를 각인시킨 사건</b>. 한국에 AI 붐을 일으킨 직접적 계기.",
+    background: "체스는 1997년 IBM Deep Blue가 카스파로프를 꺾었지만, <b>바둑은 경우의 수가 우주의 원자보다 많아</b> 무차별 탐색이 불가능했어요. 직관이 필요한 영역이라 '컴퓨터에게 향후 10년 내 어렵다'가 학계 정설이었습니다. AlphaGo는 그 예측을 2~3년 만에 깼어요.",
+    summary: [
+      { ico: "🎯", txt: "<b>정책망 + 가치망</b>의 이중 네트워크 구조 — 어떤 수를 둘지(정책)와 누가 이길지(가치)를 별도로 학습." },
+      { ico: "🔍", txt: "<b>MCTS(몬테카를로 트리 탐색)</b>으로 효율적 수읽기, 신경망이 무차별 탐색을 대체할 후보 수 압축." },
+      { ico: "🎓", txt: "<b>지도학습(프로 기보) + 강화학습(자가 대국)</b>의 결합 — 사람을 모방하다가 사람을 뛰어넘음." },
+      { ico: "🧠", txt: "<b>이세돌의 '신의 한 수' 78수</b>를 만들어낸 그 시합의 모델 — AlphaGo가 처음으로 실수한 순간." }
+    ],
+    impact: "AlphaGo Zero(2017)는 인간 기보 없이 더 강해졌고, AlphaZero(2018)는 체스·쇼기까지 정복. MuZero(2020)는 게임 규칙조차 학습. <b>강화학습 르네상스</b>를 일으켰고, 한국·중국에 'AI 붐'을 직접 점화. DeepMind를 세계 최고 AI 연구소 반열에 올린 모델.",
+    why: "<b>일반 대중에게 '딥러닝 시대 도래'를 각인시킨 사건</b>. 학계 안의 진보가 아니라 사회적·역사적 사건이 된 첫 AI이며, 한국 정부의 AI 정책과 산업 투자를 본격적으로 끌어낸 직접적 계기.",
     link: "https://www.nature.com/articles/nature16961",
     tags: ["AlphaGo", "RL", "DeepMind", "Go"]
   },
   {
-    title: "Sora: Video Generation Models as World Simulators",
+    title: "Sora: Video Generation as World Simulators",
     sub: "1분 길이의 사실적 영상 생성",
     field: "🎬 영상 생성",
     emoji: "🎬",
     year: "2024",
     org: "OpenAI",
-    lead: "<strong>최대 1분 길이의 일관성 있는 고해상도 영상을 텍스트만으로 생성</strong>. '월드 시뮬레이터'라는 개념을 제시했어요.",
-    summary: [
-      { ico: "🎞️", txt: "<b>영상·이미지를 시공간 패치</b>로 처리하는 디퓨전 트랜스포머." },
-      { ico: "🌍", txt: "<b>물리적 일관성</b>(중력·반사·움직임)이 분 단위에서 유지." },
-      { ico: "📐", txt: "다양한 <b>해상도·비율·길이</b>를 단일 모델이 처리." }
+    authors: "Brooks, Peebles, Holmes 외 13인",
+    lead: "<strong>최대 1분 길이의 일관성 있는 고해상도 영상을 텍스트만으로 생성</strong>. 단순 영상 생성기를 넘어 '월드 시뮬레이터'라는 야심찬 개념을 제시하며 AI 영상 산업의 폭발을 일으킨 모델이에요.",
+    stats: [
+      { sv: "60초", sl: "최대 영상 길이" },
+      { sv: "1080p", sl: "최대 해상도" },
+      { sv: "DiT", sl: "Diffusion Transformer 기반" }
     ],
-    why: "<b>AI 영상 생성을 '실험'에서 '산업'으로 끌어올린 모델</b>. 영화·광고·게임 제작 워크플로 재편의 신호탄.",
+    background: "기존 영상 생성 모델(Pika·Runway Gen-2·Stable Video Diffusion)은 4~10초 짧은 클립이 한계였고, <b>물리적 일관성·캐릭터 유지·카메라 움직임</b>이 깨지기 일쑤였어요. 영상의 시공간 차원을 어떻게 효율적으로 다룰지가 풀리지 않은 문제였습니다.",
+    summary: [
+      { ico: "🎞️", txt: "<b>영상·이미지를 시공간 패치(spacetime patches)</b>로 처리하는 디퓨전 트랜스포머 — 영상의 '토큰'을 정의한 발상." },
+      { ico: "🌍", txt: "<b>물리적 일관성</b>(중력·반사·움직임·가려짐)이 분 단위에서 유지 — '암묵적 물리 엔진'을 학습한 것처럼 동작." },
+      { ico: "📐", txt: "다양한 <b>해상도·비율·길이</b>(세로·가로·정사각, 5초~60초)를 단일 모델이 처리." },
+      { ico: "🎭", txt: "<b>이미지 → 영상, 영상 → 영상 변환</b>도 가능 — 기존 자산 확장·편집에 활용 가능." }
+    ],
+    impact: "<b>Sora 2·Veo 2·3·Kling·Hailuo·Runway Gen-3</b> 등 영상 생성 모델 대전을 점화. 영화·광고·뮤직비디오·게임 시네마틱·교육 콘텐츠 제작 워크플로 재편. <b>2024년 후반부터 실사 영상과 구분이 어려운 수준</b>이 됐고, 영상 산업의 일자리 구조에 대한 논의를 본격화시켰어요.",
+    why: "<b>AI 영상 생성을 '실험'에서 '산업'으로 끌어올린 모델</b>. '월드 시뮬레이터'라는 개념을 제시하며 AGI 논의에 새 차원을 추가했고, 영상 콘텐츠 제작의 진입장벽을 극적으로 낮췄어요.",
     link: "https://openai.com/research/video-generation-models-as-world-simulators",
     tags: ["Sora", "VideoGen", "OpenAI", "DiT"]
   },
@@ -743,14 +1014,23 @@ const RESEARCH = [
     field: "🧠 추론 모델",
     emoji: "🧠",
     year: "2025",
-    org: "DeepSeek",
-    lead: "<strong>강화학습만으로 (감독학습 없이) 사고 사슬을 길게 늘리는 능력을 학습</strong>. OpenAI o1에 견주는 오픈소스 추론 모델로 주목받았어요.",
-    summary: [
-      { ico: "🎯", txt: "<b>순수 RL(GRPO)</b>로 사고 길이·자기 검증·되돌리기를 자율 학습." },
-      { ico: "📊", txt: "AIME·MATH·코딩 벤치마크에서 <b>o1과 동등 수준</b>." },
-      { ico: "📦", txt: "<b>모델·논문·학습 레시피 전부 오픈소스</b> 공개 — 추론 모델 연구 가속." }
+    org: "DeepSeek AI",
+    authors: "DeepSeek-AI Team (200+인)",
+    lead: "<strong>강화학습만으로(감독학습 없이) 사고 사슬을 길게 늘리는 능력을 자율 학습</strong>한 모델. OpenAI o1에 견주는 성능을 오픈소스로 공개해 추론 모델 연구의 진입장벽을 무너뜨린 결정적 사례.",
+    stats: [
+      { sv: "79.8%", sl: "AIME 2024 (vs o1 79.2%)" },
+      { sv: "$5.6M", sl: "추정 학습 비용 (V3 기준)" },
+      { sv: "MIT", sl: "라이선스 (완전 개방)" }
     ],
-    why: "<b>'추론 모델도 오픈소스 가능' 시대의 시작</b>. 단순한 다음 토큰 예측을 넘어선 메타인지 학습의 가능성.",
+    background: "OpenAI o1(2024.9)이 '추론 모델'의 가능성을 보였지만 <b>학습 레시피는 완전 비공개</b>였어요. 학계와 오픈소스 진영은 추론 모델을 어떻게 학습하는지조차 알지 못했죠. DeepSeek는 V3(2024.12)에 이어 R1으로 '추론 모델 학습법'까지 완전히 공개했습니다.",
+    summary: [
+      { ico: "🎯", txt: "<b>순수 RL(GRPO 알고리즘)</b>로 사고 길이·자기 검증·되돌리기를 자율 학습 — SFT 없이도 가능함을 입증." },
+      { ico: "📊", txt: "AIME·MATH·코딩·과학 벤치마크에서 <b>o1과 동등 수준</b>, 일부는 능가." },
+      { ico: "📦", txt: "<b>모델·논문·학습 레시피 전부 오픈소스</b>(MIT 라이선스) — 추론 모델 연구를 1년 가속." },
+      { ico: "💰", txt: "<b>$5.6M의 학습 비용</b>으로 GPT-4급 모델을 달성, AI의 자본 장벽을 극적으로 낮춤." }
+    ],
+    impact: "<b>전 세계 AI 주식 시장이 반응</b>해 2025년 1월 'DeepSeek 쇼크'로 엔비디아 하루 만에 시총 6000억 달러 증발. Llama·Qwen·Mistral 등 모든 오픈모델이 R1 증류 버전 출시. <b>'미국 vs 중국 AI'</b> 구도와 'AI 자본 거품' 논의를 본격화시킨 사건이기도 해요.",
+    why: "<b>'추론 모델도 오픈소스 가능' 시대의 시작</b>. 단순한 다음 토큰 예측을 넘어선 메타인지 학습의 가능성을 입증했고, AI 강국 구도와 자본 시장에까지 영향을 끼친 보기 드문 모델.",
     link: "https://arxiv.org/abs/2501.12948",
     tags: ["DeepSeek", "Reasoning", "RL", "OpenSource"]
   },
@@ -761,13 +1041,22 @@ const RESEARCH = [
     emoji: "🔧",
     year: "2023",
     org: "Meta AI",
-    lead: "<strong>LLM이 어디서·어떻게 API를 호출할지 자기지도학습으로 스스로 배움</strong>. 계산기·검색·번역 도구를 자율적으로 사용해요.",
-    summary: [
-      { ico: "🎓", txt: "<b>API 호출 후보를 모델이 직접 샘플링</b>하고 유용한 호출만 학습 데이터화." },
-      { ico: "📞", txt: "<b>검색·계산·번역·달력</b> 등 5가지 도구를 단일 모델이 활용." },
-      { ico: "📊", txt: "도구 없이 학습한 동일 모델 대비 <b>다양한 작업에서 큰 폭 향상</b>." }
+    authors: "Schick, Dwivedi-Yu, Dessì 외 4인",
+    lead: "<strong>LLM이 어디서·어떻게 API를 호출할지 자기지도학습으로 스스로 배움</strong>. 인간이 도구 사용을 일일이 가르치지 않아도, 모델이 자기에게 유용한 도구 호출을 학습 데이터로 만들어냈어요.",
+    stats: [
+      { sv: "5개", sl: "학습된 도구 종류" },
+      { sv: "6.7B", sl: "베이스 모델(GPT-J)" },
+      { sv: "0개", sl: "인간 도구 사용 라벨" }
     ],
-    why: "<b>현대 AI 에이전트 'Function Calling'의 직접적 원형</b>. OpenAI Function·Claude Tool Use의 학습 청사진.",
+    background: "LLM은 계산·검색·번역 같은 단순 작업도 자주 틀렸어요. 외부 도구를 쓰면 해결되지만, <b>언제 어떤 도구를 어떻게 쓸지</b>를 일일이 사람이 가르쳐야 했죠. '모델이 스스로 도구 호출 데이터를 만들 수 있지 않을까?'라는 직관에서 출발.",
+    summary: [
+      { ico: "🎓", txt: "<b>API 호출 후보를 모델이 직접 샘플링</b>하고, 호출 결과가 다음 토큰 예측을 더 쉽게 만드는지로 유용성 판별." },
+      { ico: "📞", txt: "<b>검색·계산기·번역기·달력·QA 시스템</b> 5가지 도구를 단일 모델이 자율적으로 활용." },
+      { ico: "📊", txt: "도구 없이 학습한 동일 모델 대비 <b>다양한 작업에서 큰 폭 향상</b>, 특히 산수·시간 관련 질문에서 압도적." },
+      { ico: "🔄", txt: "<b>완전한 자기지도학습</b> — 인간 라벨 없이도 도구 사용 데이터셋을 모델이 만들어냄." }
+    ],
+    impact: "<b>OpenAI Function Calling(2023.6)·Claude Tool Use(2024)·Gemini Function Calling</b>의 직접적 원형. ChatGPT Plugins·LangChain·LlamaIndex·MCP(Model Context Protocol)의 사상적 기반. 모든 'AI 에이전트' 제품이 변형된 Toolformer 패턴 위에서 동작해요.",
+    why: "<b>현대 AI 에이전트 'Function Calling'의 직접적 원형</b>. LLM이 단독으로 동작하는 시대에서 외부 시스템과 결합되는 시대로의 전환을 만들었고, AI 인프라 아키텍처 자체를 바꾼 논문.",
     link: "https://arxiv.org/abs/2302.04761",
     tags: ["Toolformer", "Tools", "Agent", "Meta"]
   },
@@ -778,13 +1067,22 @@ const RESEARCH = [
     emoji: "📊",
     year: "2013",
     org: "Google",
-    lead: "<strong>'왕 - 남자 + 여자 = 여왕'</strong>으로 유명한 단어 벡터 산술. 의미를 숫자로 표현한 시대를 열었어요.",
-    summary: [
-      { ico: "🔄", txt: "<b>CBOW·Skip-gram</b> 두 구조로 주변 단어 예측을 통해 임베딩 학습." },
-      { ico: "🧮", txt: "<b>벡터 연산이 의미 연산</b>이 되는 놀라운 성질 발견." },
-      { ico: "🏛️", txt: "<b>모든 후속 임베딩(BERT·GPT·CLIP)</b>의 직접적 출발점." }
+    authors: "Mikolov, Chen, Corrado, Dean",
+    lead: "<strong>'왕 - 남자 + 여자 = 여왕'</strong>으로 유명한 단어 벡터 산술을 가능케 한 임베딩 학습법. 의미를 숫자로 표현하는 시대를 열며 현대 NLP의 출발선이 된 고전 중의 고전.",
+    stats: [
+      { sv: "100B", sl: "Google News 학습 토큰" },
+      { sv: "300D", sl: "표준 임베딩 차원" },
+      { sv: "70,000+", sl: "인용 횟수" }
     ],
-    why: "<b>NLP가 '기호'에서 '벡터'로 넘어간 결정적 순간</b>. 임베딩·시맨틱 검색·추천 시스템의 토대.",
+    background: "2013년 이전 NLP는 단어를 <b>One-hot 벡터</b>로 표현했어요. '왕'과 '여왕'이 완전히 다른 벡터로 표현돼서 유사도를 잡을 수 없었죠. 신경망 기반 임베딩 시도(Bengio 2003)가 있었지만 너무 비효율적이라 대규모 학습이 어려웠습니다.",
+    summary: [
+      { ico: "🔄", txt: "<b>CBOW(주변 → 중심) · Skip-gram(중심 → 주변)</b> 두 구조로 주변 단어 예측을 통해 임베딩 학습." },
+      { ico: "🧮", txt: "<b>벡터 연산이 의미 연산</b>이 되는 놀라운 성질 — 'Paris - France + Italy ≈ Rome' 같은 유추 가능." },
+      { ico: "⚡", txt: "<b>Negative Sampling·Hierarchical Softmax</b>로 학습 속도 100배 가속 — 100억 토큰 학습 실현." },
+      { ico: "🏛️", txt: "<b>모든 후속 임베딩(GloVe·FastText·BERT·GPT·CLIP)</b>의 직접적 출발점이자 영감의 원천." }
+    ],
+    impact: "<b>FastText·GloVe·ELMo·BERT·GPT</b>까지 모든 임베딩 모델의 효시. 추천 시스템(상품·동영상 임베딩)·시맨틱 검색·번역·문서 분류의 토대. 단어를 넘어 <b>Item2Vec·Node2Vec·Doc2Vec</b>로 확장돼 그래프·추천·검색 분야까지 영향. 현대 RAG 시스템의 벡터 DB도 이 사상적 후예예요.",
+    why: "<b>NLP가 '기호'에서 '벡터'로 넘어간 결정적 순간</b>. 의미가 산술 연산이 된다는 발견은 AI의 가장 마법 같은 순간 중 하나이며, 현대 임베딩·시맨틱 검색·추천 시스템 모두의 사상적 기원.",
     link: "https://arxiv.org/abs/1301.3781",
     tags: ["Word2Vec", "Embedding", "NLP", "Classic"]
   },
@@ -794,14 +1092,23 @@ const RESEARCH = [
     field: "🖼️ 컴퓨터 비전",
     emoji: "🏗️",
     year: "2015",
-    org: "Microsoft Research",
-    lead: "<strong>'스킵 연결'로 깊은 신경망의 학습 문제를 해결</strong>. ImageNet 우승 + AI 분야 인용 1위 논문(20만 회 이상).",
-    summary: [
-      { ico: "➕", txt: "<b>잔차 연결(H(x) = F(x) + x)</b>로 그래디언트 소실 문제 우회." },
-      { ico: "📊", txt: "<b>152층 ResNet</b>이 ImageNet에서 사람보다 정확한 분류 달성." },
-      { ico: "🌐", txt: "<b>트랜스포머의 잔차 연결</b>도 ResNet 아이디어를 그대로 차용." }
+    org: "Microsoft Research Asia",
+    authors: "He, Zhang, Ren, Sun",
+    lead: "<strong>'스킵 연결(skip connection)'로 깊은 신경망의 학습 문제를 해결</strong>한 논문. ImageNet 2015 우승 + AI 분야 인용 1위(20만 회 이상)로, 딥러닝을 진짜 '딥'하게 만든 결정적 트릭이에요.",
+    stats: [
+      { sv: "200,000+", sl: "인용 횟수 (역대 1위급)" },
+      { sv: "152층", sl: "ImageNet 우승 모델 깊이" },
+      { sv: "3.57%", sl: "ImageNet Top-5 오류율" }
     ],
-    why: "<b>딥러닝이 '진짜 딥'해질 수 있게 만든 결정적 트릭</b>. 비전·NLP·강화학습 모든 분야에서 표준 구성요소.",
+    background: "VGG·GoogLeNet 시기까지 신경망은 22층 정도가 한계였어요. <b>층을 더 쌓을수록 오히려 정확도가 떨어지는</b> 'degradation problem'이 나타났죠. 그래디언트 소실/폭발이 원인이라 생각됐지만, BatchNorm으로도 해결되지 않았습니다. ResNet은 이 문제의 본질을 다른 각도에서 해결.",
+    summary: [
+      { ico: "➕", txt: "<b>잔차 연결(H(x) = F(x) + x)</b> — 층이 학습할 게 없으면 항등 매핑으로 'pass through' 가능." },
+      { ico: "📊", txt: "<b>152층 ResNet</b>이 ImageNet에서 3.57% Top-5 오류율로 사람보다 정확한 분류 달성." },
+      { ico: "🧬", txt: "<b>그래디언트 소실 우회</b> — 잔차 경로로 그래디언트가 직접 흐를 수 있어 매우 깊은 망의 학습이 안정화됨." },
+      { ico: "🌐", txt: "<b>트랜스포머의 잔차 연결</b>도 ResNet 아이디어를 그대로 차용 — 사실상 모든 현대 신경망의 표준 부품." }
+    ],
+    impact: "<b>ResNeXt·Wide ResNet·DenseNet·EfficientNet</b> 등 비전 모델 표준이 됨. 더 중요한 건 <b>트랜스포머(어텐션 블록의 residual)·BERT·GPT·CLIP·Stable Diffusion·AlphaFold</b> 등 거의 모든 현대 신경망이 잔차 연결을 채택한 점. 의료영상·자율주행·OCR 등 실무 비전 시스템의 표준 백본.",
+    why: "<b>딥러닝이 '진짜 딥'해질 수 있게 만든 결정적 트릭</b>. 비전·NLP·강화학습·생성 모델 모든 분야에서 표준 구성요소가 됐고, 단순한 아이디어가 분야 전체를 바꾼 모범 사례.",
     link: "https://arxiv.org/abs/1512.03385",
     tags: ["ResNet", "DeepLearning", "Vision", "Classic"]
   },
@@ -812,13 +1119,22 @@ const RESEARCH = [
     emoji: "👥",
     year: "2022",
     org: "OpenAI",
-    lead: "<strong>RLHF로 GPT-3을 사람 지시에 맞게 정렬</strong>. ChatGPT의 직접적인 전신이자 LLM 정렬의 사실상 표준.",
-    summary: [
-      { ico: "✏️", txt: "<b>SFT → 보상모델 → PPO</b>의 3단계 파이프라인 정착." },
-      { ico: "📉", txt: "GPT-3 175B 대비 <b>1.3B InstructGPT가 사람 선호도 높음</b>." },
-      { ico: "💬", txt: "<b>ChatGPT·Claude·Gemini</b> 모두 이 파이프라인 변형 사용." }
+    authors: "Ouyang, Wu, Jiang 외 17인",
+    lead: "<strong>RLHF(인간 피드백 강화학습)로 GPT-3을 사람 지시에 맞게 정렬</strong>한 논문. ChatGPT의 직접적인 전신이자 LLM 정렬의 사실상 표준 파이프라인을 정립한 결정적 연구예요.",
+    stats: [
+      { sv: "1.3B → 175B", sl: "InstructGPT가 GPT-3 능가" },
+      { sv: "3단계", sl: "SFT → RM → PPO 파이프라인" },
+      { sv: "40명", sl: "인간 라벨러 팀 규모" }
     ],
-    why: "<b>ChatGPT 폭발의 직접적 기술 토대</b>. '거대 모델' → '쓸 만한 모델'로의 전환점.",
+    background: "GPT-3는 강력했지만 <b>사람의 지시를 잘 따르지 않았어요</b>. '이 글을 요약해줘'라 하면 요약 대신 글을 이어 쓰기도 했죠. 단순히 더 많은 데이터로 학습하는 게 아닌, '사람이 원하는 응답'을 학습 신호로 쓸 방법이 필요했어요.",
+    summary: [
+      { ico: "✏️", txt: "<b>SFT(지도학습) → 보상모델(RM) → PPO(강화학습)</b>의 3단계 파이프라인을 정착시킴." },
+      { ico: "📉", txt: "<b>1.3B InstructGPT가 175B GPT-3보다 사람 선호도 높음</b> — 정렬이 크기보다 중요할 수 있음을 입증." },
+      { ico: "🎯", txt: "<b>유해성·환각·지시 미준수</b>가 모두 감소하면서도 능력은 유지 — '정렬세' 우려를 일부 해소." },
+      { ico: "💬", txt: "<b>ChatGPT·Claude·Gemini</b> 모두 이 파이프라인 변형 사용 — 현대 어시스턴트의 학습 청사진." }
+    ],
+    impact: "정확히 이 모델을 GPT-3.5로 다듬어 출시한 게 <b>ChatGPT(2022.11)</b>. 한 달 만에 사용자 1억 명을 돌파하며 'AI 폭발기'를 열었어요. 이후 모든 챗봇·어시스턴트가 RLHF 변형 채택. DPO·RLAIF·Constitutional AI 같은 후속 정렬 연구의 토대.",
+    why: "<b>ChatGPT 폭발의 직접적 기술 토대</b>. '거대 모델 보유' → '쓸 만한 모델 보유'로의 전환점이며, AI 산업이 연구를 넘어 일반 사용자 대상 제품 시대로 진입한 결정적 순간.",
     link: "https://arxiv.org/abs/2203.02155",
     tags: ["InstructGPT", "RLHF", "Alignment", "OpenAI"]
   },
@@ -828,14 +1144,23 @@ const RESEARCH = [
     field: "🖼️ 컴퓨터 비전",
     emoji: "👁️",
     year: "2020",
-    org: "Google Brain",
-    lead: "<strong>CNN 없이 이미지를 패치로 잘라 트랜스포머로 처리</strong>. 비전과 NLP의 모델 구조를 통일했어요.",
-    summary: [
-      { ico: "🧩", txt: "<b>이미지를 16×16 패치로 분할</b> 후 토큰처럼 트랜스포머에 입력." },
-      { ico: "📊", txt: "<b>대용량 데이터(JFT-300M)</b>에서 ResNet 능가." },
-      { ico: "🌐", txt: "<b>CLIP·DALL·E·SAM</b> 등 모든 멀티모달 모델의 비전 인코더로 채택." }
+    org: "Google Brain (Google Research)",
+    authors: "Dosovitskiy, Beyer, Kolesnikov 외 9인",
+    lead: "<strong>CNN 없이 이미지를 패치로 잘라 트랜스포머로 처리</strong>한 도전적 시도. '비전엔 CNN'이라는 10년 통념을 깨고 비전과 NLP의 모델 구조를 통일한 결정적 논문이에요.",
+    stats: [
+      { sv: "16×16", sl: "패치 크기 (토큰 단위)" },
+      { sv: "88.55%", sl: "ImageNet Top-1 (ViT-H)" },
+      { sv: "300M+", sl: "필요 사전학습 데이터" }
     ],
-    why: "<b>'CNN 시대의 종료'를 알린 논문</b>. 비전+언어를 같은 구조로 합치는 멀티모달 폭발의 시작.",
+    background: "2012년 AlexNet 이후 비전은 CNN의 독무대였어요. 합성곱의 <b>지역성·평행이동 불변성</b>이 이미지에 잘 맞는다고 여겨졌고, ResNet·EfficientNet까지 모두 CNN 기반이었습니다. NLP에서 트랜스포머가 RNN을 대체한 것을 보고 '비전에도 통할까?'라는 도전이 시작됐어요.",
+    summary: [
+      { ico: "🧩", txt: "<b>이미지를 16×16 패치로 분할</b> 후 토큰처럼 임베딩해 표준 트랜스포머에 입력 — 충격적일 만큼 단순한 발상." },
+      { ico: "📊", txt: "<b>JFT-300M 같은 대용량 데이터</b>에서 ResNet 능가 — 작은 데이터에서는 CNN이 우위라는 한계는 있음." },
+      { ico: "🌐", txt: "<b>CLIP·DALL·E·SAM·Sora·DiT</b> 등 모든 멀티모달·생성 모델의 비전 인코더로 채택." },
+      { ico: "🔁", txt: "<b>합성곱의 귀납적 편향(inductive bias)이 적어</b>도 충분한 데이터만 있으면 학습 가능함을 입증." }
+    ],
+    impact: "<b>Swin Transformer·DeiT·BEiT·MAE·DINOv2·SAM</b>으로 발전하며 비전 분야 표준화. CNN 일변도였던 비전을 트랜스포머 중심으로 재편. 비전+언어를 같은 구조로 합치는 멀티모달 모델(<b>CLIP·LLaVA·GPT-4V·Claude 3</b>) 폭발의 기술적 토대.",
+    why: "<b>'CNN 시대의 종료'를 알린 논문</b>. 비전·NLP·음성·단백질이 같은 아키텍처로 통일되는 멀티모달 시대를 가능케 했고, '귀납적 편향보다 데이터+계산' 시대의 출발점.",
     link: "https://arxiv.org/abs/2010.11929",
     tags: ["ViT", "Vision", "Transformer", "Multimodal"]
   },
@@ -846,13 +1171,22 @@ const RESEARCH = [
     emoji: "📈",
     year: "2020",
     org: "OpenAI",
-    lead: "<strong>LLM의 성능은 모델 크기·데이터·계산량의 멱법칙</strong>을 따른다는 것을 실험적으로 증명. 'GPT를 더 키우자' 결정의 근거가 됐어요.",
-    summary: [
-      { ico: "📊", txt: "<b>손실 = (계산량)^-α</b> 형태의 깔끔한 멱법칙 관계 발견." },
-      { ico: "💰", txt: "<b>주어진 계산 예산에서 모델·데이터의 최적 배분</b> 공식 제시." },
-      { ico: "🎯", txt: "후속 <b>Chinchilla 논문</b>이 데이터 비중을 더 늘리도록 보정." }
+    authors: "Kaplan, McCandlish, Henighan 외 6인",
+    lead: "<strong>LLM의 성능이 모델 크기·데이터·계산량의 멱법칙</strong>을 따른다는 것을 실험적으로 증명. '모델을 얼마나 더 키워야 하나'에 정량적 답을 제시한, GPT-3·4 시대의 이론적 기반.",
+    stats: [
+      { sv: "멱법칙", sl: "L ∝ N^-α · D^-β · C^-γ" },
+      { sv: "7차수", sl: "모델 크기 실험 범위" },
+      { sv: "Chinchilla", sl: "후속 보정 모델" }
     ],
-    why: "<b>'얼마나 더 키워야 할까'에 정량적 답을 준 논문</b>. GPT-3·4, Llama, Claude 모두 이 법칙 위에서 설계됐어요.",
+    background: "당시 모델은 BERT-large(340M)·GPT-2(1.5B)·T5(11B) 등 규모가 들쭉날쭉이었고, '얼마나 더 키워야 효과가 있는지'에 대한 정량적 분석이 없었어요. 단순한 직관('더 크면 더 좋겠지')에 의존했고, 자본 투자 결정에 근거가 부족했습니다.",
+    summary: [
+      { ico: "📊", txt: "<b>손실 = (계산량)^-α</b> 형태의 깔끔한 멱법칙 관계를 7차수에 걸쳐 입증 — 모델 크기·데이터·계산이 일관된 법칙으로 연결." },
+      { ico: "💰", txt: "<b>주어진 계산 예산에서 모델·데이터의 최적 배분</b> 공식 제시 — 자본 투자 결정의 근거가 됨." },
+      { ico: "🎯", txt: "<b>이머전트 능력</b>(특정 크기를 넘어서면 갑자기 나타나는 능력) 관찰 — Few-shot·CoT 등." },
+      { ico: "📏", txt: "<b>Chinchilla(DeepMind 2022)</b>가 후속 보정 — 데이터 비중을 더 늘려야 함을 발견, 'Llama 3가 15조 토큰 학습'의 근거." }
+    ],
+    impact: "<b>GPT-3·4·Llama 1/2/3/4·Claude·Gemini·DeepSeek</b> 모두 스케일링 법칙 위에서 설계. 'AI는 데이터·계산만 늘리면 계속 좋아진다'는 산업적 신념의 근거가 됐고, 2022~2024년 AI 데이터센터·GPU 투자 광풍의 이론적 토대.",
+    why: "<b>'얼마나 더 키워야 할까'에 정량적 답을 준 논문</b>. AI 산업의 자본 투자 결정을 수학적으로 정당화시켰고, NVIDIA의 시총이 세계 1위까지 오른 거시적 배경 중 하나로 평가받아요.",
     link: "https://arxiv.org/abs/2001.08361",
     tags: ["Scaling", "OpenAI", "Theory", "LLM"]
   }
@@ -860,12 +1194,16 @@ const RESEARCH = [
 
 const titleEl = document.getElementById('paperTitle');
 const subEl = document.getElementById('paperSub');
+const authorsEl = document.getElementById('paperAuthors');
 const emojiEl = document.getElementById('paperEmoji');
 const fieldTagEl = document.getElementById('fieldTag');
 const yearEl = document.getElementById('paperYear');
 const orgEl = document.getElementById('paperOrg');
 const leadEl = document.getElementById('paperLead');
+const statsRow = document.getElementById('statsRow');
+const bgText = document.getElementById('bgText');
 const pointsList = document.getElementById('pointsList');
+const impactText = document.getElementById('impactText');
 const whyText = document.getElementById('whyText');
 const linkCard = document.getElementById('linkCard');
 const linkUrl = document.getElementById('linkUrl');
@@ -894,7 +1232,7 @@ function fmtDate(d) {
 }
 
 function pointClass(i) {
-  return ['', 'accent', 'leaf'][i % 3];
+  return ['', 'accent', 'leaf', 'plum'][i % 4];
 }
 
 function shortenUrl(url) {
@@ -916,9 +1254,25 @@ function render(idx) {
   emojiEl.textContent = p.emoji;
   titleEl.textContent = p.title;
   subEl.textContent = p.sub;
+  authorsEl.textContent = p.authors ? `— ${p.authors}` : '';
   yearEl.textContent = '📅 ' + p.year;
   orgEl.textContent = '🏛️ ' + p.org;
   leadEl.innerHTML = p.lead;
+
+  statsRow.innerHTML = '';
+  if (Array.isArray(p.stats) && p.stats.length) {
+    p.stats.forEach(s => {
+      const box = document.createElement('div');
+      box.className = 'stat-box';
+      box.innerHTML = `<div class="sv">${s.sv}</div><div class="sl">${s.sl}</div>`;
+      statsRow.appendChild(box);
+    });
+    statsRow.style.display = 'grid';
+  } else {
+    statsRow.style.display = 'none';
+  }
+
+  bgText.innerHTML = p.background || '—';
 
   pointsList.innerHTML = '';
   p.summary.forEach((s, i) => {
@@ -928,6 +1282,7 @@ function render(idx) {
     pointsList.appendChild(div);
   });
 
+  impactText.innerHTML = p.impact || '—';
   whyText.innerHTML = p.why;
 
   linkCard.setAttribute('href', p.link);
