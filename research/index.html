@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="오늘의 연구사례 — AI·머신러닝 분야의 주요 논문 30편을 매일 한 편씩, 제목·요약·원문 링크를 한 페이지에.">
+<meta name="theme-color" content="#eef4ff">
+<title>오늘의 연구사례 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfdff; --bg2: #eef4ff;
+    --ink: #1a1916; --muted: #8a8780;
+    --line: #ecf0f6; --card: #ffffff;
+    --accent: #d6452a; --accent-soft: #fce7e0; --accent-dark: #b03721;
+    --ink2: #2e3a55;
+    --blue: #3a6df0; --blue-soft: #e2ecff;
+    --leaf: #4aa376; --leaf-soft: #d8efe1;
+    --shadow: 0 1px 2px rgba(26,25,22,0.025), 0 4px 12px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 0% 0%, #e6efff 0%, transparent 45%),
+      radial-gradient(ellipse at 100% 0%, #fde3da 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg) 0%, #ffffff 70%, var(--bg2) 100%);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', system-ui, sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .back {
+    position: fixed; top: 16px; left: 18px;
+    color: var(--muted); text-decoration: none; font-size: 13.5px;
+    letter-spacing: .02em; z-index: 5;
+    background: rgba(255,255,255,0.7); backdrop-filter: blur(6px);
+    padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--line);
+  }
+  .back:hover { color: var(--accent); border-color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 72px 20px 60px; }
+
+  .eyebrow {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+    font-size: 14px; letter-spacing: .04em;
+    color: var(--accent); text-align: center; margin-bottom: 6px;
+  }
+  .title-row {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 4px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(34px, 6.4vw, 48px); line-height: 1.05;
+    letter-spacing: -0.02em; text-align: center;
+  }
+  h1 .accent { color: var(--blue); }
+  .lede {
+    text-align: center; color: var(--muted); font-size: 14px;
+    max-width: 520px; margin: 12px auto 22px; line-height: 1.75;
+    word-break: keep-all;
+  }
+  .date-strip {
+    display: flex; gap: 8px; justify-content: center; align-items: center;
+    margin-bottom: 26px; flex-wrap: wrap;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 13px; font-size: 12.5px;
+    box-shadow: var(--shadow);
+  }
+  .chip .k { color: var(--muted); }
+  .chip .v { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .chip .dot-accent { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .chip .dot-blue { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+
+  /* hero card */
+  .hero {
+    position: relative;
+    background: var(--card); border: 1px solid var(--line); border-radius: 24px;
+    overflow: hidden; box-shadow: var(--shadow);
+    animation: fade .55s ease both;
+  }
+  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .hero-banner {
+    position: relative; padding: 28px 24px 22px;
+    background: linear-gradient(135deg, #243b78 0%, #3a6df0 55%, #6f8efb 130%);
+    color: #fff; overflow: hidden;
+  }
+  .hero-banner::before {
+    content: ""; position: absolute; right: -40px; top: -40px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: rgba(255,255,255,0.18); filter: blur(2px);
+  }
+  .hero-banner::after {
+    content: ""; position: absolute; right: 40px; bottom: -60px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+  .field-tag {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.22); backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px; padding: 5px 11px;
+    font-size: 12px; font-weight: 700; letter-spacing: .06em;
+  }
+  .paper-name {
+    position: relative; z-index: 1;
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(24px, 4.8vw, 32px); line-height: 1.15;
+    margin-top: 14px; letter-spacing: -0.015em;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.12);
+    word-break: keep-all;
+  }
+  .paper-sub {
+    position: relative; z-index: 1;
+    font-size: 13.5px; opacity: 0.94; margin-top: 8px;
+    font-weight: 500; letter-spacing: .02em;
+    word-break: keep-all;
+  }
+  .paper-meta {
+    position: relative; z-index: 1;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .paper-meta .mchip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 999px; padding: 4px 10px;
+    font-size: 11.5px; font-weight: 600; color: #fff;
+    backdrop-filter: blur(4px);
+  }
+  .paper-emoji {
+    position: absolute; right: 20px; top: 18px; z-index: 1;
+    font-size: 44px; line-height: 1; opacity: 0.95;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+  }
+
+  .hero-body { padding: 22px 24px 24px; }
+  .lead {
+    font-size: 15.5px; line-height: 1.8; word-break: keep-all;
+    color: var(--ink); margin-bottom: 18px;
+  }
+  .lead strong { color: var(--blue); font-weight: 700; }
+
+  .section { margin-top: 18px; }
+  .section-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Fraunces', serif; font-weight: 700; font-style: italic;
+    font-size: 13px; letter-spacing: .04em;
+    color: var(--blue); margin-bottom: 10px;
+  }
+  .section-label.accent { color: var(--accent); }
+  .section-label.leaf { color: var(--leaf); }
+  .section-label .bar { width: 18px; height: 2px; background: currentColor; border-radius: 2px; opacity: .55; }
+
+  .points {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .point {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--blue-soft); border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .point.accent { background: var(--accent-soft); }
+  .point.leaf { background: var(--leaf-soft); }
+  .point .ico {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; box-shadow: 0 1px 4px rgba(31,39,51,0.06);
+    margin-top: 1px;
+  }
+  .point .txt { font-size: 14.5px; line-height: 1.7; word-break: keep-all; flex: 1; }
+  .point .txt b { font-weight: 700; }
+
+  .why {
+    background: linear-gradient(180deg, #f3faf6 0%, #e8f4ec 100%);
+    border-left: 3px solid var(--leaf);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 14.5px; line-height: 1.8; word-break: keep-all;
+  }
+  .why b { color: var(--leaf); font-weight: 700; }
+
+  /* link card */
+  .link-card {
+    margin-top: 18px;
+    background: linear-gradient(135deg, #f3f6ff 0%, #e9efff 100%);
+    border: 1px dashed #b9c8f0; border-radius: 14px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; color: var(--ink);
+    transition: all .15s;
+  }
+  .link-card:hover { border-style: solid; border-color: var(--blue); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .link-card .lico {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+    background: var(--blue); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800;
+  }
+  .link-card .ltxt { flex: 1; min-width: 0; }
+  .link-card .llabel { font-size: 11.5px; color: var(--muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .link-card .lurl {
+    font-size: 13.5px; color: var(--blue); font-weight: 700;
+    word-break: break-all; line-height: 1.4; margin-top: 2px;
+    font-family: 'Fraunces', serif;
+  }
+  .link-card .larrow { color: var(--blue); font-size: 18px; }
+
+  /* tags */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .tag {
+    font-size: 12px; color: var(--muted);
+    background: #f4f7fb; border: 1px solid var(--line);
+    border-radius: 999px; padding: 4px 10px;
+  }
+
+  /* actions */
+  .actions {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .btn {
+    font-family: 'Noto Sans KR', sans-serif; font-size: 14px; font-weight: 700;
+    background: var(--card); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 11px 20px; cursor: pointer; letter-spacing: .01em;
+    transition: all .15s; box-shadow: var(--shadow);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover { transform: translateY(-2px); border-color: var(--blue); color: var(--blue); }
+  .btn:active { transform: translateY(0); }
+  .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .btn.primary:hover { background: #2a55c8; border-color: #2a55c8; color: #fff; }
+  .btn .em { font-size: 15px; }
+
+  .hint {
+    text-align: center; color: var(--muted); font-size: 12.5px;
+    margin-top: 22px; letter-spacing: .02em;
+  }
+  .hint b { color: var(--blue); font-weight: 700; }
+
+  /* mini grid */
+  .all-section {
+    margin-top: 36px; padding-top: 28px;
+    border-top: 1px dashed var(--line);
+  }
+  .all-title {
+    text-align: center; font-family: 'Fraunces', serif; font-weight: 700;
+    font-size: 18px; margin-bottom: 6px;
+  }
+  .all-sub { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+  .mini-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .mini {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 12px; cursor: pointer; text-align: left;
+    transition: all .15s; font-family: inherit;
+  }
+  .mini:hover { border-color: var(--blue); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .mini.active { border-color: var(--blue); background: var(--blue-soft); }
+  .mini .em { font-size: 18px; }
+  .mini .nm { font-size: 13px; font-weight: 700; margin-top: 4px; line-height: 1.3; word-break: keep-all; }
+  .mini .rg { font-size: 11px; color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<a class="back" href="/">← U-SOL</a>
+
+<div class="wrap">
+  <div class="eyebrow">today's research</div>
+  <div class="title-row">
+    <h1>오늘의 <span class="accent">연구사례</span></h1>
+  </div>
+  <p class="lede">AI·머신러닝의 흐름을 바꾼 주요 논문 30편을 매일 하나씩. 제목 · 요약 · 원문 링크 순서로.</p>
+
+  <div class="date-strip">
+    <span class="chip"><span class="dot-accent"></span><span class="k">오늘</span><span class="v" id="todayDate">—</span></span>
+    <span class="chip"><span class="dot-blue"></span><span class="k">총</span><span class="v" id="totalCount">30</span><span class="k">편</span></span>
+    <span class="chip"><span class="k">#</span><span class="v" id="paperNo">—</span></span>
+  </div>
+
+  <article class="hero">
+    <div class="hero-banner">
+      <span class="field-tag" id="fieldTag">—</span>
+      <div class="paper-emoji" id="paperEmoji">📄</div>
+      <h2 class="paper-name" id="paperTitle">연구를 불러오는 중…</h2>
+      <div class="paper-sub" id="paperSub">—</div>
+      <div class="paper-meta">
+        <span class="mchip" id="paperYear">—</span>
+        <span class="mchip" id="paperOrg">—</span>
+      </div>
+    </div>
+
+    <div class="hero-body">
+      <p class="lead" id="paperLead">잠시만 기다려주세요.</p>
+
+      <div class="section">
+        <div class="section-label"><span class="bar"></span>요약</div>
+        <div class="points" id="pointsList"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label leaf"><span class="bar"></span>왜 중요한가</div>
+        <p class="why" id="whyText">—</p>
+      </div>
+
+      <a class="link-card" id="linkCard" href="#" target="_blank" rel="noopener">
+        <div class="lico">↗</div>
+        <div class="ltxt">
+          <div class="llabel">원문 링크</div>
+          <div class="lurl" id="linkUrl">—</div>
+        </div>
+        <div class="larrow">→</div>
+      </a>
+
+      <div class="tags" id="tagList"></div>
+    </div>
+  </article>
+
+  <div class="actions">
+    <button class="btn primary" id="randomBtn"><span class="em">🎲</span> 다른 연구 보기</button>
+    <button class="btn" id="todayBtn"><span class="em">📅</span> 오늘의 연구로</button>
+  </div>
+
+  <p class="hint">매일 자정에 새로 갱신돼요 — 30편을 순환하며 한 편씩 보여드립니다.</p>
+
+  <div class="all-section">
+    <div class="all-title">전체 연구 30편</div>
+    <div class="all-sub">눌러서 바로 보기</div>
+    <div class="mini-grid" id="miniGrid"></div>
+  </div>
+</div>
+
+<script>
+const RESEARCH = [
+  {
+    title: "Attention Is All You Need",
+    sub: "어텐션만으로 만든 트랜스포머의 등장",
+    field: "🤖 자연어처리 · 아키텍처",
+    emoji: "🧠",
+    year: "2017",
+    org: "Google Brain",
+    lead: "<strong>RNN·CNN 없이 어텐션만으로</strong> 시퀀스 모델을 구성한 트랜스포머 구조를 제안. 현재 GPT·BERT·Llama의 토대가 된 논문이에요.",
+    summary: [
+      { ico: "📐", txt: "<b>Self-Attention</b> — 입력 시퀀스 안의 모든 토큰 쌍의 관계를 한 번에 계산." },
+      { ico: "⚡", txt: "<b>병렬 학습</b> 가능 — RNN의 순차 처리 한계를 깨고 GPU에서 대규모 학습 가능." },
+      { ico: "🏆", txt: "WMT 영-독 번역에서 <b>28.4 BLEU</b>로 당시 SOTA 갱신." }
+    ],
+    why: "<b>오늘날 모든 거대언어모델의 출발점</b>. 이 논문 이전과 이후로 NLP의 시대가 갈립니다.",
+    link: "https://arxiv.org/abs/1706.03762",
+    tags: ["Transformer", "NLP", "DeepLearning", "Classic"]
+  },
+  {
+    title: "GPT-3: Language Models are Few-Shot Learners",
+    sub: "175B 파라미터 모델의 인컨텍스트 러닝",
+    field: "🤖 거대언어모델",
+    emoji: "🤖",
+    year: "2020",
+    org: "OpenAI",
+    lead: "<strong>1,750억 파라미터 모델</strong>이 별도 파인튜닝 없이 예시 몇 개만 보고도 새 작업을 수행할 수 있음을 보였어요.",
+    summary: [
+      { ico: "📊", txt: "<b>인컨텍스트 러닝</b> — 프롬프트에 예시를 넣으면 가중치 업데이트 없이 작업 수행." },
+      { ico: "📈", txt: "<b>모델 크기 ↑ → 능력 ↑</b>의 스케일링 법칙을 광범위한 벤치마크로 입증." },
+      { ico: "🌍", txt: "<b>번역·QA·산수·코드 생성</b>까지 한 모델로 — 범용 AI 가능성의 첫 신호." }
+    ],
+    why: "<b>'더 큰 모델이 더 똑똑하다'</b>는 명제를 산업 전반에 자리잡게 한 논문. ChatGPT 시대의 직접적 도화선.",
+    link: "https://arxiv.org/abs/2005.14165",
+    tags: ["GPT", "LLM", "Scaling", "FewShot"]
+  },
+  {
+    title: "BERT: Pre-training of Deep Bidirectional Transformers",
+    sub: "양방향 마스킹 사전학습의 표준",
+    field: "🤖 자연어처리",
+    emoji: "📖",
+    year: "2018",
+    org: "Google AI",
+    lead: "<strong>양쪽 문맥을 동시에 보는 마스크드 LM</strong>으로 사전학습한 뒤 파인튜닝하는 패러다임을 정착시켰어요.",
+    summary: [
+      { ico: "🔍", txt: "<b>Masked Language Model</b> — 문장의 일부를 가리고 맞히는 방식으로 양방향 표현 학습." },
+      { ico: "🎯", txt: "<b>GLUE 벤치마크 11개 작업</b>에서 SOTA — NLP 파인튜닝의 표준이 됨." },
+      { ico: "🧩", txt: "<b>Next Sentence Prediction</b>으로 문장 간 관계까지 학습." }
+    ],
+    why: "<b>'사전학습 → 파인튜닝' 워크플로</b>를 산업 표준으로 만든 논문. 검색·분류·개체명인식 전반에 영향.",
+    link: "https://arxiv.org/abs/1810.04805",
+    tags: ["BERT", "NLP", "PreTraining", "Google"]
+  },
+  {
+    title: "Chain-of-Thought Prompting Elicits Reasoning",
+    sub: "단계별로 생각하게 하면 답이 좋아진다",
+    field: "💭 추론 · 프롬프팅",
+    emoji: "💭",
+    year: "2022",
+    org: "Google Brain",
+    lead: "<strong>'단계별로 생각해보자(Let's think step by step)'</strong> 한 줄을 프롬프트에 넣자 수학·논리 문제 정답률이 폭발적으로 올랐어요.",
+    summary: [
+      { ico: "🧮", txt: "<b>GSM8K 산수 문제</b>에서 PaLM-540B 기준 18% → 57%로 점프." },
+      { ico: "📝", txt: "<b>중간 추론 단계</b>를 명시적으로 생성하게 하는 단순한 프롬프트 기법." },
+      { ico: "📐", txt: "모델 크기가 클수록 효과가 커지는 <b>이머전트 능력</b>의 대표 사례." }
+    ],
+    why: "<b>프롬프트 엔지니어링의 시대를 연 논문</b>. ReAct·Tree-of-Thoughts 등 모든 추론 기법의 뿌리.",
+    link: "https://arxiv.org/abs/2201.11903",
+    tags: ["CoT", "Reasoning", "Prompting", "LLM"]
+  },
+  {
+    title: "Retrieval-Augmented Generation (RAG)",
+    sub: "검색 + 생성으로 환각을 줄이다",
+    field: "🔍 검색 증강 생성",
+    emoji: "📚",
+    year: "2020",
+    org: "Meta AI (FAIR)",
+    lead: "<strong>외부 지식 베이스에서 관련 문서를 검색해 근거로 활용</strong>하는 RAG 구조를 제안. LLM 환각 문제의 표준 해법으로 자리잡았어요.",
+    summary: [
+      { ico: "🗄️", txt: "<b>Dense Retriever + Seq2Seq Generator</b>를 종단간(end-to-end) 학습." },
+      { ico: "📊", txt: "<b>오픈도메인 QA 4개 데이터셋</b>에서 SOTA, 사실 기반 응답 품질 향상." },
+      { ico: "🔄", txt: "<b>지식 업데이트가 쉬움</b> — 모델 재학습 없이 인덱스만 갱신." }
+    ],
+    why: "<b>기업용 LLM 도입의 사실상 표준 아키텍처</b>. 사내 문서 챗봇·고객지원·검색 강화의 토대.",
+    link: "https://arxiv.org/abs/2005.11401",
+    tags: ["RAG", "Retrieval", "Hallucination", "Meta"]
+  },
+  {
+    title: "LoRA: Low-Rank Adaptation of LLMs",
+    sub: "거대 모델을 0.1%만 학습해도 된다",
+    field: "🛠️ 파인튜닝 · 효율",
+    emoji: "🪡",
+    year: "2021",
+    org: "Microsoft",
+    lead: "<strong>전체 가중치 고정, 작은 저랭크 행렬만 추가 학습</strong>해도 성능이 거의 그대로. 파인튜닝 비용을 1만 분의 1까지 줄였어요.",
+    summary: [
+      { ico: "🧩", txt: "<b>ΔW = BA</b> (저랭크 분해) — A·B만 학습, 학습 파라미터 99.9% 감소." },
+      { ico: "💾", txt: "<b>VRAM 사용량 3배 감소</b>, 어댑터 파일 수십 MB로 배포 가능." },
+      { ico: "🎯", txt: "GPT-3 175B 풀 파인튜닝과 <b>거의 동등한 성능</b>을 단 0.01% 파라미터로." }
+    ],
+    why: "<b>개인 GPU에서도 LLM 파인튜닝이 가능해진 결정적 계기</b>. Stable Diffusion LoRA, Llama QLoRA 등 모든 효율 학습의 시작.",
+    link: "https://arxiv.org/abs/2106.09685",
+    tags: ["LoRA", "FineTuning", "Efficient", "PEFT"]
+  },
+  {
+    title: "Denoising Diffusion Probabilistic Models (DDPM)",
+    sub: "노이즈 → 이미지, 디퓨전 모델의 부활",
+    field: "🎨 생성 모델",
+    emoji: "🌫️",
+    year: "2020",
+    org: "UC Berkeley",
+    lead: "<strong>순수한 노이즈에서 점진적으로 디노이징</strong>해 이미지를 생성하는 디퓨전 모델을 정착시켰어요. Stable Diffusion·DALL·E의 원형.",
+    summary: [
+      { ico: "🌀", txt: "<b>Forward Process</b>: 이미지에 점진적으로 가우시안 노이즈 추가." },
+      { ico: "🔄", txt: "<b>Reverse Process</b>: 신경망이 노이즈를 한 단계씩 제거하며 복원." },
+      { ico: "🏆", txt: "<b>CIFAR-10에서 SOTA 9.46 IS</b>, GAN을 능가하는 안정적인 학습." }
+    ],
+    why: "<b>현재 모든 이미지·영상 생성 AI의 알고리즘적 뿌리</b>. Midjourney·Sora·Stable Diffusion이 모두 이 구조에서 출발.",
+    link: "https://arxiv.org/abs/2006.11239",
+    tags: ["Diffusion", "Generative", "ImageGen", "DDPM"]
+  },
+  {
+    title: "CLIP: Contrastive Language-Image Pre-training",
+    sub: "이미지와 텍스트를 한 공간에 묶다",
+    field: "🖼️ 멀티모달",
+    emoji: "🔗",
+    year: "2021",
+    org: "OpenAI",
+    lead: "<strong>4억 쌍의 이미지-텍스트 데이터로 대조 학습</strong>해 이미지와 문장을 같은 임베딩 공간에 매핑. 텍스트로 이미지를 검색·분류할 수 있게 됐어요.",
+    summary: [
+      { ico: "🎯", txt: "<b>Zero-shot 이미지 분류</b> — ImageNet에서 ResNet-50과 동등한 정확도." },
+      { ico: "🔍", txt: "<b>텍스트로 이미지 검색</b>, 이미지로 텍스트 찾기 양방향 가능." },
+      { ico: "🧬", txt: "Stable Diffusion·DALL·E의 <b>텍스트 인코더로 채택</b>되어 산업 전반 확산." }
+    ],
+    why: "<b>'언어로 이미지를 다룬다'는 패러다임의 시작</b>. 멀티모달 AI의 출발점이 된 모델.",
+    link: "https://arxiv.org/abs/2103.00020",
+    tags: ["CLIP", "Multimodal", "Vision", "ZeroShot"]
+  },
+  {
+    title: "Llama 2: Open Foundation Models",
+    sub: "오픈소스 LLM의 산업 표준",
+    field: "🦙 오픈소스 LLM",
+    emoji: "🦙",
+    year: "2023",
+    org: "Meta AI",
+    lead: "<strong>7B/13B/70B 파라미터 모델을 상업적으로 무료 공개</strong>. 폐쇄형 GPT-4 시대에 오픈소스 LLM 생태계의 중심이 되었어요.",
+    summary: [
+      { ico: "📦", txt: "<b>2조 토큰</b>으로 사전학습, 4K → 32K로 컨텍스트 확장." },
+      { ico: "💬", txt: "<b>RLHF로 정렬된 Llama 2 Chat</b> — 안전성과 도움성의 균형." },
+      { ico: "🌐", txt: "<b>상업 이용 허용 라이선스</b> — 스타트업·기업이 자체 LLM을 만들 수 있는 토대." }
+    ],
+    why: "<b>'GPT-4 vs 오픈소스'의 격차가 좁혀진 결정적 모델</b>. Code Llama·Llama 3·Mistral·DeepSeek 모두의 출발점.",
+    link: "https://arxiv.org/abs/2307.09288",
+    tags: ["Llama", "OpenSource", "Meta", "Foundation"]
+  },
+  {
+    title: "Direct Preference Optimization (DPO)",
+    sub: "RLHF 없이 선호도 학습하기",
+    field: "🎯 정렬 · RLHF",
+    emoji: "⚖️",
+    year: "2023",
+    org: "Stanford",
+    lead: "<strong>강화학습 없이 단순한 분류 손실</strong>로 인간 선호도를 학습. RLHF의 복잡성을 한 줄의 손실 함수로 대체했어요.",
+    summary: [
+      { ico: "🧮", txt: "<b>보상 모델 + PPO 없이</b> 정책을 직접 최적화하는 손실 유도." },
+      { ico: "🏆", txt: "RLHF 대비 <b>학습 안정성·재현성·성능</b> 모두 우위." },
+      { ico: "⚡", txt: "구현 복잡도가 1/10 — <b>오픈소스 정렬의 사실상 표준</b>으로 자리잡음." }
+    ],
+    why: "<b>오픈소스 진영의 LLM 정렬을 단순화시킨 핵심 기법</b>. Zephyr·Tulu 등 거의 모든 최신 오픈모델이 채택.",
+    link: "https://arxiv.org/abs/2305.18290",
+    tags: ["DPO", "Alignment", "RLHF", "Stanford"]
+  },
+  {
+    title: "FlashAttention: Fast and Memory-Efficient Attention",
+    sub: "어텐션을 2~4배 빠르게",
+    field: "⚡ 시스템 · 효율",
+    emoji: "⚡",
+    year: "2022",
+    org: "Stanford",
+    lead: "<strong>GPU 메모리 계층(HBM ↔ SRAM) 이동을 최소화</strong>하는 IO-aware 어텐션. 메모리는 줄고 속도는 빨라지고 정확도는 그대로.",
+    summary: [
+      { ico: "🧱", txt: "<b>Tiling + Recomputation</b>으로 어텐션 행렬을 전체 저장하지 않음." },
+      { ico: "⏱️", txt: "GPT-2 학습 <b>3배 가속</b>, 시퀀스 길이 16K에서도 안정적 동작." },
+      { ico: "📐", txt: "<b>수치적으로 동일한 결과</b> — 근사 없이 정확한 어텐션." }
+    ],
+    why: "<b>장문 컨텍스트 LLM의 인프라 기반</b>. Llama·GPT-4의 32K~128K 컨텍스트가 이 기법 위에서 작동.",
+    link: "https://arxiv.org/abs/2205.14135",
+    tags: ["FlashAttention", "Efficient", "GPU", "Systems"]
+  },
+  {
+    title: "ReAct: Reasoning + Acting in LLMs",
+    sub: "생각하고 도구 쓰는 에이전트의 원형",
+    field: "🤖 에이전트",
+    emoji: "🛠️",
+    year: "2022",
+    org: "Princeton + Google",
+    lead: "<strong>LLM이 '생각 → 행동 → 관찰' 루프</strong>로 외부 도구를 호출하며 작업을 수행하는 프레임워크. 모든 AI 에이전트의 출발점.",
+    summary: [
+      { ico: "🔄", txt: "<b>Thought → Action → Observation</b> 사이클을 텍스트로 표현." },
+      { ico: "🔧", txt: "<b>검색 API·계산기</b> 등 외부 도구 사용으로 LLM 한계 보완." },
+      { ico: "📊", txt: "HotpotQA·Fever에서 <b>CoT 단독 대비 환각률 50% 감소</b>." }
+    ],
+    why: "<b>LangChain·AutoGPT·Claude Tool Use의 직접적 뿌리</b>. 현대 AI 에이전트 설계의 청사진.",
+    link: "https://arxiv.org/abs/2210.03629",
+    tags: ["Agent", "ReAct", "ToolUse", "Reasoning"]
+  },
+  {
+    title: "Mixture of Experts (Mixtral / Switch Transformer)",
+    sub: "활성화되는 전문가만 계산한다",
+    field: "🧩 모델 아키텍처",
+    emoji: "🧩",
+    year: "2022",
+    org: "Google + Mistral",
+    lead: "<strong>여러 전문가(FFN) 중 일부만 활성화</strong>해 추론. 전체 파라미터는 거대해도 실제 계산량은 작은 효율적 거대 모델.",
+    summary: [
+      { ico: "🚪", txt: "<b>라우터가 토큰별로 Top-2 전문가</b> 선택, 나머지는 비활성화." },
+      { ico: "📈", txt: "Mixtral 8×7B: 활성 12.9B 파라미터로 <b>Llama-70B와 동등한 성능</b>." },
+      { ico: "⚡", txt: "<b>총 파라미터 ↑, 추론 비용 ↓</b>의 패러독스 — 큰 모델을 싸게 운영." }
+    ],
+    why: "<b>GPT-4·Claude·Gemini가 채택한 비공개 핵심 기술</b>. 1조 파라미터 시대를 가능케 한 구조.",
+    link: "https://arxiv.org/abs/2401.04088",
+    tags: ["MoE", "Mixtral", "Efficient", "Sparse"]
+  },
+  {
+    title: "Whisper: Robust Speech Recognition",
+    sub: "다국어 음성 인식의 오픈소스 정점",
+    field: "🎤 음성 인식",
+    emoji: "🎙️",
+    year: "2022",
+    org: "OpenAI",
+    lead: "<strong>웹에서 수집한 68만 시간의 다국어 음성</strong>으로 학습. 99개 언어에 대해 사람 수준의 자동 음성 인식을 달성했어요.",
+    summary: [
+      { ico: "🌍", txt: "<b>99개 언어 인식 + 영어 번역</b>을 하나의 모델에서." },
+      { ico: "📡", txt: "잡음·억양·외래어에 대한 <b>robustness</b>가 기존 모델 대비 2배." },
+      { ico: "📦", txt: "<b>오픈소스 공개</b> — 자막·통역·회의록 산업에 즉시 도입." }
+    ],
+    why: "<b>구글 STT·아마존 Transcribe를 단숨에 따라잡은 오픈모델</b>. 영상 자막·실시간 통역 서비스 대부분이 이 위에서 동작.",
+    link: "https://arxiv.org/abs/2212.04356",
+    tags: ["Whisper", "ASR", "Speech", "Multilingual"]
+  },
+  {
+    title: "Segment Anything (SAM)",
+    sub: "이미지 안의 모든 것을 분리한다",
+    field: "🖼️ 컴퓨터 비전",
+    emoji: "✂️",
+    year: "2023",
+    org: "Meta AI",
+    lead: "<strong>11억 개 마스크로 학습한 범용 세그멘테이션 모델</strong>. 한 번 클릭하면 그 객체를 정확히 분리해 줘요.",
+    summary: [
+      { ico: "🖱️", txt: "<b>포인트·박스·텍스트 프롬프트</b>로 객체 마스크 즉시 생성." },
+      { ico: "🌐", txt: "<b>훈련 안 한 도메인(의료·위성·현미경)</b>에서도 제로샷 동작." },
+      { ico: "📦", txt: "모델·데이터셋·코드 <b>모두 오픈소스 공개</b>." }
+    ],
+    why: "<b>비전 분야의 'GPT 모먼트'</b>로 평가되는 모델. 의료영상·자율주행·이미지 편집의 즉시 가능한 기반.",
+    link: "https://arxiv.org/abs/2304.02643",
+    tags: ["SAM", "Segmentation", "Vision", "Foundation"]
+  },
+  {
+    title: "Mamba: Linear-Time Sequence Modeling",
+    sub: "트랜스포머를 넘어서는 상태공간 모델",
+    field: "🐍 아키텍처",
+    emoji: "🐍",
+    year: "2023",
+    org: "CMU + Princeton",
+    lead: "<strong>선택적 상태공간(Selective SSM)</strong>으로 시퀀스를 처리. 트랜스포머의 어텐션을 대체할 가능성을 보였어요.",
+    summary: [
+      { ico: "📏", txt: "<b>시퀀스 길이에 선형 시간</b> — 어텐션의 O(n²)을 극복." },
+      { ico: "🧠", txt: "<b>입력 의존적 SSM</b>으로 콘텐츠 인지형 정보 흐름 제어." },
+      { ico: "🏆", txt: "동일 파라미터에서 <b>트랜스포머 대비 동등 이상 성능</b>, 5배 빠른 추론." }
+    ],
+    why: "<b>'트랜스포머 이후'를 노리는 가장 유력한 후보</b>. 장문·DNA·오디오 등 긴 시퀀스에서 게임체인저 가능성.",
+    link: "https://arxiv.org/abs/2312.00752",
+    tags: ["Mamba", "SSM", "Architecture", "PostTransformer"]
+  },
+  {
+    title: "Constitutional AI",
+    sub: "AI가 AI를 가르치는 정렬 방식",
+    field: "🛡️ AI 안전성",
+    emoji: "📜",
+    year: "2022",
+    org: "Anthropic",
+    lead: "<strong>인간 라벨러 없이 '헌법'(원칙 리스트)을 따라 AI가 스스로 응답을 비판·수정</strong>. Claude의 핵심 정렬 기법이 됐어요.",
+    summary: [
+      { ico: "📋", txt: "<b>원칙 리스트 + AI 자기 비판</b>으로 무해성 학습 데이터 자동 생성." },
+      { ico: "🔄", txt: "<b>RLAIF (AI Feedback)</b>으로 인간 피드백을 부분 대체." },
+      { ico: "🎯", txt: "독성·편향 감소와 동시에 <b>도움성 유지</b>의 균형 달성." }
+    ],
+    why: "<b>Claude의 정체성을 만든 논문이자 AI 안전성 연구의 대표 사례</b>. RLHF 외 정렬 방법론의 다양화.",
+    link: "https://arxiv.org/abs/2212.08073",
+    tags: ["Anthropic", "Safety", "Constitutional", "Alignment"]
+  },
+  {
+    title: "AlphaFold 2: Protein Structure Prediction",
+    sub: "단백질 접힘 문제를 풀다",
+    field: "🧬 과학 AI",
+    emoji: "🧬",
+    year: "2021",
+    org: "DeepMind",
+    lead: "<strong>50년간 풀리지 않던 단백질 3D 구조 예측 문제</strong>를 원자 단위 정확도로 풀어낸 모델. Nature 표지 + 2024 노벨화학상.",
+    summary: [
+      { ico: "🔬", txt: "<b>다중 시퀀스 정렬(MSA) + 진화 정보</b>를 어텐션 기반 모듈로 통합." },
+      { ico: "📊", txt: "<b>CASP14에서 정확도 평균 92.4 GDT</b> — 사실상 실험과 동등한 수준." },
+      { ico: "🌍", txt: "<b>2억 개 단백질 구조 무료 공개</b> — 신약 개발·생명과학 패러다임 전환." }
+    ],
+    why: "<b>AI가 노벨상을 받는 시대의 신호탄</b>. 생물학 50년 난제 해결, 의학·신약 연구 가속.",
+    link: "https://www.nature.com/articles/s41586-021-03819-2",
+    tags: ["AlphaFold", "Biology", "Nobel", "DeepMind"]
+  },
+  {
+    title: "Tree of Thoughts",
+    sub: "LLM의 사고를 트리로 탐색하다",
+    field: "💭 추론",
+    emoji: "🌳",
+    year: "2023",
+    org: "Princeton + DeepMind",
+    lead: "<strong>단일 추론 경로(CoT)를 넘어 여러 사고 가지를 탐색</strong>하고 자기 평가로 가지치기. 복잡한 문제 해결력이 크게 향상.",
+    summary: [
+      { ico: "🌿", txt: "<b>BFS/DFS로 사고 트리 탐색</b> + LLM 자체로 노드 평가." },
+      { ico: "🎮", txt: "<b>24 게임</b>에서 CoT 4% → ToT 74%로 정답률 18배 향상." },
+      { ico: "🧩", txt: "<b>창의적 글쓰기·미니 크로스워드</b>에서도 일관된 성능 향상." }
+    ],
+    why: "<b>'한 번에 답하는 LLM'에서 '탐색하는 LLM'으로의 전환점</b>. OpenAI o1·DeepSeek R1의 사고 사슬 설계의 직접 영감.",
+    link: "https://arxiv.org/abs/2305.10601",
+    tags: ["ToT", "Reasoning", "Search", "LLM"]
+  },
+  {
+    title: "Self-Supervised Learning (SimCLR)",
+    sub: "레이블 없이 시각 표현 학습하기",
+    field: "🖼️ 자기지도학습",
+    emoji: "🔁",
+    year: "2020",
+    org: "Google Research",
+    lead: "<strong>같은 이미지의 두 변형을 가깝게, 다른 이미지는 멀리</strong> 배치하는 단순한 대조 학습. 레이블 없이 비전 표현을 얻는 표준이 됐어요.",
+    summary: [
+      { ico: "🎲", txt: "<b>강한 데이터 증강 + 큰 배치 + 프로젝션 헤드</b>의 3박자가 핵심." },
+      { ico: "📊", txt: "ImageNet에서 <b>레이블 1%만으로 지도학습 동등 성능</b>." },
+      { ico: "🌐", txt: "<b>CLIP·DINOv2 등 모든 비전 파운데이션 모델</b>의 학습 원리." }
+    ],
+    why: "<b>'레이블 없는 데이터가 보물'</b>임을 비전 분야에 확신시킨 논문. 멀티모달 시대의 시각 표현 학습 토대.",
+    link: "https://arxiv.org/abs/2002.05709",
+    tags: ["SimCLR", "SelfSupervised", "Vision", "Contrastive"]
+  },
+  {
+    title: "Stable Diffusion (Latent Diffusion)",
+    sub: "잠재공간에서 디퓨전 — 개인 GPU로 이미지 생성",
+    field: "🎨 생성 모델",
+    emoji: "🖌️",
+    year: "2022",
+    org: "LMU Munich + Stability AI",
+    lead: "<strong>VAE로 압축한 잠재공간에서 디퓨전</strong>을 수행해 계산량을 100분의 1로 줄임. 일반 GPU에서 이미지 생성 가능 시대를 열었어요.",
+    summary: [
+      { ico: "🗜️", txt: "<b>VAE 인코더로 8배 다운샘플</b> 후 잠재공간에서 디퓨전 학습." },
+      { ico: "🖥️", txt: "<b>VRAM 8~10GB로 동작</b> — 개인 GPU에서 실시간 가까운 생성." },
+      { ico: "📦", txt: "<b>모델·가중치 완전 오픈소스</b> — 이미지 생성 AI 폭발의 출발점." }
+    ],
+    why: "<b>'AI 이미지 생성을 만인의 것으로'</b> 만든 논문. Midjourney·Krea·ComfyUI 등 모든 후속 모델의 기반.",
+    link: "https://arxiv.org/abs/2112.10752",
+    tags: ["StableDiffusion", "LDM", "Generative", "OpenSource"]
+  },
+  {
+    title: "AlphaGo: Mastering the Game of Go",
+    sub: "AI가 이세돌을 이긴 그 모델",
+    field: "🎮 강화학습",
+    emoji: "♟️",
+    year: "2016",
+    org: "DeepMind",
+    lead: "<strong>딥러닝 + 몬테카를로 트리 서치 + 자가 대국 강화학습</strong>. 2016년 이세돌 9단을 4-1로 꺾으며 AI 패러다임을 바꿨어요.",
+    summary: [
+      { ico: "🎯", txt: "<b>정책망 + 가치망</b>의 이중 네트워크 구조로 수읽기 깊이 확장." },
+      { ico: "🔍", txt: "<b>MCTS</b>로 효율적 탐색, 수백만 후보 중 의미 있는 수만 평가." },
+      { ico: "🧠", txt: "<b>이세돌의 '신의 한 수' 78수</b>를 만들어낸 그 시합의 모델." }
+    ],
+    why: "<b>일반 대중에게 '딥러닝 시대 도래'를 각인시킨 사건</b>. 한국에 AI 붐을 일으킨 직접적 계기.",
+    link: "https://www.nature.com/articles/nature16961",
+    tags: ["AlphaGo", "RL", "DeepMind", "Go"]
+  },
+  {
+    title: "Sora: Video Generation Models as World Simulators",
+    sub: "1분 길이의 사실적 영상 생성",
+    field: "🎬 영상 생성",
+    emoji: "🎬",
+    year: "2024",
+    org: "OpenAI",
+    lead: "<strong>최대 1분 길이의 일관성 있는 고해상도 영상을 텍스트만으로 생성</strong>. '월드 시뮬레이터'라는 개념을 제시했어요.",
+    summary: [
+      { ico: "🎞️", txt: "<b>영상·이미지를 시공간 패치</b>로 처리하는 디퓨전 트랜스포머." },
+      { ico: "🌍", txt: "<b>물리적 일관성</b>(중력·반사·움직임)이 분 단위에서 유지." },
+      { ico: "📐", txt: "다양한 <b>해상도·비율·길이</b>를 단일 모델이 처리." }
+    ],
+    why: "<b>AI 영상 생성을 '실험'에서 '산업'으로 끌어올린 모델</b>. 영화·광고·게임 제작 워크플로 재편의 신호탄.",
+    link: "https://openai.com/research/video-generation-models-as-world-simulators",
+    tags: ["Sora", "VideoGen", "OpenAI", "DiT"]
+  },
+  {
+    title: "DeepSeek-R1: Reasoning via Reinforcement Learning",
+    sub: "오픈소스 추론 모델의 정점",
+    field: "🧠 추론 모델",
+    emoji: "🧠",
+    year: "2025",
+    org: "DeepSeek",
+    lead: "<strong>강화학습만으로 (감독학습 없이) 사고 사슬을 길게 늘리는 능력을 학습</strong>. OpenAI o1에 견주는 오픈소스 추론 모델로 주목받았어요.",
+    summary: [
+      { ico: "🎯", txt: "<b>순수 RL(GRPO)</b>로 사고 길이·자기 검증·되돌리기를 자율 학습." },
+      { ico: "📊", txt: "AIME·MATH·코딩 벤치마크에서 <b>o1과 동등 수준</b>." },
+      { ico: "📦", txt: "<b>모델·논문·학습 레시피 전부 오픈소스</b> 공개 — 추론 모델 연구 가속." }
+    ],
+    why: "<b>'추론 모델도 오픈소스 가능' 시대의 시작</b>. 단순한 다음 토큰 예측을 넘어선 메타인지 학습의 가능성.",
+    link: "https://arxiv.org/abs/2501.12948",
+    tags: ["DeepSeek", "Reasoning", "RL", "OpenSource"]
+  },
+  {
+    title: "Toolformer: LMs Can Teach Themselves to Use Tools",
+    sub: "도구 사용을 스스로 배우는 LLM",
+    field: "🛠️ 도구 사용",
+    emoji: "🔧",
+    year: "2023",
+    org: "Meta AI",
+    lead: "<strong>LLM이 어디서·어떻게 API를 호출할지 자기지도학습으로 스스로 배움</strong>. 계산기·검색·번역 도구를 자율적으로 사용해요.",
+    summary: [
+      { ico: "🎓", txt: "<b>API 호출 후보를 모델이 직접 샘플링</b>하고 유용한 호출만 학습 데이터화." },
+      { ico: "📞", txt: "<b>검색·계산·번역·달력</b> 등 5가지 도구를 단일 모델이 활용." },
+      { ico: "📊", txt: "도구 없이 학습한 동일 모델 대비 <b>다양한 작업에서 큰 폭 향상</b>." }
+    ],
+    why: "<b>현대 AI 에이전트 'Function Calling'의 직접적 원형</b>. OpenAI Function·Claude Tool Use의 학습 청사진.",
+    link: "https://arxiv.org/abs/2302.04761",
+    tags: ["Toolformer", "Tools", "Agent", "Meta"]
+  },
+  {
+    title: "Word2Vec: Efficient Word Embeddings",
+    sub: "단어를 벡터로 — NLP의 출발선",
+    field: "📖 자연어처리",
+    emoji: "📊",
+    year: "2013",
+    org: "Google",
+    lead: "<strong>'왕 - 남자 + 여자 = 여왕'</strong>으로 유명한 단어 벡터 산술. 의미를 숫자로 표현한 시대를 열었어요.",
+    summary: [
+      { ico: "🔄", txt: "<b>CBOW·Skip-gram</b> 두 구조로 주변 단어 예측을 통해 임베딩 학습." },
+      { ico: "🧮", txt: "<b>벡터 연산이 의미 연산</b>이 되는 놀라운 성질 발견." },
+      { ico: "🏛️", txt: "<b>모든 후속 임베딩(BERT·GPT·CLIP)</b>의 직접적 출발점." }
+    ],
+    why: "<b>NLP가 '기호'에서 '벡터'로 넘어간 결정적 순간</b>. 임베딩·시맨틱 검색·추천 시스템의 토대.",
+    link: "https://arxiv.org/abs/1301.3781",
+    tags: ["Word2Vec", "Embedding", "NLP", "Classic"]
+  },
+  {
+    title: "ResNet: Deep Residual Learning",
+    sub: "152층 신경망을 학습 가능하게 만들다",
+    field: "🖼️ 컴퓨터 비전",
+    emoji: "🏗️",
+    year: "2015",
+    org: "Microsoft Research",
+    lead: "<strong>'스킵 연결'로 깊은 신경망의 학습 문제를 해결</strong>. ImageNet 우승 + AI 분야 인용 1위 논문(20만 회 이상).",
+    summary: [
+      { ico: "➕", txt: "<b>잔차 연결(H(x) = F(x) + x)</b>로 그래디언트 소실 문제 우회." },
+      { ico: "📊", txt: "<b>152층 ResNet</b>이 ImageNet에서 사람보다 정확한 분류 달성." },
+      { ico: "🌐", txt: "<b>트랜스포머의 잔차 연결</b>도 ResNet 아이디어를 그대로 차용." }
+    ],
+    why: "<b>딥러닝이 '진짜 딥'해질 수 있게 만든 결정적 트릭</b>. 비전·NLP·강화학습 모든 분야에서 표준 구성요소.",
+    link: "https://arxiv.org/abs/1512.03385",
+    tags: ["ResNet", "DeepLearning", "Vision", "Classic"]
+  },
+  {
+    title: "InstructGPT (RLHF for Instruction Following)",
+    sub: "사람 피드백으로 LLM을 길들이다",
+    field: "🎯 정렬 · RLHF",
+    emoji: "👥",
+    year: "2022",
+    org: "OpenAI",
+    lead: "<strong>RLHF로 GPT-3을 사람 지시에 맞게 정렬</strong>. ChatGPT의 직접적인 전신이자 LLM 정렬의 사실상 표준.",
+    summary: [
+      { ico: "✏️", txt: "<b>SFT → 보상모델 → PPO</b>의 3단계 파이프라인 정착." },
+      { ico: "📉", txt: "GPT-3 175B 대비 <b>1.3B InstructGPT가 사람 선호도 높음</b>." },
+      { ico: "💬", txt: "<b>ChatGPT·Claude·Gemini</b> 모두 이 파이프라인 변형 사용." }
+    ],
+    why: "<b>ChatGPT 폭발의 직접적 기술 토대</b>. '거대 모델' → '쓸 만한 모델'로의 전환점.",
+    link: "https://arxiv.org/abs/2203.02155",
+    tags: ["InstructGPT", "RLHF", "Alignment", "OpenAI"]
+  },
+  {
+    title: "Vision Transformer (ViT)",
+    sub: "이미지도 트랜스포머로 처리하자",
+    field: "🖼️ 컴퓨터 비전",
+    emoji: "👁️",
+    year: "2020",
+    org: "Google Brain",
+    lead: "<strong>CNN 없이 이미지를 패치로 잘라 트랜스포머로 처리</strong>. 비전과 NLP의 모델 구조를 통일했어요.",
+    summary: [
+      { ico: "🧩", txt: "<b>이미지를 16×16 패치로 분할</b> 후 토큰처럼 트랜스포머에 입력." },
+      { ico: "📊", txt: "<b>대용량 데이터(JFT-300M)</b>에서 ResNet 능가." },
+      { ico: "🌐", txt: "<b>CLIP·DALL·E·SAM</b> 등 모든 멀티모달 모델의 비전 인코더로 채택." }
+    ],
+    why: "<b>'CNN 시대의 종료'를 알린 논문</b>. 비전+언어를 같은 구조로 합치는 멀티모달 폭발의 시작.",
+    link: "https://arxiv.org/abs/2010.11929",
+    tags: ["ViT", "Vision", "Transformer", "Multimodal"]
+  },
+  {
+    title: "Scaling Laws for Neural Language Models",
+    sub: "모델 크기 · 데이터 · 계산의 법칙",
+    field: "📈 스케일링",
+    emoji: "📈",
+    year: "2020",
+    org: "OpenAI",
+    lead: "<strong>LLM의 성능은 모델 크기·데이터·계산량의 멱법칙</strong>을 따른다는 것을 실험적으로 증명. 'GPT를 더 키우자' 결정의 근거가 됐어요.",
+    summary: [
+      { ico: "📊", txt: "<b>손실 = (계산량)^-α</b> 형태의 깔끔한 멱법칙 관계 발견." },
+      { ico: "💰", txt: "<b>주어진 계산 예산에서 모델·데이터의 최적 배분</b> 공식 제시." },
+      { ico: "🎯", txt: "후속 <b>Chinchilla 논문</b>이 데이터 비중을 더 늘리도록 보정." }
+    ],
+    why: "<b>'얼마나 더 키워야 할까'에 정량적 답을 준 논문</b>. GPT-3·4, Llama, Claude 모두 이 법칙 위에서 설계됐어요.",
+    link: "https://arxiv.org/abs/2001.08361",
+    tags: ["Scaling", "OpenAI", "Theory", "LLM"]
+  }
+];
+
+const titleEl = document.getElementById('paperTitle');
+const subEl = document.getElementById('paperSub');
+const emojiEl = document.getElementById('paperEmoji');
+const fieldTagEl = document.getElementById('fieldTag');
+const yearEl = document.getElementById('paperYear');
+const orgEl = document.getElementById('paperOrg');
+const leadEl = document.getElementById('paperLead');
+const pointsList = document.getElementById('pointsList');
+const whyText = document.getElementById('whyText');
+const linkCard = document.getElementById('linkCard');
+const linkUrl = document.getElementById('linkUrl');
+const tagList = document.getElementById('tagList');
+const todayDate = document.getElementById('todayDate');
+const totalCount = document.getElementById('totalCount');
+const paperNo = document.getElementById('paperNo');
+const miniGrid = document.getElementById('miniGrid');
+
+totalCount.textContent = RESEARCH.length;
+
+function dayOfYear(d) {
+  const start = new Date(d.getFullYear(), 0, 0);
+  const diff = d - start;
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+function todayIndex() {
+  const d = new Date();
+  return dayOfYear(d) % RESEARCH.length;
+}
+
+function fmtDate(d) {
+  const days = ['일','월','화','수','목','금','토'];
+  return `${d.getMonth()+1}/${d.getDate()} (${days[d.getDay()]})`;
+}
+
+function pointClass(i) {
+  return ['', 'accent', 'leaf'][i % 3];
+}
+
+function shortenUrl(url) {
+  try {
+    const u = new URL(url);
+    let path = u.pathname;
+    if (path.length > 32) path = path.slice(0, 30) + '…';
+    return u.host + path;
+  } catch (_) {
+    return url;
+  }
+}
+
+function render(idx) {
+  const p = RESEARCH[idx];
+  if (!p) return;
+  paperNo.textContent = String(idx + 1).padStart(2, '0');
+  fieldTagEl.textContent = p.field;
+  emojiEl.textContent = p.emoji;
+  titleEl.textContent = p.title;
+  subEl.textContent = p.sub;
+  yearEl.textContent = '📅 ' + p.year;
+  orgEl.textContent = '🏛️ ' + p.org;
+  leadEl.innerHTML = p.lead;
+
+  pointsList.innerHTML = '';
+  p.summary.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'point ' + pointClass(i);
+    div.innerHTML = `<div class="ico">${s.ico}</div><div class="txt">${s.txt}</div>`;
+    pointsList.appendChild(div);
+  });
+
+  whyText.innerHTML = p.why;
+
+  linkCard.setAttribute('href', p.link);
+  linkUrl.textContent = shortenUrl(p.link);
+
+  tagList.innerHTML = '';
+  (p.tags || []).forEach(t => {
+    const s = document.createElement('span');
+    s.className = 'tag';
+    s.textContent = '#' + t;
+    tagList.appendChild(s);
+  });
+
+  document.querySelectorAll('.mini').forEach((m, i) => {
+    m.classList.toggle('active', i === idx);
+  });
+
+  document.querySelector('.hero').style.animation = 'none';
+  void document.querySelector('.hero').offsetWidth;
+  document.querySelector('.hero').style.animation = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderMiniGrid() {
+  RESEARCH.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'mini';
+    btn.innerHTML = `<div class="em">${p.emoji}</div><div class="nm">${p.title}</div><div class="rg">${p.year} · ${p.org}</div>`;
+    btn.addEventListener('click', () => render(i));
+    miniGrid.appendChild(btn);
+  });
+}
+
+document.getElementById('randomBtn').addEventListener('click', () => {
+  const current = RESEARCH.findIndex((_, i) => document.querySelectorAll('.mini')[i]?.classList.contains('active'));
+  let r;
+  do { r = Math.floor(Math.random() * RESEARCH.length); } while (r === current && RESEARCH.length > 1);
+  render(r);
+});
+
+document.getElementById('todayBtn').addEventListener('click', () => {
+  render(todayIndex());
+});
+
+todayDate.textContent = fmtDate(new Date());
+renderMiniGrid();
+render(todayIndex());
+</script>
+</body>
+</html>
