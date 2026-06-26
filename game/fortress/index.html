@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="포트리스 스타일 탱크 포격전. 각도·파워를 맞춰 적 탱크를 명중시키는 한국어 웹 슈팅 게임.">
+<meta name="theme-color" content="#0a0a12">
+<title>NEON FORTRESS · 네온 포트리스</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@500;700;900&display=swap');
+  :root {
+    --bg: #0a0a12; --panel: #12121f; --accent: #00f0ff; --accent-2: #ff2d95;
+    --accent-3: #ffd400; --text: #e8ecff; --muted: #7a82b8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    min-height: 100%;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(0,240,255,0.12), transparent 55%),
+      radial-gradient(ellipse at 80% 120%, rgba(255,45,149,0.12), transparent 55%),
+      var(--bg);
+    color: var(--text); font-family: 'Orbitron', sans-serif;
+    overflow: hidden; user-select: none;
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0) 4px);
+    pointer-events: none; z-index: 100; mix-blend-mode: multiply;
+  }
+  .wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 8px; }
+  .back { position: fixed; top: 14px; left: 16px; z-index: 200; color: var(--muted); text-decoration: none; font-size: 13px; letter-spacing: 1px; }
+  .title {
+    font-family: 'Press Start 2P', monospace; font-size: clamp(13px, 3.6vw, 22px);
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 0 24px rgba(0,240,255,0.35); text-align: center;
+  }
+  .hud { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; font-size: 11px; letter-spacing: 1px; }
+  .hud b { color: var(--accent); font-weight: 700; }
+  .hud .p2 b { color: var(--accent-2); }
+  .hud .wind b { color: var(--accent-3); }
+  .board-frame {
+    position: relative; padding: 6px; border-radius: 10px;
+    background: linear-gradient(145deg, rgba(0,240,255,0.5), rgba(255,45,149,0.5));
+    box-shadow: 0 0 40px rgba(0,240,255,0.25), inset 0 0 20px rgba(0,0,0,0.6);
+    max-width: 100%;
+  }
+  canvas#game { display: block; background: #07070e; border-radius: 6px; max-width: 100%; height: auto; }
+  .overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    background: rgba(10,10,18,0.92); backdrop-filter: blur(4px); border-radius: 6px;
+    z-index: 10; text-align: center; padding: 20px;
+  }
+  .overlay.hidden { display: none; }
+  .overlay .big {
+    font-family: 'Press Start 2P', monospace; font-size: 16px; line-height: 1.8;
+    color: var(--accent-2); text-shadow: 0 0 18px rgba(255,45,149,0.5);
+  }
+  .overlay .sub { font-size: 12px; color: var(--muted); line-height: 1.9; }
+  .btn {
+    font-family: 'Press Start 2P', monospace; font-size: 11px; color: #061015;
+    background: linear-gradient(90deg, var(--accent), #6ef0ff); border: none;
+    border-radius: 8px; padding: 14px 22px; cursor: pointer;
+    box-shadow: 0 0 22px rgba(0,240,255,0.5);
+  }
+  .btn:active { transform: scale(0.96); }
+  .panel-row {
+    display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+    padding: 10px 14px; background: var(--panel); border: 1px solid rgba(0,240,255,0.2);
+    border-radius: 10px; font-size: 12px;
+  }
+  .panel-row .meter { display: flex; align-items: center; gap: 8px; }
+  .panel-row .label { color: var(--muted); letter-spacing: 1px; }
+  .panel-row .val { color: var(--accent); font-weight: 700; min-width: 38px; text-align: right; font-family: 'Press Start 2P', monospace; font-size: 10px; }
+  .bar { width: 96px; height: 8px; background: #1d1d2e; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,240,255,0.2); }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 4px; transition: width .12s; }
+  .turn-tag {
+    font-family: 'Press Start 2P', monospace; font-size: 10px; padding: 6px 12px;
+    border-radius: 20px; background: rgba(0,240,255,0.15); color: var(--accent);
+    border: 1px solid rgba(0,240,255,0.4);
+  }
+  .turn-tag.cpu { background: rgba(255,45,149,0.15); color: var(--accent-2); border-color: rgba(255,45,149,0.4); }
+  .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%; max-width: 460px; }
+  .controls button {
+    font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 18px; color: var(--text);
+    background: var(--panel); border: 1px solid rgba(0,240,255,0.35); border-radius: 12px;
+    padding: 14px 0; box-shadow: 0 0 14px rgba(0,240,255,0.12);
+  }
+  .controls button:active { transform: scale(0.94); background: rgba(0,240,255,0.15); }
+  .controls .fire { grid-column: span 1; border-color: rgba(255,45,149,0.6); color: var(--accent-2); }
+  .controls .fire:active { background: rgba(255,45,149,0.18); }
+  .hint { font-size: 11px; color: var(--muted); text-align: center; letter-spacing: .5px; max-width: 480px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="/game/">← 게임</a>
+  <div class="title">NEON FORTRESS</div>
+
+  <div class="hud">
+    <div>P1 HP <b id="hp1">100</b></div>
+    <div class="p2">CPU HP <b id="hp2">100</b></div>
+    <div class="wind">WIND <b id="windv">0</b></div>
+    <div id="turnTag" class="turn-tag">P1 TURN</div>
+  </div>
+
+  <div class="board-frame">
+    <canvas id="game" width="760" height="420"></canvas>
+    <div class="overlay" id="ovStart">
+      <div class="big">READY?</div>
+      <div class="sub">
+        ← → 각도 · ↑ ↓ 파워 · SPACE 발사<br>
+        모바일은 아래 버튼 사용<br>
+        바람과 중력을 고려해 명중시켜라
+      </div>
+      <button class="btn" id="btnStart">START</button>
+    </div>
+    <div class="overlay hidden" id="ovOver">
+      <div class="big" id="overMsg">VICTORY!</div>
+      <div class="sub" id="overSub">적을 격파했다</div>
+      <button class="btn" id="btnRetry">RETRY</button>
+    </div>
+  </div>
+
+  <div class="panel-row">
+    <div class="meter">
+      <span class="label">ANGLE</span>
+      <div class="bar"><i id="barAng" style="width:50%"></i></div>
+      <span class="val" id="valAng">45°</span>
+    </div>
+    <div class="meter">
+      <span class="label">POWER</span>
+      <div class="bar"><i id="barPwr" style="width:55%"></i></div>
+      <span class="val" id="valPwr">55</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="bAngU">↙</button>
+    <button id="bAngD">↘</button>
+    <button id="bPwrD">−</button>
+    <button id="bPwrU">+</button>
+    <button id="bFire" class="fire">🔥</button>
+  </div>
+
+  <div class="hint">
+    ← / → 로 각도 (탱크 포신 회전), ↑ / ↓ 로 파워 조절, SPACE 로 발사.<br>
+    터미널 우측 CPU가 자동으로 응사합니다. HP를 0으로 만들면 승리.
+  </div>
+</div>
+
+<script>
+(() => {
+  const cv = document.getElementById('game');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+
+  const elHp1 = document.getElementById('hp1');
+  const elHp2 = document.getElementById('hp2');
+  const elWind = document.getElementById('windv');
+  const elTurn = document.getElementById('turnTag');
+  const elAng = document.getElementById('valAng');
+  const elPwr = document.getElementById('valPwr');
+  const barAng = document.getElementById('barAng');
+  const barPwr = document.getElementById('barPwr');
+  const ovStart = document.getElementById('ovStart');
+  const ovOver = document.getElementById('ovOver');
+  const overMsg = document.getElementById('overMsg');
+  const overSub = document.getElementById('overSub');
+
+  const GROUND_RES = 2;
+  const GROUND_LEN = Math.floor(W / GROUND_RES);
+  let ground = new Float32Array(GROUND_LEN);
+
+  const GRAVITY = 0.18;
+  const TANK_W = 28, TANK_H = 12, BARREL_LEN = 18;
+
+  const state = {
+    phase: 'idle',
+    turn: 0,
+    wind: 0,
+    tanks: [],
+    shell: null,
+    particles: [],
+    smokes: [],
+    cooldown: 0,
+    aimAngle: 45,
+    aimPower: 55,
+    cpuPlan: null,
+    flash: 0,
+  };
+
+  function makeTerrain() {
+    const peaks = [];
+    const n = 5 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < n; i++) {
+      peaks.push({
+        x: (i + 0.5) / n + (Math.random() - 0.5) * 0.08,
+        amp: 50 + Math.random() * 80,
+        freq: 1 + Math.random() * 2,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+    const baseline = H * 0.72;
+    for (let i = 0; i < GROUND_LEN; i++) {
+      const x = i / GROUND_LEN;
+      let h = baseline;
+      for (const p of peaks) {
+        const d = (x - p.x);
+        h -= p.amp * Math.exp(-d * d * 18) * Math.cos(p.freq * 6 * d + p.phase) * 0.5 + p.amp * 0.4 * Math.exp(-d * d * 12);
+      }
+      h += Math.sin(x * 18) * 4 + Math.sin(x * 47) * 2;
+      ground[i] = Math.max(80, Math.min(H - 30, h));
+    }
+    for (let pass = 0; pass < 2; pass++) {
+      for (let i = 1; i < GROUND_LEN - 1; i++) {
+        ground[i] = (ground[i - 1] + ground[i] * 2 + ground[i + 1]) / 4;
+      }
+    }
+  }
+
+  function groundAt(px) {
+    const i = Math.max(0, Math.min(GROUND_LEN - 1, Math.floor(px / GROUND_RES)));
+    return ground[i];
+  }
+
+  function placeTanks() {
+    const x1 = Math.floor(W * (0.08 + Math.random() * 0.08));
+    const x2 = Math.floor(W * (0.84 + Math.random() * 0.08));
+    state.tanks = [
+      { x: x1, y: groundAt(x1), hp: 100, color: '#00f0ff', glow: 'rgba(0,240,255,0.55)', face: 1, name: 'P1', cpu: false },
+      { x: x2, y: groundAt(x2), hp: 100, color: '#ff2d95', glow: 'rgba(255,45,149,0.55)', face: -1, name: 'CPU', cpu: true },
+    ];
+  }
+
+  function newRound() {
+    makeTerrain();
+    placeTanks();
+    state.wind = (Math.random() * 2 - 1) * 0.06;
+    state.turn = 0;
+    state.shell = null;
+    state.particles = [];
+    state.smokes = [];
+    state.phase = 'aim';
+    state.aimAngle = 45;
+    state.aimPower = 55;
+    state.cooldown = 0;
+    updateHud();
+    updateMeters();
+  }
+
+  function updateHud() {
+    const t1 = state.tanks[0], t2 = state.tanks[1];
+    elHp1.textContent = Math.max(0, Math.round(t1.hp));
+    elHp2.textContent = Math.max(0, Math.round(t2.hp));
+    const w = state.wind;
+    elWind.textContent = (w >= 0 ? '→ ' : '← ') + Math.abs(w * 100).toFixed(0);
+    if (state.phase === 'aim' || state.phase === 'fly') {
+      elTurn.textContent = state.turn === 0 ? 'P1 TURN' : 'CPU TURN';
+      elTurn.classList.toggle('cpu', state.turn === 1);
+    }
+  }
+
+  function updateMeters() {
+    elAng.textContent = state.aimAngle + '°';
+    elPwr.textContent = state.aimPower;
+    barAng.style.width = (state.aimAngle / 90 * 100) + '%';
+    barPwr.style.width = (state.aimPower / 100 * 100) + '%';
+  }
+
+  function getShooter() { return state.tanks[state.turn]; }
+  function getTarget()  { return state.tanks[1 - state.turn]; }
+
+  function fire(angleDeg, power) {
+    const sh = getShooter();
+    const ang = angleDeg * Math.PI / 180;
+    const dir = sh.face;
+    const muzzleX = sh.x + Math.cos(ang) * BARREL_LEN * dir;
+    const muzzleY = sh.y - TANK_H * 0.6 - Math.sin(ang) * BARREL_LEN;
+    const speed = power * 0.18;
+    state.shell = {
+      x: muzzleX, y: muzzleY,
+      vx: Math.cos(ang) * speed * dir,
+      vy: -Math.sin(ang) * speed,
+      trail: [],
+    };
+    state.phase = 'fly';
+    spawnMuzzle(muzzleX, muzzleY, ang, dir, sh.color);
+  }
+
+  function spawnMuzzle(x, y, ang, dir, color) {
+    for (let i = 0; i < 12; i++) {
+      const a = ang + (Math.random() - 0.5) * 0.6;
+      const s = 1 + Math.random() * 3;
+      state.particles.push({
+        x, y,
+        vx: Math.cos(a) * s * dir,
+        vy: -Math.sin(a) * s,
+        life: 18 + Math.random() * 10,
+        color, size: 1 + Math.random() * 2,
+      });
+    }
+    state.flash = 6;
+  }
+
+  function spawnExplosion(x, y, big) {
+    const count = big ? 60 : 36;
+    for (let i = 0; i < count; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const s = 1 + Math.random() * (big ? 6 : 4);
+      const palette = ['#ffd400', '#ff2d95', '#ff7a00', '#fff7a8'];
+      state.particles.push({
+        x, y,
+        vx: Math.cos(a) * s,
+        vy: Math.sin(a) * s - 1,
+        life: 24 + Math.random() * 20,
+        color: palette[Math.floor(Math.random() * palette.length)],
+        size: 1.5 + Math.random() * 2.5,
+        gravity: true,
+      });
+    }
+    for (let i = 0; i < 10; i++) {
+      state.smokes.push({
+        x: x + (Math.random() - 0.5) * 16,
+        y: y + (Math.random() - 0.5) * 10,
+        r: 6 + Math.random() * 10,
+        life: 40 + Math.random() * 30,
+        maxLife: 60,
+      });
+    }
+    state.flash = big ? 14 : 8;
+  }
+
+  function deformTerrain(cx, cy, radius) {
+    const i0 = Math.max(0, Math.floor((cx - radius) / GROUND_RES));
+    const i1 = Math.min(GROUND_LEN - 1, Math.ceil((cx + radius) / GROUND_RES));
+    for (let i = i0; i <= i1; i++) {
+      const px = i * GROUND_RES;
+      const dx = px - cx;
+      const cut = Math.sqrt(Math.max(0, radius * radius - dx * dx));
+      if (cut <= 0) continue;
+      const newTop = cy + cut * 0.6;
+      if (newTop > ground[i]) ground[i] = Math.min(H - 4, newTop);
+    }
+  }
+
+  function settleTanks() {
+    for (const t of state.tanks) {
+      t.y = groundAt(t.x);
+    }
+  }
+
+  function applyHit(x, y) {
+    const radius = 32;
+    deformTerrain(x, y, radius);
+    spawnExplosion(x, y, true);
+    const target = getTarget();
+    const shooter = getShooter();
+    for (const t of state.tanks) {
+      const d = Math.hypot(t.x - x, t.y - y);
+      if (d < radius + TANK_W * 0.5) {
+        const dmg = Math.max(0, (1 - d / (radius + TANK_W * 0.5))) * 45 + 5;
+        t.hp -= dmg;
+      }
+    }
+    settleTanks();
+    updateHud();
+    if (state.tanks[0].hp <= 0 || state.tanks[1].hp <= 0) {
+      endRound();
+      return;
+    }
+    state.cooldown = 36;
+  }
+
+  function endRound() {
+    state.phase = 'over';
+    const p1 = state.tanks[0].hp > 0;
+    overMsg.textContent = p1 ? 'VICTORY!' : 'DEFEAT';
+    overMsg.style.color = p1 ? 'var(--accent)' : 'var(--accent-2)';
+    overSub.textContent = p1 ? '적 탱크를 격파했다' : '아군 탱크가 파괴되었다';
+    ovOver.classList.remove('hidden');
+  }
+
+  function step() {
+    if (state.flash > 0) state.flash--;
+
+    if (state.phase === 'fly' && state.shell) {
+      const sh = state.shell;
+      sh.trail.push({ x: sh.x, y: sh.y });
+      if (sh.trail.length > 28) sh.trail.shift();
+      sh.vx += state.wind;
+      sh.vy += GRAVITY;
+      sh.x += sh.vx;
+      sh.y += sh.vy;
+
+      const enemy = getTarget();
+      if (Math.hypot(sh.x - enemy.x, sh.y - (enemy.y - TANK_H * 0.5)) < TANK_W * 0.6) {
+        applyHit(sh.x, sh.y);
+        state.shell = null;
+        return;
+      }
+
+      if (sh.x < -20 || sh.x > W + 20) {
+        spawnExplosion(Math.max(10, Math.min(W - 10, sh.x)), Math.min(H - 10, Math.max(20, sh.y)), false);
+        state.shell = null;
+        state.cooldown = 30;
+        return;
+      }
+      if (sh.y >= groundAt(sh.x)) {
+        applyHit(sh.x, sh.y);
+        state.shell = null;
+        return;
+      }
+    }
+
+    if (state.cooldown > 0) {
+      state.cooldown--;
+      if (state.cooldown === 0 && state.phase !== 'over') {
+        state.turn = 1 - state.turn;
+        state.phase = 'aim';
+        if (getShooter().cpu) scheduleCpu();
+        updateHud();
+      }
+    }
+
+    for (let i = state.particles.length - 1; i >= 0; i--) {
+      const p = state.particles[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.gravity) p.vy += 0.12;
+      p.vx *= 0.98; p.vy *= 0.98;
+      p.life--;
+      if (p.life <= 0) state.particles.splice(i, 1);
+    }
+    for (let i = state.smokes.length - 1; i >= 0; i--) {
+      const s = state.smokes[i];
+      s.y -= 0.3; s.r += 0.25; s.life--;
+      if (s.life <= 0) state.smokes.splice(i, 1);
+    }
+  }
+
+  function scheduleCpu() {
+    const shooter = getShooter();
+    const target = getTarget();
+    const dx = (target.x - shooter.x) * shooter.face;
+    const dy = shooter.y - target.y;
+    const wind = state.wind;
+    let bestAng = 45, bestPwr = 55, bestErr = Infinity;
+    for (let a = 18; a <= 80; a += 2) {
+      for (let p = 35; p <= 95; p += 5) {
+        const err = simulateError(shooter, target, a, p, wind);
+        if (err < bestErr) { bestErr = err; bestAng = a; bestPwr = p; }
+      }
+    }
+    const wobble = Math.max(0, bestErr < 30 ? 3 : 8);
+    bestAng += (Math.random() - 0.5) * wobble;
+    bestPwr += (Math.random() - 0.5) * wobble * 1.5;
+    bestAng = Math.max(15, Math.min(85, Math.round(bestAng)));
+    bestPwr = Math.max(20, Math.min(100, Math.round(bestPwr)));
+    state.cpuPlan = { angle: bestAng, power: bestPwr, delay: 50 };
+  }
+
+  function simulateError(sh, tg, angleDeg, power, wind) {
+    const ang = angleDeg * Math.PI / 180;
+    const dir = sh.face;
+    let x = sh.x + Math.cos(ang) * BARREL_LEN * dir;
+    let y = sh.y - TANK_H * 0.6 - Math.sin(ang) * BARREL_LEN;
+    const speed = power * 0.18;
+    let vx = Math.cos(ang) * speed * dir;
+    let vy = -Math.sin(ang) * speed;
+    let minErr = Infinity;
+    for (let s = 0; s < 360; s++) {
+      vx += wind; vy += GRAVITY;
+      x += vx; y += vy;
+      if (x < -10 || x > W + 10) break;
+      if (y >= groundAt(x)) break;
+      const d = Math.hypot(x - tg.x, y - (tg.y - TANK_H * 0.5));
+      if (d < minErr) minErr = d;
+      if (d < 8) return d;
+    }
+    return minErr;
+  }
+
+  function maybeRunCpu() {
+    if (state.phase !== 'aim') return;
+    if (!getShooter().cpu) return;
+    if (!state.cpuPlan) return;
+    state.cpuPlan.delay--;
+    if (state.cpuPlan.delay <= 0) {
+      const p = state.cpuPlan;
+      state.cpuPlan = null;
+      state.aimAngle = p.angle;
+      state.aimPower = p.power;
+      updateMeters();
+      fire(p.angle, p.power);
+    }
+  }
+
+  function drawSky() {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#0a0a1a');
+    g.addColorStop(0.6, '#10122a');
+    g.addColorStop(1, '#1a0e2e');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    for (let i = 0; i < 40; i++) {
+      const x = ((i * 73) % W);
+      const y = ((i * 41) % (H * 0.6));
+      const s = (i % 3 === 0) ? 1.5 : 0.8;
+      ctx.fillRect(x, y, s, s);
+    }
+  }
+
+  function drawGround() {
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    for (let i = 0; i < GROUND_LEN; i++) {
+      ctx.lineTo(i * GROUND_RES, ground[i]);
+    }
+    ctx.lineTo(W, H);
+    ctx.closePath();
+    const g = ctx.createLinearGradient(0, H * 0.5, 0, H);
+    g.addColorStop(0, '#1a3a3a');
+    g.addColorStop(0.4, '#0e2a32');
+    g.addColorStop(1, '#06141a');
+    ctx.fillStyle = g;
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(0,240,255,0.6)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < GROUND_LEN; i++) {
+      const x = i * GROUND_RES, y = ground[i];
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,240,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i < GROUND_LEN; i++) {
+      const x = i * GROUND_RES, y = ground[i] + 3;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  function drawTank(t, isActive) {
+    ctx.save();
+    ctx.translate(t.x, t.y);
+    ctx.shadowColor = t.glow;
+    ctx.shadowBlur = isActive ? 18 : 6;
+
+    ctx.fillStyle = '#1d2438';
+    ctx.fillRect(-TANK_W / 2, -3, TANK_W, 6);
+    ctx.fillStyle = '#2a3554';
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.arc(i * 6, 2, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = t.color;
+    ctx.fillRect(-TANK_W / 2 + 3, -TANK_H + 1, TANK_W - 6, TANK_H - 4);
+
+    ctx.beginPath();
+    ctx.ellipse(0, -TANK_H + 1, 9, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    let ang;
+    if (t === state.tanks[state.turn] && (state.phase === 'aim' || state.phase === 'fly')) {
+      ang = state.turn === 0 || !t.cpu ? state.aimAngle : (state.cpuPlan ? state.cpuPlan.angle : state.aimAngle);
+      ang = state.aimAngle;
+    } else {
+      ang = 45;
+    }
+    const rad = ang * Math.PI / 180;
+    ctx.strokeStyle = t.color;
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(0, -TANK_H + 1);
+    ctx.lineTo(Math.cos(rad) * BARREL_LEN * t.face, -TANK_H + 1 - Math.sin(rad) * BARREL_LEN);
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = '10px Orbitron, sans-serif';
+    ctx.textAlign = 'center';
+    const label = t.name + ' ' + Math.max(0, Math.round(t.hp));
+    ctx.fillText(label, t.x, t.y - TANK_H - 10);
+    const barW = 32, barH = 4;
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillRect(t.x - barW / 2, t.y - TANK_H - 7, barW, barH);
+    ctx.fillStyle = t.color;
+    ctx.fillRect(t.x - barW / 2, t.y - TANK_H - 7, barW * Math.max(0, t.hp) / 100, barH);
+  }
+
+  function drawShell() {
+    if (!state.shell) return;
+    const sh = state.shell;
+    for (let i = 0; i < sh.trail.length; i++) {
+      const p = sh.trail[i];
+      const a = i / sh.trail.length;
+      ctx.fillStyle = 'rgba(255,212,0,' + (a * 0.7) + ')';
+      ctx.fillRect(p.x - 1, p.y - 1, 2, 2);
+    }
+    ctx.save();
+    ctx.shadowColor = 'rgba(255,212,0,0.9)';
+    ctx.shadowBlur = 14;
+    ctx.fillStyle = '#fff4a8';
+    ctx.beginPath();
+    ctx.arc(sh.x, sh.y, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawParticles() {
+    for (const p of state.particles) {
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.life / 30));
+      ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+    }
+    ctx.globalAlpha = 1;
+    for (const s of state.smokes) {
+      const a = Math.max(0, s.life / 80) * 0.5;
+      ctx.fillStyle = 'rgba(180,180,200,' + a + ')';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawAimGuide() {
+    if (state.phase !== 'aim') return;
+    const sh = state.tanks[state.turn];
+    if (sh.cpu) return;
+    const ang = state.aimAngle * Math.PI / 180;
+    const dir = sh.face;
+    const x0 = sh.x + Math.cos(ang) * BARREL_LEN * dir;
+    const y0 = sh.y - TANK_H * 0.6 - Math.sin(ang) * BARREL_LEN;
+    ctx.strokeStyle = 'rgba(0,240,255,0.45)';
+    ctx.setLineDash([4, 6]);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x0 + Math.cos(ang) * 60 * dir, y0 - Math.sin(ang) * 60);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawFlash() {
+    if (state.flash <= 0) return;
+    ctx.fillStyle = 'rgba(255,240,180,' + (state.flash / 20) + ')';
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function drawWindIndicator() {
+    const cx = W / 2, cy = 28;
+    const len = state.wind * 600;
+    ctx.strokeStyle = 'rgba(255,212,0,0.8)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + len, cy);
+    ctx.stroke();
+    const dir = len >= 0 ? 1 : -1;
+    ctx.beginPath();
+    ctx.moveTo(cx + len, cy);
+    ctx.lineTo(cx + len - 6 * dir, cy - 4);
+    ctx.lineTo(cx + len - 6 * dir, cy + 4);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(255,212,0,0.8)';
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,212,0,0.9)';
+    ctx.font = '10px Orbitron, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('WIND', cx, cy - 8);
+  }
+
+  function render() {
+    drawSky();
+    drawGround();
+    drawWindIndicator();
+    drawAimGuide();
+    for (const t of state.tanks) drawTank(t, t === state.tanks[state.turn] && state.phase === 'aim');
+    drawShell();
+    drawParticles();
+    drawFlash();
+  }
+
+  function loop() {
+    step();
+    maybeRunCpu();
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  function tryFire() {
+    if (state.phase !== 'aim') return;
+    if (getShooter().cpu) return;
+    fire(state.aimAngle, state.aimPower);
+  }
+
+  function adjustAngle(d) {
+    if (state.phase !== 'aim' || getShooter().cpu) return;
+    state.aimAngle = Math.max(5, Math.min(89, state.aimAngle + d));
+    updateMeters();
+  }
+  function adjustPower(d) {
+    if (state.phase !== 'aim' || getShooter().cpu) return;
+    state.aimPower = Math.max(10, Math.min(100, state.aimPower + d));
+    updateMeters();
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      if (state.phase === 'idle') { startGame(); return; }
+      if (state.phase === 'over') { restart(); return; }
+      tryFire();
+    } else if (e.key === 'ArrowLeft') {
+      adjustAngle(1);
+    } else if (e.key === 'ArrowRight') {
+      adjustAngle(-1);
+    } else if (e.key === 'ArrowUp') {
+      adjustPower(1);
+    } else if (e.key === 'ArrowDown') {
+      adjustPower(-1);
+    }
+  });
+
+  function bindHold(id, fn) {
+    const el = document.getElementById(id);
+    let timer = null, fast = null;
+    const start = (e) => {
+      e.preventDefault();
+      fn();
+      timer = setTimeout(() => {
+        fast = setInterval(fn, 60);
+      }, 300);
+    };
+    const end = () => {
+      if (timer) clearTimeout(timer);
+      if (fast) clearInterval(fast);
+      timer = fast = null;
+    };
+    el.addEventListener('touchstart', start, { passive: false });
+    el.addEventListener('mousedown', start);
+    el.addEventListener('touchend', end);
+    el.addEventListener('mouseup', end);
+    el.addEventListener('mouseleave', end);
+  }
+  bindHold('bAngU', () => adjustAngle(1));
+  bindHold('bAngD', () => adjustAngle(-1));
+  bindHold('bPwrU', () => adjustPower(1));
+  bindHold('bPwrD', () => adjustPower(-1));
+  document.getElementById('bFire').addEventListener('click', tryFire);
+
+  document.getElementById('btnStart').addEventListener('click', startGame);
+  document.getElementById('btnRetry').addEventListener('click', restart);
+
+  function startGame() {
+    ovStart.classList.add('hidden');
+    newRound();
+  }
+  function restart() {
+    ovOver.classList.add('hidden');
+    newRound();
+  }
+
+  newRound();
+  state.phase = 'idle';
+  loop();
+})();
+</script>
+</body>
+</html>
