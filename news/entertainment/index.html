@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="연예계 최신 뉴스 — K팝·드라마·영화·예능·OTT 소식을 한곳에서.">
+<meta name="theme-color" content="#fbfaf7">
+<title>연예 뉴스 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .back { position: fixed; top: 16px; left: 18px; color: var(--muted); text-decoration: none; font-size: 13px; letter-spacing: .04em; }
+  .back:hover { color: var(--accent); }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 64px 22px 70px; }
+  .crumb { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .crumb a { color: var(--accent); text-decoration: none; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+  .desc { color: var(--muted); margin-top: 8px; font-size: 15px; padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+  .all-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: #fff; padding: 11px 18px; border-radius: 999px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; }
+  .all-btn:hover { background: var(--accent); }
+  .section-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; margin: 26px 0 12px; color: var(--ink); }
+  .keys { display: flex; flex-wrap: wrap; gap: 8px; }
+  .key {
+    font-size: 14px; color: var(--ink); background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 9px 15px; cursor: pointer; transition: all .14s; user-select: none;
+    box-shadow: var(--shadow);
+  }
+  .key:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .key:active { transform: scale(0.96); }
+  .source-row { margin-top: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .source-row span { font-size: 13px; color: var(--muted); }
+  .src-btn { font-size: 13px; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 13px; cursor: pointer; font-family: inherit; }
+  .src-btn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .note { margin-top: 28px; font-size: 12.5px; color: var(--muted); line-height: 1.8; }
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 30px; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/news/">← 뉴스 메뉴</a>
+  <div class="wrap">
+    <div class="crumb"><a href="/">U-SOL</a> · <a href="/news/">뉴스</a> · 연예</div>
+    <h1>🎬 연예 뉴스</h1>
+    <p class="desc">방송·음악·드라마·영화·OTT — 키워드를 누르면 그 주제의 최신 뉴스가 바로 열려요.</p>
+
+    <div class="source-row">
+      <span>뉴스 출처</span>
+      <button class="src-btn on" data-src="google">구글 뉴스</button>
+      <button class="src-btn" data-src="naver">네이버 뉴스</button>
+    </div>
+
+    <div style="margin-top:22px;">
+      <button class="all-btn" data-q="연예">📰 연예 전체 뉴스 보기 →</button>
+    </div>
+
+    <div class="section-title">음악 · 아이돌</div>
+    <div class="keys">
+      <span class="key">K팝</span>
+      <span class="key">아이돌</span>
+      <span class="key">BTS</span>
+      <span class="key">블랙핑크</span>
+      <span class="key">뉴진스</span>
+      <span class="key">에스파</span>
+      <span class="key">컴백</span>
+    </div>
+
+    <div class="section-title">드라마 · 영화</div>
+    <div class="keys">
+      <span class="key">드라마</span>
+      <span class="key">영화</span>
+      <span class="key">박스오피스</span>
+      <span class="key">시청률</span>
+      <span class="key">한국영화</span>
+    </div>
+
+    <div class="section-title">OTT · 예능</div>
+    <div class="keys">
+      <span class="key">예능</span>
+      <span class="key">OTT</span>
+      <span class="key">넷플릭스</span>
+      <span class="key">디즈니플러스</span>
+      <span class="key">티빙</span>
+      <span class="key">웨이브</span>
+    </div>
+
+    <p class="note">키워드를 누르는 순간의 최신 검색 결과로 열려서 항상 새로워요. 위에서 출처(구글/네이버)를 바꿀 수 있어요.</p>
+  </div>
+  <footer>© 2026 U-SOL · <a href="/news/">뉴스 메뉴</a> · <a href="/">메인</a></footer>
+
+<script>
+  let source = 'google';
+  document.querySelector('.source-row').addEventListener('click', (e) => {
+    const b = e.target.closest('.src-btn');
+    if (!b) return;
+    source = b.getAttribute('data-src');
+    document.querySelectorAll('.src-btn').forEach(x => x.classList.toggle('on', x === b));
+  });
+  function openNews(query) {
+    let url;
+    if (source === 'naver') {
+      url = `https://search.naver.com/search.naver?where=news&query=${encodeURIComponent(query)}&sort=1`;
+    } else {
+      url = `https://news.google.com/search?q=${encodeURIComponent(query)}%20when%3A7d&hl=ko&gl=KR&ceid=KR%3Ako`;
+    }
+    window.open(url, '_blank');
+  }
+  document.body.addEventListener('click', (e) => {
+    const key = e.target.closest('.key');
+    if (key) { openNews(key.textContent.trim()); return; }
+    const all = e.target.closest('.all-btn');
+    if (all) { openNews(all.getAttribute('data-q')); }
+  });
+</script>
+</body>
+</html>
