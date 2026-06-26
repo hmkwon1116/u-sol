@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="주변 놀거리 — 현재 위치 기준으로 가볼만한 곳·놀거리를 구글맵에서 바로 추천.">
+<meta name="theme-color" content="#fbfaf7">
+<title>주변 놀거리 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .back { position: fixed; top: 16px; left: 18px; color: var(--muted); text-decoration: none; font-size: 13px; letter-spacing: .04em; }
+  .back:hover { color: var(--accent); }
+  .wrap { max-width: 620px; margin: 0 auto; padding: 64px 22px 70px; }
+  .crumb { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .crumb a { color: var(--accent); text-decoration: none; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+  .desc { color: var(--muted); margin-top: 8px; font-size: 15px; padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+  .loc-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .loc-status { font-size: 14px; color: var(--muted); margin-bottom: 12px; }
+  .loc-status strong { color: var(--ink); font-weight: 600; }
+  .loc-status.ok strong { color: var(--accent); }
+  .locBtn {
+    font-family: 'Spline Sans', sans-serif; font-size: 15px; font-weight: 600;
+    color: #fff; background: var(--accent); border: none; border-radius: 12px;
+    padding: 13px 20px; cursor: pointer; width: 100%; transition: all .15s;
+  }
+  .locBtn:hover { filter: brightness(1.05); }
+  .locBtn:active { transform: scale(0.98); }
+  .label { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin: 18px 0 12px 2px; }
+  .cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (min-width: 520px) { .cats { grid-template-columns: repeat(3, 1fr); } }
+  .play {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px 14px; text-align: center; cursor: pointer; box-shadow: var(--shadow);
+    transition: transform .15s, box-shadow .15s, border-color .15s; user-select: none;
+  }
+  .play:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 14px 30px rgba(26,25,22,0.1); border-color: #d8d2c6; }
+  .play:active { transform: scale(0.97); }
+  .play .emoji { font-size: 30px; display: block; margin-bottom: 8px; }
+  .play .nm { font-size: 15px; font-weight: 600; }
+  .play .sub { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.3; }
+  .pick-card {
+    background: linear-gradient(135deg, #2a2723 0%, #1f1d18 100%);
+    color: #fff; border-radius: 16px; padding: 18px 18px 16px;
+    box-shadow: var(--shadow); margin-bottom: 6px;
+  }
+  .pick-card .pick-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(214,69,42,0.18); color: #ffd6c8;
+    border: 1px solid rgba(214,69,42,0.35);
+    padding: 5px 11px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
+  }
+  .pick-card .pick-name {
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;
+    margin-top: 10px; line-height: 1.2;
+  }
+  .pick-card .pick-desc {
+    font-size: 13px; color: #d4cfc4; margin-top: 6px; line-height: 1.5;
+  }
+  .pick-card .pick-actions {
+    display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;
+  }
+  .pick-card .pick-btn {
+    flex: 1; min-width: 0;
+    font-family: 'Spline Sans', sans-serif; font-size: 13.5px; font-weight: 600;
+    background: rgba(255,255,255,0.08); color: #fff;
+    border: 1px solid rgba(255,214,200,0.35);
+    padding: 10px 12px; border-radius: 999px;
+    cursor: pointer; text-decoration: none; text-align: center;
+    transition: background .15s, border-color .15s, transform .15s;
+  }
+  .pick-card .pick-btn:hover {
+    background: rgba(214,69,42,0.35); border-color: #ffd6c8; transform: translateY(-1px);
+  }
+  .pick-card .pick-btn.primary {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .pick-card .pick-btn.primary:hover {
+    background: #c63d22; border-color: #c63d22;
+  }
+  .manual { margin-top: 22px; }
+  .manual input {
+    width: 100%; font-family: 'Spline Sans', sans-serif; font-size: 15px;
+    padding: 13px 16px; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--card); color: var(--ink); margin-bottom: 10px;
+  }
+  .manual input:focus { outline: none; border-color: var(--accent); }
+  .note { margin-top: 26px; font-size: 12.5px; color: var(--muted); line-height: 1.8; }
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 30px; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/">← U-SOL</a>
+  <div class="wrap">
+    <div class="crumb"><a href="/">U-SOL</a> · 주변 놀거리</div>
+    <h1>🗺️ 주변 놀거리</h1>
+    <p class="desc">현재 위치 기준으로 가볼만한 곳·즐길거리를 한 번에 추천. 카테고리를 누르면 구글맵에서 내 주변으로 바로 검색돼요.</p>
+
+    <div class="loc-card">
+      <div class="loc-status" id="locStatus">📍 아직 위치를 모르고 있어요. 아래 버튼을 눌러 현재 위치를 잡아보세요.</div>
+      <button class="locBtn" id="locBtn">내 위치 찾기</button>
+    </div>
+
+    <p class="label">오늘의 추천</p>
+    <div class="pick-card">
+      <span class="pick-tag" id="pickTag">🎲 무엇을 할까</span>
+      <div class="pick-name" id="pickName">—</div>
+      <div class="pick-desc" id="pickDesc">—</div>
+      <div class="pick-actions">
+        <button type="button" class="pick-btn primary" id="pickMapBtn">🗺️ 지도에서 보기</button>
+        <button type="button" class="pick-btn" id="pickRollBtn">🎲 다시 뽑기</button>
+      </div>
+    </div>
+
+    <p class="label">카테고리</p>
+    <div class="cats" id="cats">
+      <div class="play" data-q="가볼만한 곳"><span class="emoji">📍</span><span class="nm">가볼만한 곳</span><span class="sub">관광·명소·핫플</span></div>
+      <div class="play" data-q="공원"><span class="emoji">🌳</span><span class="nm">공원·산책</span><span class="sub">자연·휴식</span></div>
+      <div class="play" data-q="전시"><span class="emoji">🖼️</span><span class="nm">전시·미술관</span><span class="sub">갤러리·박물관</span></div>
+      <div class="play" data-q="영화관"><span class="emoji">🎬</span><span class="nm">영화관</span><span class="sub">CGV·메가박스</span></div>
+      <div class="play" data-q="노래방"><span class="emoji">🎤</span><span class="nm">노래방</span><span class="sub">코노·일반</span></div>
+      <div class="play" data-q="보드게임 카페"><span class="emoji">🎲</span><span class="nm">보드게임</span><span class="sub">친구·연인</span></div>
+      <div class="play" data-q="방탈출"><span class="emoji">🔐</span><span class="nm">방탈출</span><span class="sub">스릴·추리</span></div>
+      <div class="play" data-q="볼링장"><span class="emoji">🎳</span><span class="nm">볼링·당구</span><span class="sub">스트라이크</span></div>
+      <div class="play" data-q="PC방"><span class="emoji">🖥️</span><span class="nm">PC방</span><span class="sub">한 판 하러</span></div>
+      <div class="play" data-q="놀이공원"><span class="emoji">🎢</span><span class="nm">놀이공원</span><span class="sub">테마파크</span></div>
+      <div class="play" data-q="쇼핑몰"><span class="emoji">🛍️</span><span class="nm">쇼핑몰</span><span class="sub">백화점·아울렛</span></div>
+      <div class="play" data-q="찜질방"><span class="emoji">♨️</span><span class="nm">찜질방·스파</span><span class="sub">힐링·휴식</span></div>
+    </div>
+
+    <div class="manual">
+      <p class="label">직접 검색</p>
+      <input type="text" id="manualInput" placeholder="예: 한강공원, 야구장, 클라이밍, 키즈카페…">
+      <button class="locBtn" id="manualBtn">이 키워드로 주변 검색</button>
+    </div>
+
+    <p class="note">위치를 잡지 않아도 카테고리를 누르면 구글맵에서 검색돼요. 위치를 허용하면 '내 주변'으로 더 정확하게 찾아줘요. 위치 정보는 이 기기 안에서만 쓰이고 어디에도 저장되지 않아요.</p>
+  </div>
+  <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
+
+<script>
+  let coords = null;
+  const statusEl = document.getElementById('locStatus');
+
+  document.getElementById('locBtn').addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      statusEl.textContent = '이 브라우저는 위치 기능을 지원하지 않아요. 직접 검색을 이용해보세요.';
+      return;
+    }
+    statusEl.innerHTML = '📡 위치를 찾는 중…';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        statusEl.className = 'loc-status ok';
+        statusEl.innerHTML = '✅ <strong>현재 위치를 찾았어요!</strong> 이제 카테고리를 누르면 내 주변으로 검색돼요.';
+      },
+      (err) => {
+        statusEl.textContent = '위치를 가져오지 못했어요. 권한을 허용했는지 확인하거나, 직접 검색을 이용해보세요.';
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  });
+
+  function search(query) {
+    let url;
+    if (coords) {
+      url = `https://www.google.com/maps/search/${encodeURIComponent(query)}/@${coords.lat},${coords.lng},15z`;
+    } else {
+      url = `https://www.google.com/maps/search/${encodeURIComponent(query)}`;
+    }
+    window.open(url, '_blank');
+  }
+
+  document.getElementById('cats').addEventListener('click', (e) => {
+    const card = e.target.closest('.play');
+    if (!card) return;
+    search(card.getAttribute('data-q'));
+  });
+  document.getElementById('manualBtn').addEventListener('click', () => {
+    const v = document.getElementById('manualInput').value.trim();
+    if (v) search(v);
+  });
+  document.getElementById('manualInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { const v = e.target.value.trim(); if (v) search(v); }
+  });
+
+  const picks = [
+    { tag: '🌳 자연 한 모금', name: '동네 공원 산책', desc: '가까운 공원에서 20분만 걸어도 머리가 맑아져요. 벤치에 앉아 노을까지.', q: '공원' },
+    { tag: '🖼️ 감각 충전', name: '전시·미술관 한 곳', desc: '근처 갤러리나 미술관에서 사진 한 장씩. 평일 오후가 가장 한적해요.', q: '미술관' },
+    { tag: '🎬 어두운 방의 두 시간', name: '근처 영화관', desc: '조조나 심야 회차가 가성비 최고. 팝콘 한 통이면 충분해요.', q: '영화관' },
+    { tag: '🎤 목 풀러 가자', name: '코인노래방 30분', desc: '한 곡에 500원, 혼자 가도 부담 없는 짧고 굵은 스트레스 해소.', q: '코인노래방' },
+    { tag: '🎲 머리 식히기', name: '보드게임 카페', desc: '두 명이서 가볍게 즐길 수 있는 카탄·블라인드 보드게임을 골라보세요.', q: '보드게임 카페' },
+    { tag: '🔐 한 시간의 스릴', name: '방탈출 한 판', desc: '난이도 3~4 추천. 4명이 모이면 협동·추리·반전이 다 들어 있어요.', q: '방탈출 카페' },
+    { tag: '🎳 클래식 게임', name: '볼링장 한 게임', desc: '한 게임 6,000원선. 스코어보다 스트라이크 하나가 그날의 하이라이트.', q: '볼링장' },
+    { tag: '♨️ 회복 시간', name: '찜질방·스파', desc: '한 시간만 누워 있어도 다음 날이 가벼워져요. 식혜 한 잔은 필수.', q: '찜질방' },
+    { tag: '🛍️ 윈도쇼핑', name: '쇼핑몰·아울렛', desc: '안 사도 좋아요. 신상 구경하고 카페에서 한 잔, 그게 본 게임.', q: '쇼핑몰' },
+    { tag: '🎢 하루 통째로', name: '놀이공원', desc: '하루 코스로 가볍게. 야간 입장권이 사람도 적고 가격도 착해요.', q: '놀이공원' },
+    { tag: '🗺️ 핫플 탐험', name: '가볼만한 곳', desc: '내 주변의 명소·관광지·뷰포인트를 지도에서 한눈에.', q: '가볼만한 곳' },
+    { tag: '🌅 한강 한 바퀴', name: '한강공원', desc: '치맥이든 라이딩이든. 해 질 녘 강변이 가장 예뻐요.', q: '한강공원' },
+    { tag: '🚶 동네 한 바퀴', name: '걷기 좋은 길', desc: '낯선 골목 한 시간만 걸어도 새 동네가 생겨요.', q: '산책로' },
+    { tag: '☕ 분위기 좋은 카페', name: '뷰 좋은 카페', desc: '루프탑·통창·디저트가 좋은 카페에 오래 앉아 있기.', q: '루프탑 카페' },
+    { tag: '🎮 추억의 한 판', name: '오락실', desc: '동전 한 줌으로 펀치·인형뽑기·리듬게임까지. 의외로 진심이 됨.', q: '오락실' },
+  ];
+
+  let pickIdx = 0;
+  function rollPick() {
+    let next;
+    do { next = Math.floor(Math.random() * picks.length); } while (next === pickIdx && picks.length > 1);
+    pickIdx = next;
+    const p = picks[pickIdx];
+    document.getElementById('pickTag').textContent = p.tag;
+    document.getElementById('pickName').textContent = p.name;
+    document.getElementById('pickDesc').textContent = p.desc;
+    document.getElementById('pickMapBtn').onclick = () => search(p.q);
+  }
+  rollPick();
+  document.getElementById('pickRollBtn').addEventListener('click', rollPick);
+</script>
+</body>
+</html>
