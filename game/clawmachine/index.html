@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="네온 아케이드 스타일 인형뽑기. 좌우로 움직이고 집게를 내려 인형을 뽑아보세요.">
+<meta name="theme-color" content="#0a0a12">
+<title>NEON CLAW · 네온 인형뽑기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@500;700;900&display=swap');
+
+  :root {
+    --bg: #0a0a12;
+    --panel: #12121f;
+    --accent: #ffd93d;
+    --accent-2: #ff2d95;
+    --accent-3: #3dcbff;
+    --text: #e8ecff;
+    --muted: #7a82b8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(255,217,61,0.18), transparent 55%),
+      radial-gradient(ellipse at 80% 120%, rgba(255,45,149,0.14), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Orbitron', sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.18) 3px,
+      rgba(0,0,0,0) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+    mix-blend-mode: multiply;
+  }
+
+  .wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(13px, 3.6vw, 22px);
+    letter-spacing: 1px;
+    text-align: center;
+    line-height: 1.6;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 24px rgba(255,217,61,0.35);
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    max-width: 420px;
+    justify-content: space-between;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid rgba(120,130,200,0.18);
+    border-radius: 10px;
+    padding: 8px 12px;
+    box-shadow: inset 0 0 16px rgba(0,0,0,0.4);
+    flex: 1;
+    text-align: center;
+  }
+  .card h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .stat-value {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 12px rgba(255,217,61,0.5);
+  }
+
+  .board-frame {
+    position: relative;
+    padding: 6px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(255,217,61,0.55), rgba(255,45,149,0.55));
+    box-shadow: 0 0 40px rgba(255,217,61,0.22), inset 0 0 20px rgba(0,0,0,0.6);
+  }
+  canvas#board {
+    display: block;
+    background: linear-gradient(180deg, #16162b 0%, #1a1a30 55%, #22223c 100%);
+    border-radius: 8px;
+    touch-action: none;
+  }
+
+  .touch {
+    display: grid;
+    width: 100%;
+    max-width: 380px;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .touch button {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid rgba(255,217,61,0.35);
+    border-radius: 12px;
+    padding: 16px 0;
+    box-shadow: 0 0 14px rgba(255,217,61,0.12);
+    transition: transform .05s, background .1s;
+    cursor: pointer;
+  }
+  .touch button:active { transform: scale(0.94); background: rgba(255,217,61,0.15); }
+  .touch .drop {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    color: #061015;
+    background: linear-gradient(90deg, var(--accent), #ffec8a);
+    border-color: transparent;
+    box-shadow: 0 0 22px rgba(255,217,61,0.45);
+  }
+  .touch button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .controls-hint {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.7;
+    letter-spacing: .5px;
+  }
+
+  .collected {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 420px;
+    min-height: 30px;
+    font-size: 22px;
+    padding: 4px 0;
+  }
+  .collected .slot {
+    background: rgba(255,217,61,0.08);
+    border: 1px solid rgba(255,217,61,0.2);
+    border-radius: 8px;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    animation: pop .35s ease-out;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.2) rotate(-40deg); opacity: 0; }
+    60% { transform: scale(1.15) rotate(6deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  .overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px;
+    background: rgba(10,10,18,0.88);
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
+    z-index: 10;
+    text-align: center;
+    padding: 20px;
+  }
+  .overlay.hidden { display: none; }
+  .overlay .big {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--accent-2);
+    text-shadow: 0 0 18px rgba(255,45,149,0.5);
+  }
+  .overlay .sub { font-size: 12px; color: var(--muted); line-height: 1.8; }
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: #061015;
+    background: linear-gradient(90deg, var(--accent), #ffec8a);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 22px;
+    cursor: pointer;
+    box-shadow: 0 0 22px rgba(255,217,61,0.5);
+    transition: transform .06s;
+  }
+  .btn:active { transform: scale(0.96); }
+
+  @media (min-width: 620px) {
+    .controls-hint { display: block; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="/game/" style="position:fixed;top:14px;left:16px;z-index:200;color:#7a82b8;text-decoration:none;font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:1px;">← 게임</a>
+  <div class="title">NEON CLAW</div>
+
+  <div class="stats-row">
+    <div class="card"><h2>Coins</h2><div class="stat-value" id="coins">10</div></div>
+    <div class="card"><h2>Won</h2><div class="stat-value" id="won">0</div></div>
+    <div class="card"><h2>Best</h2><div class="stat-value" id="best">0</div></div>
+  </div>
+
+  <div class="board-frame">
+    <canvas id="board"></canvas>
+    <div class="overlay" id="overlay">
+      <div class="big" id="ov-title">READY?</div>
+      <div class="sub" id="ov-sub">◀ ▶ 로 집게를 움직이고<br>DROP으로 인형을 뽑아보세요<br>동전 10개로 시작합니다</div>
+      <button class="btn" id="startBtn">START</button>
+    </div>
+  </div>
+
+  <div class="collected" id="collected"></div>
+
+  <div class="touch" id="touch">
+    <button class="left" data-act="left">◀</button>
+    <button class="drop" data-act="drop">DROP</button>
+    <button class="right" data-act="right">▶</button>
+  </div>
+
+  <div class="controls-hint">
+    ← → 이동 &nbsp;·&nbsp; SPACE 집게 내리기 &nbsp;·&nbsp; ENTER 시작/재시작
+  </div>
+</div>
+
+<script>
+(function () {
+  const board = document.getElementById('board');
+  const ctx = board.getContext('2d');
+
+  const coinsEl = document.getElementById('coins');
+  const wonEl = document.getElementById('won');
+  const bestEl = document.getElementById('best');
+  const overlay = document.getElementById('overlay');
+  const ovTitle = document.getElementById('ov-title');
+  const ovSub = document.getElementById('ov-sub');
+  const startBtn = document.getElementById('startBtn');
+  const collectedEl = document.getElementById('collected');
+
+  const STORAGE_KEY = 'neon-claw-best';
+  let best = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10) || 0;
+  bestEl.textContent = best;
+
+  const DOLL_TYPES = [
+    { emoji: '🐻', chance: 0.75 },
+    { emoji: '🐰', chance: 0.72 },
+    { emoji: '🐼', chance: 0.68 },
+    { emoji: '🐶', chance: 0.72 },
+    { emoji: '🐱', chance: 0.70 },
+    { emoji: '🦊', chance: 0.60 },
+    { emoji: '🐯', chance: 0.55 },
+    { emoji: '🦁', chance: 0.50 },
+    { emoji: '🐸', chance: 0.65 },
+    { emoji: '🐷', chance: 0.70 },
+    { emoji: '🐨', chance: 0.55 },
+    { emoji: '🦄', chance: 0.30 },
+    { emoji: '👑', chance: 0.20 },
+    { emoji: '💎', chance: 0.18 },
+  ];
+
+  let W = 380, H = 480;
+  const dpr = () => window.devicePixelRatio || 1;
+
+  function sizeCanvas() {
+    const vw = Math.min(window.innerWidth - 32, 420);
+    const vh = window.innerHeight - 340;
+    W = Math.max(260, Math.min(vw, 420));
+    H = Math.max(320, Math.min(vh, 520));
+    const d = dpr();
+    board.style.width = W + 'px';
+    board.style.height = H + 'px';
+    board.width = W * d;
+    board.height = H * d;
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+  }
+
+  let coins = 10;
+  let won = 0;
+  let dolls = [];
+  let claw = { x: 0, targetX: 0, y: 0, state: 'idle', speed: 3, grabbedIdx: -1, openAmt: 1 };
+  let running = false;
+  let over = false;
+  let raf = null;
+  let dropStartY = 0;
+  let lastCollected = [];
+
+  const RAIL_Y = 30;
+  const DOLL_R = 18;
+
+  function spawnDolls() {
+    dolls = [];
+    const cols = 5;
+    const rows = 3;
+    const startX = 40;
+    const startY = H - 90;
+    const gapX = (W - 80) / (cols - 1);
+    const gapY = 40;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const type = DOLL_TYPES[Math.floor(Math.random() * DOLL_TYPES.length)];
+        dolls.push({
+          x: startX + c * gapX + (Math.random() - 0.5) * 8,
+          y: startY - r * gapY + (Math.random() - 0.5) * 4,
+          emoji: type.emoji,
+          chance: type.chance,
+          taken: false,
+        });
+      }
+    }
+  }
+
+  function resetRound() {
+    claw.x = W / 2;
+    claw.targetX = W / 2;
+    claw.y = RAIL_Y;
+    claw.state = 'idle';
+    claw.openAmt = 1;
+    claw.grabbedIdx = -1;
+    dropStartY = RAIL_Y;
+  }
+
+  function resetGame() {
+    coins = 10;
+    won = 0;
+    lastCollected = [];
+    renderCollected();
+    updateStats();
+    spawnDolls();
+    resetRound();
+    over = false;
+    running = true;
+  }
+
+  function updateStats() {
+    coinsEl.textContent = coins;
+    wonEl.textContent = won;
+  }
+
+  function renderCollected() {
+    collectedEl.innerHTML = '';
+    lastCollected.slice(-10).forEach(e => {
+      const s = document.createElement('div');
+      s.className = 'slot';
+      s.textContent = e;
+      collectedEl.appendChild(s);
+    });
+  }
+
+  function drawBackground() {
+    ctx.fillStyle = 'rgba(255,255,255,0.02)';
+    for (let i = 0; i < W; i += 24) {
+      ctx.fillRect(i, 0, 1, H);
+    }
+    ctx.strokeStyle = 'rgba(255,217,61,0.35)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, RAIL_Y);
+    ctx.lineTo(W, RAIL_Y);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,45,149,0.5)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, H - 20);
+    ctx.lineTo(W, H - 20);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,45,149,0.08)';
+    ctx.fillRect(0, H - 20, W, 20);
+  }
+
+  function drawDolls() {
+    ctx.font = (DOLL_R * 1.8) + 'px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    dolls.forEach((d, i) => {
+      if (d.taken) return;
+      if (i === claw.grabbedIdx) return;
+      ctx.save();
+      ctx.shadowColor = 'rgba(255,217,61,0.4)';
+      ctx.shadowBlur = 8;
+      ctx.fillText(d.emoji, d.x, d.y);
+      ctx.restore();
+    });
+  }
+
+  function drawClaw() {
+    ctx.strokeStyle = 'rgba(255,217,61,0.9)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(claw.x, RAIL_Y);
+    ctx.lineTo(claw.x, claw.y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#2a2a4a';
+    ctx.strokeStyle = 'rgba(255,217,61,0.9)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(claw.x - 14, claw.y - 6, 28, 12, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    const open = claw.openAmt;
+    const spread = 6 + open * 10;
+    const armLen = 22;
+    ctx.strokeStyle = 'rgba(255,217,61,0.95)';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+
+    ctx.beginPath();
+    ctx.moveTo(claw.x - 6, claw.y + 6);
+    ctx.lineTo(claw.x - spread, claw.y + armLen);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(claw.x + 6, claw.y + 6);
+    ctx.lineTo(claw.x + spread, claw.y + armLen);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(claw.x - spread, claw.y + armLen);
+    ctx.lineTo(claw.x - spread + 4, claw.y + armLen + 6);
+    ctx.moveTo(claw.x + spread, claw.y + armLen);
+    ctx.lineTo(claw.x + spread - 4, claw.y + armLen + 6);
+    ctx.stroke();
+
+    if (claw.grabbedIdx >= 0) {
+      const d = dolls[claw.grabbedIdx];
+      ctx.font = (DOLL_R * 1.8) + 'px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.save();
+      ctx.shadowColor = 'rgba(255,217,61,0.6)';
+      ctx.shadowBlur = 14;
+      ctx.fillText(d.emoji, claw.x, claw.y + armLen + 4);
+      ctx.restore();
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    drawBackground();
+    drawDolls();
+    drawClaw();
+  }
+
+  function step() {
+    if (!running) return;
+
+    if (claw.state === 'idle') {
+      if (claw.x < claw.targetX) claw.x = Math.min(claw.x + claw.speed, claw.targetX);
+      else if (claw.x > claw.targetX) claw.x = Math.max(claw.x - claw.speed, claw.targetX);
+    } else if (claw.state === 'dropping') {
+      claw.y += 3;
+      claw.openAmt = 1;
+      const hit = findHit();
+      if (hit >= 0 || claw.y > H - 40) {
+        claw.state = 'grabbing';
+        claw.grabTimer = 0;
+        claw.hitIdx = hit;
+      }
+    } else if (claw.state === 'grabbing') {
+      claw.grabTimer++;
+      claw.openAmt = Math.max(0, 1 - claw.grabTimer / 20);
+      if (claw.grabTimer > 20) {
+        if (claw.hitIdx >= 0) {
+          const d = dolls[claw.hitIdx];
+          const roll = Math.random();
+          if (roll < d.chance) {
+            claw.grabbedIdx = claw.hitIdx;
+          } else {
+            claw.grabbedIdx = -1;
+          }
+        }
+        claw.state = 'lifting';
+      }
+    } else if (claw.state === 'lifting') {
+      claw.y -= 3;
+      if (claw.y <= RAIL_Y) {
+        claw.y = RAIL_Y;
+        claw.state = 'returning';
+      }
+    } else if (claw.state === 'returning') {
+      const homeX = W / 2;
+      if (claw.x < homeX) claw.x = Math.min(claw.x + claw.speed * 1.5, homeX);
+      else if (claw.x > homeX) claw.x = Math.max(claw.x - claw.speed * 1.5, homeX);
+      if (Math.abs(claw.x - homeX) < 1) {
+        finalizeGrab();
+      }
+    }
+
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+
+  function findHit() {
+    for (let i = 0; i < dolls.length; i++) {
+      const d = dolls[i];
+      if (d.taken) continue;
+      const dx = Math.abs(d.x - claw.x);
+      const dy = Math.abs(d.y - (claw.y + 22));
+      if (dx < DOLL_R && dy < DOLL_R) return i;
+    }
+    return -1;
+  }
+
+  function finalizeGrab() {
+    if (claw.grabbedIdx >= 0) {
+      const d = dolls[claw.grabbedIdx];
+      d.taken = true;
+      won++;
+      lastCollected.push(d.emoji);
+      renderCollected();
+      if (won > best) {
+        best = won;
+        localStorage.setItem(STORAGE_KEY, String(best));
+        bestEl.textContent = best;
+      }
+    }
+    claw.grabbedIdx = -1;
+    claw.state = 'idle';
+    claw.openAmt = 1;
+    claw.targetX = claw.x;
+    updateStats();
+
+    const remaining = dolls.filter(d => !d.taken).length;
+    if (coins <= 0 || remaining === 0) {
+      endGame(remaining === 0);
+    }
+  }
+
+  function endGame(cleared) {
+    running = false;
+    over = true;
+    cancelAnimationFrame(raf);
+    overlay.classList.remove('hidden');
+    if (cleared) {
+      ovTitle.textContent = 'CLEAR!';
+      ovSub.innerHTML = `모든 인형을 뽑았어요<br>획득 ${won}개 · 남은 동전 ${coins}개`;
+    } else {
+      ovTitle.textContent = 'GAME OVER';
+      ovSub.innerHTML = `동전을 모두 사용했어요<br>획득 ${won}개 · 최고 ${best}개`;
+    }
+    startBtn.textContent = 'RESTART';
+  }
+
+  function drop() {
+    if (!running || claw.state !== 'idle' || coins <= 0) return;
+    coins--;
+    updateStats();
+    claw.state = 'dropping';
+    claw.openAmt = 1;
+    dropStartY = claw.y;
+  }
+
+  function moveLeft() {
+    if (!running || claw.state !== 'idle') return;
+    claw.targetX = Math.max(24, claw.targetX - 26);
+  }
+  function moveRight() {
+    if (!running || claw.state !== 'idle') return;
+    claw.targetX = Math.min(W - 24, claw.targetX + 26);
+  }
+
+  document.getElementById('touch').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const act = btn.dataset.act;
+    if (act === 'left') moveLeft();
+    else if (act === 'right') moveRight();
+    else if (act === 'drop') drop();
+  });
+
+  let leftHeld = false, rightHeld = false;
+  function holdLoop() {
+    if (leftHeld) moveLeft();
+    if (rightHeld) moveRight();
+    if (leftHeld || rightHeld) setTimeout(holdLoop, 60);
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      if (!running || over) startGame();
+      return;
+    }
+    if (!running) return;
+    if (e.key === 'ArrowLeft') { if (!leftHeld) { leftHeld = true; holdLoop(); } e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { if (!rightHeld) { rightHeld = true; holdLoop(); } e.preventDefault(); }
+    else if (e.key === ' ') { drop(); e.preventDefault(); }
+  });
+  document.addEventListener('keyup', (e) => {
+    if (e.key === 'ArrowLeft') leftHeld = false;
+    else if (e.key === 'ArrowRight') rightHeld = false;
+  });
+
+  let touchStartX = null;
+  board.addEventListener('touchstart', (e) => {
+    if (!running || claw.state !== 'idle') return;
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  board.addEventListener('touchmove', (e) => {
+    if (!running || claw.state !== 'idle' || touchStartX === null) return;
+    const dx = e.touches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 12) {
+      claw.targetX = Math.max(24, Math.min(W - 24, claw.targetX + Math.sign(dx) * 12));
+      touchStartX = e.touches[0].clientX;
+    }
+  }, { passive: true });
+  board.addEventListener('touchend', () => { touchStartX = null; }, { passive: true });
+
+  board.addEventListener('click', (e) => {
+    if (!running || claw.state !== 'idle') return;
+    const rect = board.getBoundingClientRect();
+    const relX = e.clientX - rect.left;
+    if (Math.abs(relX - claw.x) < 30) drop();
+    else claw.targetX = Math.max(24, Math.min(W - 24, relX));
+  });
+
+  function startGame() {
+    sizeCanvas();
+    resetGame();
+    overlay.classList.add('hidden');
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(step);
+  }
+
+  startBtn.addEventListener('click', startGame);
+
+  window.addEventListener('resize', () => {
+    sizeCanvas();
+    if (running) draw();
+  });
+
+  sizeCanvas();
+  draw();
+})();
+</script>
+</body>
+</html>
