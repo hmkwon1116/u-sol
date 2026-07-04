@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="오늘 스친 사람·순간·생각의 접점을 매일 한 조각씩 짚어보는 데일리 리플렉션. 짧은 문장 하나로 오늘 하루를 한 번 더 만나 봅니다.">
+<meta name="theme-color" content="#f6f2ec">
+<title>오늘의 접점 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f2ec;
+    --bg2: #efe9df;
+    --ink: #2b2822;
+    --muted: #8a8272;
+    --line: #e2dccf;
+    --card: #fffdf7;
+    --accent: #b0663a;
+    --accent-soft: #f2e2d1;
+    --shadow: 0 1px 2px rgba(60,45,25,0.03), 0 8px 24px rgba(60,45,25,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 30% -10%, #fbf6ee 0%, transparent 55%),
+      radial-gradient(ellipse at 90% 100%, #f0e5d3 0%, transparent 60%),
+      linear-gradient(180deg, var(--bg), var(--bg2));
+    color: var(--ink);
+    font-family: 'Noto Serif KR', 'Gowun Batang', serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex; flex-direction: column;
+  }
+  .back {
+    position: fixed; top: 18px; left: 20px;
+    color: var(--muted); text-decoration: none;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13.5px; letter-spacing: .04em; z-index: 5;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .back:hover { color: var(--accent); }
+
+  .wrap {
+    flex: 1; max-width: 680px; margin: 0 auto; width: 100%;
+    padding: 84px 22px 64px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+
+  .date {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13px; color: var(--muted); letter-spacing: .12em; margin-bottom: 10px;
+  }
+  .eyebrow {
+    font-family: 'Gowun Batang', serif; font-size: 14.5px; color: var(--accent);
+    letter-spacing: .32em; margin-bottom: 30px; position: relative;
+  }
+  .eyebrow::after {
+    content: ""; display: block; width: 34px; height: 1px;
+    background: var(--accent); margin: 14px auto 0; opacity: .55;
+  }
+
+  /* hero */
+  .hero {
+    width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    margin-bottom: 12px;
+    animation: fade .8s ease both;
+  }
+  .kind {
+    display: inline-block;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11.5px; letter-spacing: .3em; color: var(--accent);
+    background: var(--accent-soft);
+    padding: 5px 14px; border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  .quote {
+    font-family: 'Gowun Batang', serif;
+    font-size: clamp(22px, 5.2vw, 32px);
+    line-height: 1.75; font-weight: 400; letter-spacing: -0.01em;
+    word-break: keep-all; min-height: 90px;
+    margin-bottom: 22px;
+  }
+  .quote::before,
+  .quote::after {
+    content: '"';
+    color: var(--accent); opacity: .35;
+    font-family: 'Fraunces', serif;
+    font-size: 1.1em;
+    margin: 0 4px;
+  }
+  .note {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px; color: var(--muted);
+    line-height: 1.75; max-width: 520px;
+    margin-bottom: 30px; word-break: keep-all;
+  }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .hero.swap { animation: fadeOut .3s ease forwards; }
+  @keyframes fadeOut { to { opacity: 0; transform: translateY(-6px); } }
+
+  .actions {
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 8px;
+  }
+  button {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13.5px; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 20px; cursor: pointer; letter-spacing: .04em;
+    transition: border-color .15s, color .15s, transform .15s, background .15s;
+    box-shadow: 0 2px 10px rgba(120,100,60,0.05);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  button.primary {
+    background: var(--ink); color: #fff; border-color: var(--ink);
+  }
+  button.primary:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* divider */
+  .divider {
+    width: 100%; display: flex; align-items: center; gap: 14px;
+    color: var(--muted); margin: 48px 0 22px;
+    font-family: 'Gowun Batang', serif; font-size: 13.5px; letter-spacing: .22em;
+  }
+  .divider::before, .divider::after {
+    content: ""; flex: 1; height: 1px; background: var(--line);
+  }
+
+  /* journal — user-entered touchpoints saved to localStorage */
+  .journal {
+    width: 100%; background: var(--card); border: 1px solid var(--line);
+    border-radius: 20px; padding: 24px 22px 20px;
+    box-shadow: var(--shadow);
+    text-align: left;
+  }
+  .journal h2 {
+    font-family: 'Gowun Batang', serif; font-size: 17px; font-weight: 700;
+    color: var(--ink); margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .journal .sub {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px; color: var(--muted); margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .form {
+    display: flex; gap: 8px; margin-bottom: 14px; align-items: stretch;
+  }
+  .form input {
+    flex: 1;
+    font-family: 'Noto Serif KR', serif; font-size: 14.5px; color: var(--ink);
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 11px 14px; outline: none;
+    transition: border-color .15s;
+  }
+  .form input:focus { border-color: var(--accent); }
+  .form input::placeholder { color: var(--muted); opacity: .7; }
+  .form button {
+    padding: 10px 16px; font-size: 13px;
+  }
+
+  .entries { list-style: none; padding: 0; margin: 0; }
+  .entries li {
+    padding: 12px 0; border-bottom: 1px dashed var(--line);
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  }
+  .entries li:last-child { border-bottom: none; }
+  .entries .txt {
+    font-family: 'Noto Serif KR', serif; font-size: 14.5px; color: var(--ink);
+    line-height: 1.6; word-break: keep-all; flex: 1;
+  }
+  .entries .meta {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11px; color: var(--muted); letter-spacing: .04em;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .entries .del {
+    background: none; border: none; padding: 0 0 0 6px;
+    color: var(--muted); opacity: .6; cursor: pointer;
+    font-size: 13px; transition: color .15s, opacity .15s;
+    box-shadow: none;
+  }
+  .entries .del:hover { color: var(--accent); opacity: 1; transform: none; }
+  .empty {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13.5px; color: var(--muted); text-align: center;
+    padding: 18px 0 8px; opacity: .8; font-style: italic;
+  }
+
+  footer {
+    margin-top: 40px; padding: 16px 22px; text-align: center;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    border-top: 1px solid var(--line);
+  }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<a class="back" href="/">← 홈으로</a>
+
+<div class="wrap">
+  <div class="date" id="dateNow">…</div>
+  <div class="eyebrow">오늘의 접점</div>
+
+  <div class="hero" id="hero">
+    <span class="kind" id="kind">사람</span>
+    <div class="quote" id="quote">오늘 마주친 이름 없는 얼굴에도, 잠시 눈을 맞춘 순간이 있다.</div>
+    <div class="note" id="note">스쳐 지나간 접점 하나에도 오늘이 담겨 있습니다. 눈을 조금 낮춰 다시 짚어 봅니다.</div>
+  </div>
+
+  <div class="actions">
+    <button type="button" id="nextBtn" class="primary">
+      <span>🎲</span><span>다른 접점 보기</span>
+    </button>
+    <button type="button" id="copyBtn">
+      <span>📋</span><span>문장 복사</span>
+    </button>
+  </div>
+
+  <div class="divider">나의 접점 기록</div>
+
+  <div class="journal">
+    <h2>오늘의 접점 한 줄</h2>
+    <div class="sub">누구를, 무엇을, 어떤 생각을 스쳤나요. 한 줄로 남겨 두면 나중에 다시 만납니다. (내 브라우저에만 저장됩니다.)</div>
+    <div class="form">
+      <input id="entryInput" type="text" placeholder="예) 편의점 알바생의 미소, 지하철에서 본 문장…" maxlength="120">
+      <button type="button" id="addBtn" class="primary">기록</button>
+    </div>
+    <ul class="entries" id="entries"></ul>
+    <div class="empty" id="empty">아직 기록이 없어요. 오늘의 접점을 하나 남겨 볼까요.</div>
+  </div>
+</div>
+
+<footer>
+  <span>© 2026 U-SOL · 오늘 스친 것들의 한 자락</span>
+</footer>
+
+<script>
+  (function setDate() {
+    const now = new Date();
+    const days = ['일','월','화','수','목','금','토'];
+    document.getElementById('dateNow').textContent =
+      `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${days[now.getDay()]})`;
+  })();
+
+  const items = [
+    { kind: '사람',   quote: '오늘 마주친 이름 없는 얼굴에도, 잠시 눈을 맞춘 순간이 있다.', note: '스쳐 지나간 접점 하나에도 오늘이 담겨 있습니다. 눈을 조금 낮춰 다시 짚어 봅니다.' },
+    { kind: '순간',   quote: '엘리베이터 문이 닫히기 직전, 낯선 이의 짧은 인사.', note: '작은 인사는 하루의 온도를 반 도쯤 올립니다. 그 반 도가 저녁까지 남습니다.' },
+    { kind: '생각',   quote: '어떤 결심은, 잊고 있던 옛 문장에서 다시 시작된다.', note: '오래 접혀 있던 페이지가 오늘 우연히 펼쳐졌다면, 그건 우연이 아닐지도 모릅니다.' },
+    { kind: '장소',   quote: '늘 지나가던 골목의 벽에, 오늘 처음 보는 그림자가 있었다.', note: '같은 길도 계절과 각도에 따라 다른 이야기가 됩니다.' },
+    { kind: '말',     quote: '"괜찮아요"라는 말 한 마디가, 하루의 방향을 바꾼다.', note: '가볍게 던진 위로 한 조각이 누군가에게는 종일의 지지대가 됩니다.' },
+    { kind: '음식',   quote: '따뜻한 국물 한 술이, 잊고 있던 옛 부엌을 소환한다.', note: '맛은 기억의 지도입니다. 오늘의 한 끼도 어딘가로 이어져 있습니다.' },
+    { kind: '음악',   quote: '오늘 우연히 흘러나온 한 구절이, 하루 종일 등 뒤에 남았다.', note: '어떤 멜로디는 몸이 먼저 기억합니다. 그 기억을 오늘 다시 만납니다.' },
+    { kind: '책',     quote: '단 한 문장 때문에, 이 책을 오늘 만난 이유가 생겼다.', note: '두꺼운 책 속의 짧은 한 줄이 오늘의 나침반이 되기도 합니다.' },
+    { kind: '풍경',   quote: '창밖의 노을이, 잠깐 화면을 덮어 두라고 말했다.', note: '자연의 신호는 조용히 옵니다. 스치기 전에 한 번 고개를 들어 봅니다.' },
+    { kind: '침묵',   quote: '아무 말도 하지 않은 시간이, 오늘 가장 많은 말을 했다.', note: '접점은 반드시 소리로만 오지 않습니다. 함께 앉아 있는 자체가 이미 대화입니다.' },
+    { kind: '기억',   quote: '오래된 사진 한 장이, 오늘의 나에게 다시 말을 걸었다.', note: '과거의 나와 오늘의 나 사이에도 접점이 필요합니다.' },
+    { kind: '실패',   quote: '오늘 어긋난 자리에서, 내일의 문장이 시작된다.', note: '실패는 접점이 아니라 곡률입니다. 방향이 조금 꺾일 뿐입니다.' },
+    { kind: '감정',   quote: '이유 없이 뭉클했던 그 순간, 이유는 나중에 찾아온다.', note: '먼저 느껴도 괜찮습니다. 해석은 시간이 알아서 데려옵니다.' },
+    { kind: '사물',   quote: '오랜만에 꺼낸 물건이, 잊고 있던 나의 취향을 되찾아 준다.', note: '접점은 사람 사이에만 있지 않습니다. 사물도 조용히 나를 기억합니다.' },
+    { kind: '질문',   quote: '누군가의 짧은 질문이, 하루의 방향을 바꿀 때가 있다.', note: '좋은 질문은 지도를 접었다가 다시 펴게 만듭니다.' },
+    { kind: '동물',   quote: '길 위의 고양이가, 오늘 잠시 나를 멈춰 세웠다.', note: '이유 없는 정지도 하루엔 필요합니다. 접점은 종종 무언(無言)입니다.' },
+    { kind: '계절',   quote: '바람의 결이 바뀌었다. 계절이 손끝으로 먼저 왔다.', note: '달력보다 몸이 먼저 아는 것들이 있습니다.' },
+    { kind: '아이디어', quote: '샤워 중에 떠오른 문장 하나가, 종일 사라지지 않았다.', note: '메모하지 않으면 사라진다는 걸 알면서도, 우리는 자꾸 놓칩니다.' },
+    { kind: '용서',   quote: '오늘 나 자신을 조금 더 봐 준 순간, 하루가 부드러워졌다.', note: '가장 오래 걸리는 접점은 나와 나 사이의 접점입니다.' },
+    { kind: '감사',   quote: '당연하다고 여긴 것 하나가, 오늘은 유난히 고맙게 느껴진다.', note: '접점의 다른 이름은, 어쩌면 감사입니다.' }
+  ];
+
+  const kindEl = document.getElementById('kind');
+  const quoteEl = document.getElementById('quote');
+  const noteEl = document.getElementById('note');
+  const hero = document.getElementById('hero');
+  const nextBtn = document.getElementById('nextBtn');
+  const copyBtn = document.getElementById('copyBtn');
+
+  function daySeedIndex() {
+    const d = new Date();
+    const seed = d.getFullYear() * 1000 + (d.getMonth() + 1) * 40 + d.getDate();
+    return seed % items.length;
+  }
+  let idx = daySeedIndex();
+
+  function render() {
+    const it = items[idx];
+    kindEl.textContent = it.kind;
+    quoteEl.textContent = it.quote;
+    noteEl.textContent = it.note;
+  }
+  render();
+
+  function swapTo(nextIdx) {
+    hero.classList.add('swap');
+    setTimeout(() => {
+      idx = nextIdx;
+      render();
+      hero.classList.remove('swap');
+      hero.style.animation = 'none';
+      void hero.offsetWidth;
+      hero.style.animation = '';
+    }, 280);
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (items.length < 2) return;
+    let nxt;
+    do { nxt = Math.floor(Math.random() * items.length); } while (nxt === idx);
+    swapTo(nxt);
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    const text = `"${quoteEl.textContent}" — 오늘의 접점 · U-SOL`;
+    try {
+      await navigator.clipboard.writeText(text);
+      const original = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<span>✅</span><span>복사됨</span>';
+      setTimeout(() => { copyBtn.innerHTML = original; }, 1400);
+    } catch (_) {}
+  });
+
+  // journal
+  const KEY = 'usol.touchpoints';
+  const entriesEl = document.getElementById('entries');
+  const emptyEl = document.getElementById('empty');
+  const input = document.getElementById('entryInput');
+  const addBtn = document.getElementById('addBtn');
+
+  function readAll() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+    catch (_) { return []; }
+  }
+  function writeAll(list) {
+    try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (_) {}
+  }
+  function fmtWhen(ts) {
+    const d = new Date(ts);
+    const today = new Date();
+    const sameDay = d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
+    if (sameDay) {
+      const hh = String(d.getHours()).padStart(2,'0');
+      const mm = String(d.getMinutes()).padStart(2,'0');
+      return `오늘 ${hh}:${mm}`;
+    }
+    return `${d.getMonth()+1}/${d.getDate()}`;
+  }
+  function renderList() {
+    const list = readAll().sort((a, b) => b.ts - a.ts);
+    entriesEl.innerHTML = '';
+    if (!list.length) { emptyEl.style.display = ''; return; }
+    emptyEl.style.display = 'none';
+    for (const item of list) {
+      const li = document.createElement('li');
+      const txt = document.createElement('div');
+      txt.className = 'txt';
+      txt.textContent = item.text;
+      const meta = document.createElement('span');
+      meta.className = 'meta';
+      meta.textContent = fmtWhen(item.ts);
+      const del = document.createElement('button');
+      del.className = 'del';
+      del.type = 'button';
+      del.textContent = '×';
+      del.setAttribute('aria-label', '삭제');
+      del.addEventListener('click', () => {
+        const filtered = readAll().filter(x => x.ts !== item.ts);
+        writeAll(filtered);
+        renderList();
+      });
+      const right = document.createElement('span');
+      right.style.display = 'inline-flex';
+      right.style.alignItems = 'center';
+      right.style.gap = '6px';
+      right.style.flexShrink = '0';
+      right.appendChild(meta);
+      right.appendChild(del);
+      li.appendChild(txt);
+      li.appendChild(right);
+      entriesEl.appendChild(li);
+    }
+  }
+  function addEntry() {
+    const v = input.value.trim();
+    if (!v) return;
+    const list = readAll();
+    list.push({ text: v.slice(0, 120), ts: Date.now() });
+    writeAll(list);
+    input.value = '';
+    renderList();
+  }
+  addBtn.addEventListener('click', addEntry);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') addEntry(); });
+  renderList();
+</script>
+</body>
+</html>
