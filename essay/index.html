@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="일과 사람, 나를 지나는 계절 — 짧게 붙잡아 두는 여덟 편의 에세이.">
+<meta name="theme-color" content="#f7f3ec">
+<title>짧은 에세이 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f3ec;
+    --bg2: #efe9df;
+    --ink: #2a2722;
+    --soft: #5c574e;
+    --muted: #8a8272;
+    --line: #e2dccf;
+    --card: #fffdf7;
+    --accent: #a35b32;
+    --accent-soft: #f2e2d1;
+    --shadow: 0 1px 2px rgba(60,45,25,0.03), 0 8px 24px rgba(60,45,25,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 20% -10%, #fbf6ee 0%, transparent 55%),
+      radial-gradient(ellipse at 90% 100%, #efe4d2 0%, transparent 60%),
+      linear-gradient(180deg, var(--bg), var(--bg2));
+    color: var(--ink);
+    font-family: 'Noto Serif KR', 'Gowun Batang', serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .back {
+    position: fixed; top: 18px; left: 20px;
+    color: var(--muted); text-decoration: none;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13.5px; letter-spacing: .04em; z-index: 5;
+  }
+  .back:hover { color: var(--accent); }
+
+  .wrap {
+    max-width: 680px; margin: 0 auto;
+    padding: 76px 22px 72px;
+  }
+
+  header { text-align: center; margin-bottom: 44px; }
+  .date {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13px; color: var(--muted); letter-spacing: .12em; margin-bottom: 10px;
+  }
+  .eyebrow {
+    font-family: 'Gowun Batang', serif;
+    font-size: 14.5px; color: var(--accent);
+    letter-spacing: .32em; margin-bottom: 22px;
+  }
+  .eyebrow::after {
+    content: ""; display: block; width: 34px; height: 1px;
+    background: var(--accent); margin: 14px auto 0; opacity: .55;
+  }
+  h1 {
+    font-family: 'Gowun Batang', serif;
+    font-size: clamp(26px, 5.4vw, 34px); font-weight: 700;
+    letter-spacing: -0.01em; line-height: 1.3; margin-bottom: 10px;
+  }
+  .lede {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 14.5px; color: var(--soft); line-height: 1.65;
+  }
+
+  .list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; }
+  .pick {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 16px 18px; cursor: pointer;
+    text-align: left; width: 100%; box-shadow: var(--shadow);
+    transition: transform .15s, border-color .15s, box-shadow .15s;
+    font-family: 'Gowun Batang', serif;
+  }
+  .pick:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .pick.on { border-color: var(--accent); background: var(--accent-soft); }
+  .pick .no {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11px; color: var(--accent); letter-spacing: .3em;
+    margin-bottom: 6px;
+  }
+  .pick .tt { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .pick .sub { font-size: 13px; color: var(--muted); font-weight: 400; }
+
+  article {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 18px; padding: 32px 26px 28px;
+    box-shadow: var(--shadow);
+    animation: fade .4s ease;
+  }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  article .num {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11.5px; color: var(--accent); letter-spacing: .32em; margin-bottom: 10px;
+  }
+  article h2 {
+    font-family: 'Gowun Batang', serif; font-size: 22px; font-weight: 700;
+    line-height: 1.35; margin-bottom: 8px;
+  }
+  article .meta {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    padding-bottom: 20px; margin-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  article .body {
+    font-family: 'Gowun Batang', serif; font-size: 16px; color: var(--ink);
+    line-height: 2.0;
+  }
+  article .body p { margin-bottom: 1.2em; word-break: keep-all; }
+  article .body em { font-style: normal; color: var(--accent); font-weight: 700; }
+
+  .navrow {
+    display: flex; justify-content: space-between; gap: 10px;
+    margin-top: 24px;
+  }
+  .navrow button {
+    flex: 1; padding: 12px;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13px; color: var(--soft);
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    cursor: pointer; transition: all .15s;
+  }
+  .navrow button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+  .navrow button:disabled { opacity: .35; cursor: default; }
+
+  footer {
+    text-align: center; margin-top: 56px;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11.5px; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<a class="back" href="/">← U-SOL</a>
+<div class="wrap">
+  <header>
+    <div class="date" id="date">…</div>
+    <div class="eyebrow">SHORT ESSAY</div>
+    <h1>짧은 에세이</h1>
+    <p class="lede">일과 사람, 나를 지나는 계절 — 짧게 붙잡아 두는 여덟 편의 조각.</p>
+  </header>
+
+  <div class="list" id="list"></div>
+  <div id="read"></div>
+
+  <footer>© U-SOL · 짧은 에세이</footer>
+</div>
+
+<script>
+  const essays = [
+    {
+      no: "01",
+      title: "월요일의 마감",
+      sub: "새로운 주가 시작되는 아침에",
+      body: [
+        "월요일 아침에는 커피가 조금 더 진하다.",
+        "회의실 창밖으로 흐린 하늘이 지나가고, 나는 어젯밤에 쓰다 만 메일의 첫 줄을 다시 읽는다. 지난주에는 하지 못했던 말이 새 주가 되면 왜 조금 더 쉬워지는지 잘 모르겠다. 어쩌면 <em>거리</em>가 필요했던 것 같기도 하다.",
+        "마감은 늘 무언가를 정리하게 만든다. 문장을, 결정을, 마음을. 나는 오늘 하나쯤은 매듭을 짓고 퇴근하기로 한다."
+      ]
+    },
+    {
+      no: "02",
+      title: "책상 위의 화분",
+      sub: "잘 자라지 않아도 괜찮은 것들",
+      body: [
+        "책상 위에 작은 화분이 있다.",
+        "누가 선물로 준 건 아니고, 어느 날 문득 사무실에 초록이 하나쯤 필요하다는 생각이 들어서 데려온 아이다. 이름표에 <em>스킨답서스</em>라고 적혀 있었다. 물을 자주 주지 않아도 된다는 말에 안심하고 골랐다.",
+        "가끔은 성장이 눈에 잘 보이지 않는 것들이 좋다. 어제와 오늘이 별로 다르지 않은 자리에서, 그저 옆에 있어 주는 것만으로도 충분한 것들."
+      ]
+    },
+    {
+      no: "03",
+      title: "회의가 끝난 뒤",
+      sub: "말하지 못한 것에 대하여",
+      body: [
+        "회의는 끝났지만 말은 끝나지 않았다.",
+        "복도에서 마주친 동료가 조용히 웃으며 지나갔다. 나는 그 웃음을 오래 생각했다. 회의 안에서 하지 못한 말이 회의 밖에서 저런 표정으로 남는다는 걸, 오늘도 배웠다.",
+        "다음 회의에는 조금 더 <em>먼저</em> 말해 봐야겠다. 무엇을 지키고 싶은지, 무엇이 어려운지."
+      ]
+    },
+    {
+      no: "04",
+      title: "점심시간의 산책",
+      sub: "혼자여도 괜찮은 스무 걸음",
+      body: [
+        "점심을 조금 일찍 먹고 사무실 뒤편의 골목을 걷는다.",
+        "봄에는 목련이, 여름에는 능소화가, 가을에는 은행이, 겨울에는 마른 나뭇가지 사이로 햇살이 내린다. 계절이 어디쯤 왔는지 나는 이 스무 걸음으로 안다.",
+        "누구와 함께여도 좋고, 혼자여도 괜찮다. <em>혼자의 시간</em>이 없는 하루는 어쩐지 자꾸만 짧아진다."
+      ]
+    },
+    {
+      no: "05",
+      title: "메모의 습관",
+      sub: "잊어버려도 되는 것들을 위해",
+      body: [
+        "메모를 자주 한다.",
+        "회의 중에도, 지하철에서도, 자기 전에도. 처음에는 무언가를 잊지 않으려고 시작한 습관이었는데, 요즘은 <em>안심하고 잊기 위해</em> 쓴다.",
+        "적어두면 잊어도 된다. 잊어도 된다고 생각하면 마음이 가볍다. 오늘도 몇 줄을 적고, 몇 줄을 잊는다."
+      ]
+    },
+    {
+      no: "06",
+      title: "선배의 커피",
+      sub: "말하지 않고 건네는 것들",
+      body: [
+        "바쁜 오후, 선배가 아무 말 없이 커피를 내밀었다.",
+        "무슨 일이 있는지 묻지 않았고, 나도 굳이 설명하지 않았다. 그저 서로의 자리로 돌아가 각자의 화면을 다시 켰다.",
+        "어떤 배려는 <em>말이 되지 않을 때</em> 가장 잘 전해진다. 그날의 커피는 오래도록 따뜻했다."
+      ]
+    },
+    {
+      no: "07",
+      title: "퇴근길의 창밖",
+      sub: "지하철 3호선, 저녁 7시 24분",
+      body: [
+        "지하철 창밖으로 서울의 저녁이 지나간다.",
+        "누군가는 이제 막 하루를 시작하고, 누군가는 나처럼 하루를 접는다. 창에 비친 내 얼굴은 어제보다 조금 지쳐 보이지만 그래도 <em>괜찮은 얼굴</em>이다.",
+        "오늘 하루도 그럭저럭 살아냈다. 그 정도면 충분한 저녁이다."
+      ]
+    },
+    {
+      no: "08",
+      title: "일요일 밤의 편지",
+      sub: "다음 주의 나에게",
+      body: [
+        "일요일 밤에는 다음 주의 나에게 짧게 편지를 쓴다.",
+        "화요일에는 어떤 회의가 있는지, 목요일에는 무엇을 마감해야 하는지 — 그런 것들 말고. 무엇을 즐거워하고 싶은지, 누구를 챙기고 싶은지. 한 주를 <em>일정</em>이 아니라 <em>마음</em>으로 여는 방법을 나는 아직 배우는 중이다.",
+        "잘 자, 다음 주의 나. 화이팅."
+      ]
+    }
+  ];
+
+  const $list = document.getElementById('list');
+  const $read = document.getElementById('read');
+  const $date = document.getElementById('date');
+
+  const now = new Date();
+  $date.textContent = now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+
+  function renderList(active) {
+    $list.innerHTML = essays.map((e, i) => `
+      <button class="pick ${i === active ? 'on' : ''}" data-i="${i}">
+        <div class="no">EPISODE ${e.no}</div>
+        <div class="tt">${e.title}</div>
+        <div class="sub">${e.sub}</div>
+      </button>
+    `).join('');
+    $list.querySelectorAll('.pick').forEach(btn => {
+      btn.addEventListener('click', () => open(parseInt(btn.dataset.i, 10)));
+    });
+  }
+
+  function open(i) {
+    const e = essays[i];
+    renderList(i);
+    $read.innerHTML = `
+      <article>
+        <div class="num">EPISODE ${e.no}</div>
+        <h2>${e.title}</h2>
+        <div class="meta">${e.sub}</div>
+        <div class="body">${e.body.map(p => `<p>${p}</p>`).join('')}</div>
+        <div class="navrow">
+          <button id="prev" ${i === 0 ? 'disabled' : ''}>← 이전</button>
+          <button id="next" ${i === essays.length - 1 ? 'disabled' : ''}>다음 →</button>
+        </div>
+      </article>
+    `;
+    document.getElementById('prev').addEventListener('click', () => { if (i > 0) { open(i - 1); scrollToRead(); } });
+    document.getElementById('next').addEventListener('click', () => { if (i < essays.length - 1) { open(i + 1); scrollToRead(); } });
+    scrollToRead();
+  }
+
+  function scrollToRead() {
+    $read.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  renderList(-1);
+</script>
+</body>
+</html>
