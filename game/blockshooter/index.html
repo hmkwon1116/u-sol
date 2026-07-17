@@ -86,7 +86,7 @@
     padding: 14px 0; box-shadow: 0 0 12px rgba(124,255,90,0.12); touch-action: none;
   }
   .touch button:active { transform: scale(0.94); background: rgba(124,255,90,0.15); }
-  .touch .fire { border-color: rgba(255,45,149,0.5); color: var(--accent-2); grid-column: span 1; }
+  .touch .fire { border-color: rgba(255,45,149,0.5); color: var(--accent-2); }
   .hint { font-size: 11px; color: var(--muted); text-align: center; letter-spacing: .5px; }
   @media (max-width: 700px) { .touch { display: grid; } .hint { display: none; } }
 </style>
@@ -110,7 +110,7 @@
       <div class="sub">
         WASD 이동 · 마우스로 조준 · 클릭 발사<br>
         R 재장전 · Shift 달리기<br>
-        모바일: 좌우로 회전, ▲ 전진, ● 발사
+        모바일: ◀▶ 회전 · ▲▼ 이동 · ● 발사
       </div>
       <button class="btn" id="startBtn">시작</button>
     </div>
@@ -142,49 +142,50 @@
   // 1 = 돌, 2 = 잔디, 3 = 나무, 4 = 흙, 0 = 빈 공간
   const MAP = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,0,0,0,2,0,0,0,0,0,0,0,1],
-    [1,0,3,0,4,0,0,0,0,0,3,0,4,0,0,1],
-    [1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,1,0,0,2,0,0,3,0,0,1],
-    [1,0,4,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,3,0,0,0,1,1,0,0,0,2,0,1],
-    [1,0,0,0,0,0,0,0,0,1,0,4,0,0,0,1],
-    [1,0,2,0,0,0,3,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,0,3,0,0,1],
-    [1,0,0,4,0,0,0,1,1,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,2,0,0,0,0,1],
-    [1,0,3,0,0,4,0,0,0,0,0,0,0,4,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,3,0,0,0,0,0,0,0,3,0,0,0,0,1],
+    [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,4,0,1,0,0,0,0,0,3,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
+    [1,0,0,0,0,0,3,0,0,1,0,4,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,4,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,3,0,0,0,0,0,0,0,0,0,0,4,0,1],
     [1,0,0,0,0,0,0,3,0,0,0,0,0,0,0,1],
     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
   ];
   const MAP_H = MAP.length, MAP_W = MAP[0].length;
 
-  // 블록별 색상 (마인크래프트 스타일 팔레트, 위/아래 명암)
   const BLOCK_COLORS = {
-    1: { light: '#8a8a8a', dark: '#5a5a5a' },  // 돌
+    1: { light: '#9a9a9a', dark: '#5a5a5a' },  // 돌
     2: { light: '#6cc046', dark: '#3d7024' },  // 잔디
     3: { light: '#8b5a2b', dark: '#4a2e13' },  // 나무
-    4: { light: '#9a6a3a', dark: '#5c3d1e' },  // 흙
+    4: { light: '#b07a44', dark: '#6c4820' },  // 흙
   };
 
   const FOV = Math.PI / 3;
   const NUM_RAYS = 160;
   const MAX_DEPTH = 20;
+  const PROJ_PLANE = (W / 2) / Math.tan(FOV / 2);
 
   const state = {
     px: 2.5, py: 2.5, pa: 0,
-    hp: 100, ammo: 12, mag: 30, magSize: 12, magStored: 30,
+    hp: 100, magSize: 12, magStored: 30,
+    ammo: 12, mag: 30,
     kills: 0, wave: 1,
     running: false, dead: false,
+    started: false,
     enemies: [],
-    bullets: [],
     lastShot: 0,
     reloading: false,
     hitFlashTimer: 0,
     muzzleFlashTimer: 0,
     keys: {},
-    mouseDown: false,
+    moving: false,
     lastTime: 0,
   };
 
@@ -198,15 +199,18 @@
     const count = 3 + state.wave;
     for (let i = 0; i < count; i++) {
       let tries = 0;
-      while (tries++ < 100) {
+      while (tries++ < 200) {
         const x = Math.random() * (MAP_W - 2) + 1;
         const y = Math.random() * (MAP_H - 2) + 1;
         if (!isWall(x, y)) {
           const dx = x - state.px, dy = y - state.py;
-          if (dx*dx + dy*dy > 25) {
+          const d2 = dx*dx + dy*dy;
+          // 3 ~ 10 타일 거리 안에서 스폰 (바로 보이도록)
+          if (d2 > 9 && d2 < 100) {
             state.enemies.push({
               x, y, hp: 30 + state.wave * 5, alive: true,
-              speed: 0.6 + Math.random() * 0.3, hitTimer: 0
+              speed: 0.7 + Math.random() * 0.3, hitTimer: 0,
+              lastAttack: 0
             });
             break;
           }
@@ -215,161 +219,186 @@
     }
   }
 
+  // DDA raycasting
   function castRay(angle) {
     const sin = Math.sin(angle), cos = Math.cos(angle);
-    let dist = 0, hitBlock = 0, hitSide = 0;
-    // DDA-style stepping
-    const step = 0.02;
-    while (dist < MAX_DEPTH) {
-      dist += step;
-      const x = state.px + cos * dist;
-      const y = state.py + sin * dist;
-      const b = isWall(x, y);
-      if (b) {
-        hitBlock = b;
-        // approximate wall side by comparing subcell position
-        const fx = x - Math.floor(x);
-        const fy = y - Math.floor(y);
-        const dx = Math.min(fx, 1 - fx);
-        const dy = Math.min(fy, 1 - fy);
-        hitSide = dx < dy ? 0 : 1;
+    let mapX = Math.floor(state.px), mapY = Math.floor(state.py);
+    const deltaX = Math.abs(1 / cos), deltaY = Math.abs(1 / sin);
+    let stepX, stepY, sideDistX, sideDistY;
+    if (cos < 0) {
+      stepX = -1;
+      sideDistX = (state.px - mapX) * deltaX;
+    } else {
+      stepX = 1;
+      sideDistX = (mapX + 1 - state.px) * deltaX;
+    }
+    if (sin < 0) {
+      stepY = -1;
+      sideDistY = (state.py - mapY) * deltaY;
+    } else {
+      stepY = 1;
+      sideDistY = (mapY + 1 - state.py) * deltaY;
+    }
+    let side = 0, hitBlock = 0;
+    for (let i = 0; i < 64; i++) {
+      if (sideDistX < sideDistY) {
+        sideDistX += deltaX;
+        mapX += stepX;
+        side = 0;
+      } else {
+        sideDistY += deltaY;
+        mapY += stepY;
+        side = 1;
+      }
+      if (mapX < 0 || mapY < 0 || mapX >= MAP_W || mapY >= MAP_H) {
+        hitBlock = 1;
+        break;
+      }
+      if (MAP[mapY][mapX]) {
+        hitBlock = MAP[mapY][mapX];
         break;
       }
     }
-    return { dist, hitBlock, hitSide };
+    let dist;
+    if (side === 0) dist = (mapX - state.px + (1 - stepX) / 2) / cos;
+    else dist = (mapY - state.py + (1 - stepY) / 2) / sin;
+    return { dist: Math.max(0.01, dist), hitBlock, side };
   }
 
+  const zBuffer = new Array(NUM_RAYS);
+
   function drawScene() {
-    // 하늘 & 바닥
+    // 하늘
     const skyGrad = ctx.createLinearGradient(0, 0, 0, H/2);
     skyGrad.addColorStop(0, '#1a2a4a');
     skyGrad.addColorStop(1, '#4a6a9a');
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, W, H/2);
+    // 바닥
     const floorGrad = ctx.createLinearGradient(0, H/2, 0, H);
     floorGrad.addColorStop(0, '#2a2018');
-    floorGrad.addColorStop(1, '#4a3828');
+    floorGrad.addColorStop(1, '#5a4030');
     ctx.fillStyle = floorGrad;
     ctx.fillRect(0, H/2, W, H/2);
 
     const stripeW = W / NUM_RAYS;
-    const zBuffer = new Array(NUM_RAYS);
 
     for (let i = 0; i < NUM_RAYS; i++) {
       const angle = state.pa - FOV/2 + (i / NUM_RAYS) * FOV;
       const ray = castRay(angle);
+      // 어안 왜곡 보정
       const corrected = ray.dist * Math.cos(angle - state.pa);
       zBuffer[i] = corrected;
-      const wallH = Math.min(H, (H / corrected) * 0.9);
+      const wallH = Math.min(H * 2, (H / corrected));
       const y0 = (H - wallH) / 2;
       const colors = BLOCK_COLORS[ray.hitBlock] || BLOCK_COLORS[1];
-      const shade = ray.hitSide ? colors.dark : colors.light;
+      const shade = ray.side ? colors.dark : colors.light;
       ctx.fillStyle = shade;
       ctx.fillRect(i * stripeW, y0, stripeW + 1, wallH);
 
-      // 픽셀 텍스처 느낌 — 블록 경계 라인
-      const cellPos = ((state.px + Math.cos(angle) * ray.dist) % 1 + (state.py + Math.sin(angle) * ray.dist) % 1);
-      if (Math.abs(cellPos - Math.round(cellPos)) < 0.03) {
-        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      // 안개
+      const fog = Math.min(0.7, corrected / MAX_DEPTH);
+      if (fog > 0) {
+        ctx.fillStyle = `rgba(10,10,18,${fog})`;
         ctx.fillRect(i * stripeW, y0, stripeW + 1, wallH);
       }
-
-      // 거리에 따른 안개
-      const fog = Math.min(1, corrected / MAX_DEPTH);
-      ctx.fillStyle = `rgba(10,10,18,${fog * 0.6})`;
-      ctx.fillRect(i * stripeW, y0, stripeW + 1, wallH);
     }
 
-    // 적 렌더링 (스프라이트)
-    const sorted = state.enemies.filter(e => e.alive).map(e => {
+    // 적 스프라이트 (뒤에서 앞으로)
+    const visible = [];
+    for (const e of state.enemies) {
+      if (!e.alive) continue;
       const dx = e.x - state.px, dy = e.y - state.py;
-      return { e, dist: Math.sqrt(dx*dx + dy*dy) };
-    }).sort((a, b) => b.dist - a.dist);
-
-    for (const { e, dist } of sorted) {
-      const dx = e.x - state.px, dy = e.y - state.py;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 0.2) continue;
       let ang = Math.atan2(dy, dx) - state.pa;
       while (ang > Math.PI) ang -= 2 * Math.PI;
       while (ang < -Math.PI) ang += 2 * Math.PI;
-      if (Math.abs(ang) > FOV/2 + 0.3) continue;
-      if (dist < 0.3) continue;
+      if (Math.abs(ang) > FOV / 2 + 0.4) continue;
+      const corrected = dist * Math.cos(ang);
+      if (corrected < 0.1) continue;
+      visible.push({ e, dist, ang, corrected });
+    }
+    visible.sort((a, b) => b.dist - a.dist);
 
-      const size = Math.min(H * 0.9, (H / dist) * 0.8);
-      const screenX = W/2 + Math.tan(ang) * (W / (2 * Math.tan(FOV/2)));
-      const yBase = H/2 + size/2;
-
-      // 좀비 픽셀 아트 (7x9 그리드)
-      const px = size / 7;
-      const zombiePattern = [
+    for (const { e, dist, ang, corrected } of visible) {
+      const size = Math.min(H * 2, H / corrected);
+      const screenX = W / 2 + Math.tan(ang) * PROJ_PLANE;
+      const spriteTop = (H - size) / 2;
+      // 픽셀 아트 좀비 (7x10)
+      const pattern = [
         [0,0,3,3,3,0,0],
         [0,0,3,3,3,0,0],
-        [0,3,4,3,4,3,0],
         [0,3,3,3,3,3,0],
-        [0,0,3,3,3,0,0],
+        [0,3,4,3,4,3,0],
+        [0,3,3,5,3,3,0],
         [3,3,3,3,3,3,3],
         [3,3,3,3,3,3,3],
-        [3,3,0,0,0,3,3],
-        [3,3,0,0,0,3,3],
+        [3,3,3,3,3,3,3],
+        [0,3,3,0,3,3,0],
+        [0,3,3,0,3,3,0],
       ];
+      const rows = pattern.length, cols = pattern[0].length;
+      const pxSize = size / rows;
       const colorMap = {
-        3: e.hitTimer > 0 ? '#ff8080' : '#4a7a3a',  // 좀비 초록
-        4: '#f0e050',  // 눈
+        3: e.hitTimer > 0 ? '#ff5555' : '#4a8a3a',
+        4: '#ffee00',  // 눈
+        5: '#2a1010',  // 입
       };
-      // 안개 페이드
-      const fadeFactor = Math.min(1, dist / MAX_DEPTH);
-      for (let py = 0; py < zombiePattern.length; py++) {
-        for (let pxx = 0; pxx < zombiePattern[py].length; pxx++) {
-          const v = zombiePattern[py][pxx];
+      const fog = Math.min(0.7, corrected / MAX_DEPTH);
+      const startX = screenX - (cols * pxSize) / 2;
+      for (let py = 0; py < rows; py++) {
+        for (let pxx = 0; pxx < cols; pxx++) {
+          const v = pattern[py][pxx];
           if (!v) continue;
-          // 스크린 X 범위 밖 z-check
-          const sx = screenX - size/2 + pxx * px;
-          const stripeIdx = Math.floor(sx / (W / NUM_RAYS));
-          if (stripeIdx >= 0 && stripeIdx < NUM_RAYS && dist > zBuffer[stripeIdx]) continue;
+          const sx = startX + pxx * pxSize;
+          const sy = spriteTop + py * pxSize;
+          // z-buffer 체크
+          const stripeIdx = Math.floor((sx + pxSize/2) / stripeW);
+          if (stripeIdx >= 0 && stripeIdx < NUM_RAYS && corrected > zBuffer[stripeIdx]) continue;
           ctx.fillStyle = colorMap[v];
-          ctx.fillRect(sx, yBase - zombiePattern.length * px + py * px, px + 1, px + 1);
-          if (fadeFactor > 0) {
-            ctx.fillStyle = `rgba(10,10,18,${fadeFactor * 0.5})`;
-            ctx.fillRect(sx, yBase - zombiePattern.length * px + py * px, px + 1, px + 1);
+          ctx.fillRect(sx, sy, pxSize + 1, pxSize + 1);
+          if (fog > 0) {
+            ctx.fillStyle = `rgba(10,10,18,${fog})`;
+            ctx.fillRect(sx, sy, pxSize + 1, pxSize + 1);
           }
         }
       }
       if (e.hitTimer > 0) e.hitTimer--;
     }
 
-    // 총기 (화면 하단)
     drawGun();
   }
 
   function drawGun() {
-    const gx = W/2, gy = H;
-    const bob = state.running && (state.keys.w || state.keys.a || state.keys.s || state.keys.d)
-      ? Math.sin(performance.now() / 100) * 4 : 0;
-    const rec = state.muzzleFlashTimer > 0 ? 8 : 0;
+    const gx = W / 2, gy = H;
+    const bob = state.moving ? Math.sin(performance.now() / 120) * 5 : 0;
+    const rec = state.muzzleFlashTimer > 0 ? 10 : 0;
 
     // 총 몸체
     ctx.fillStyle = '#2a2a3a';
-    ctx.fillRect(gx - 30, gy - 90 + bob + rec, 60, 40);
-    ctx.fillStyle = '#404050';
-    ctx.fillRect(gx - 30, gy - 90 + bob + rec, 60, 8);
+    ctx.fillRect(gx - 36, gy - 90 + bob + rec, 72, 40);
+    ctx.fillStyle = '#3f3f52';
+    ctx.fillRect(gx - 36, gy - 90 + bob + rec, 72, 8);
     // 손잡이
     ctx.fillStyle = '#1a1a24';
-    ctx.fillRect(gx - 18, gy - 55 + bob + rec, 36, 55);
+    ctx.fillRect(gx - 20, gy - 55 + bob + rec, 40, 55);
     // 총구
     ctx.fillStyle = '#1a1a20';
-    ctx.fillRect(gx - 6, gy - 130 + bob + rec, 12, 45);
-    // 조준선
+    ctx.fillRect(gx - 7, gy - 132 + bob + rec, 14, 45);
+    // 가늠쇠
     ctx.fillStyle = '#7cff5a';
-    ctx.fillRect(gx - 1, gy - 133 + bob + rec, 2, 6);
+    ctx.fillRect(gx - 1, gy - 136 + bob + rec, 2, 6);
 
     // 머즐 플래시
     if (state.muzzleFlashTimer > 0) {
       const f = state.muzzleFlashTimer;
       ctx.fillStyle = `rgba(255,220,80,${f/6})`;
       ctx.beginPath();
-      ctx.arc(gx, gy - 130 + bob, 20 * (f/6), 0, Math.PI * 2);
+      ctx.arc(gx, gy - 132 + bob, 22 * (f/6), 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = `rgba(255,120,40,${f/6 * 0.6})`;
-      ctx.fillRect(gx - 4, gy - 155 + bob, 8, 25);
+      ctx.fillRect(gx - 5, gy - 160 + bob, 10, 28);
       state.muzzleFlashTimer--;
     }
 
@@ -383,7 +412,7 @@
   }
 
   function shoot() {
-    if (state.reloading || !state.running || state.dead) return;
+    if (state.reloading || !state.started || state.dead) return;
     if (state.ammo <= 0) {
       reload();
       return;
@@ -395,17 +424,18 @@
     state.muzzleFlashTimer = 6;
     ammoEl.textContent = state.ammo;
 
-    // 히트스캔 - 조준선 방향으로 가장 가까운 적 or 벽
+    // 조준선 히트스캔
     const ray = castRay(state.pa);
     let hitEnemy = null, hitDist = ray.dist;
     for (const e of state.enemies) {
       if (!e.alive) continue;
       const dx = e.x - state.px, dy = e.y - state.py;
       const dist = Math.sqrt(dx*dx + dy*dy);
-      const ang = Math.atan2(dy, dx) - state.pa;
-      const normAng = Math.atan2(Math.sin(ang), Math.cos(ang));
-      const halfWidth = 0.4 / dist;
-      if (Math.abs(normAng) < halfWidth && dist < hitDist) {
+      let ang = Math.atan2(dy, dx) - state.pa;
+      while (ang > Math.PI) ang -= 2 * Math.PI;
+      while (ang < -Math.PI) ang += 2 * Math.PI;
+      const halfWidth = 0.45 / dist;
+      if (Math.abs(ang) < halfWidth && dist < hitDist) {
         hitEnemy = e;
         hitDist = dist;
       }
@@ -440,9 +470,8 @@
       if (!e.alive) continue;
       const dx = state.px - e.x, dy = state.py - e.y;
       const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 0.7) {
-        // 공격
-        if (!e.lastAttack || performance.now() - e.lastAttack > 900) {
+      if (dist < 0.75) {
+        if (performance.now() - e.lastAttack > 900) {
           e.lastAttack = performance.now();
           state.hp -= 8;
           state.hitFlashTimer = 8;
@@ -456,7 +485,7 @@
       if (!isWall(nx, e.y)) e.x = nx;
       if (!isWall(e.x, ny)) e.y = ny;
     }
-    if (state.enemies.every(e => !e.alive)) {
+    if (state.enemies.length > 0 && state.enemies.every(e => !e.alive)) {
       state.wave++;
       waveEl.textContent = state.wave;
       state.mag = Math.min(state.magStored, state.mag + 12);
@@ -472,21 +501,19 @@
     if (state.keys.s) { mx -= Math.cos(state.pa) * speed; my -= Math.sin(state.pa) * speed; }
     if (state.keys.a) { mx += Math.cos(state.pa - Math.PI/2) * speed; my += Math.sin(state.pa - Math.PI/2) * speed; }
     if (state.keys.d) { mx += Math.cos(state.pa + Math.PI/2) * speed; my += Math.sin(state.pa + Math.PI/2) * speed; }
-    // 벽 슬라이딩
     const nx = state.px + mx, ny = state.py + my;
     if (!isWall(nx, state.py)) state.px = nx;
     if (!isWall(state.px, ny)) state.py = ny;
-    state.running = (mx !== 0 || my !== 0);
-    // 좌우 화살표로 회전 (터치용)
+    state.moving = (mx !== 0 || my !== 0);
     if (state.keys.left) state.pa -= 2.5 * dt;
     if (state.keys.right) state.pa += 2.5 * dt;
   }
 
   function loop(t) {
     if (!state.lastTime) state.lastTime = t;
-    const dt = Math.min(0.1, (t - state.lastTime) / 1000);
+    const dt = Math.min(0.05, (t - state.lastTime) / 1000);
     state.lastTime = t;
-    if (state.running !== undefined && !state.dead && !overlay.classList.contains('hidden') === false) {
+    if (state.started && !state.dead) {
       updatePlayer(dt);
       updateEnemies(dt);
     }
@@ -503,9 +530,9 @@
   }
 
   function drawMinimap() {
-    const mmSize = 100, cell = mmSize / MAP_W;
+    const mmSize = 110, cell = mmSize / MAP_W;
     const ox = W - mmSize - 10, oy = 10;
-    ctx.fillStyle = 'rgba(10,10,20,0.7)';
+    ctx.fillStyle = 'rgba(10,10,20,0.75)';
     ctx.fillRect(ox - 3, oy - 3, mmSize + 6, mmSize + 6);
     for (let y = 0; y < MAP_H; y++) {
       for (let x = 0; x < MAP_W; x++) {
@@ -516,27 +543,29 @@
         }
       }
     }
-    // 적
     for (const e of state.enemies) {
       if (!e.alive) continue;
       ctx.fillStyle = '#ff2d95';
-      ctx.fillRect(ox + e.x * cell - 1, oy + e.y * cell - 1, 3, 3);
+      ctx.fillRect(ox + e.x * cell - 2, oy + e.y * cell - 2, 4, 4);
     }
     // 플레이어
     ctx.fillStyle = '#7cff5a';
     ctx.beginPath();
-    ctx.arc(ox + state.px * cell, oy + state.py * cell, 2, 0, Math.PI * 2);
+    ctx.arc(ox + state.px * cell, oy + state.py * cell, 3, 0, Math.PI * 2);
     ctx.fill();
     // 시야 방향
     ctx.strokeStyle = '#7cff5a';
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(ox + state.px * cell, oy + state.py * cell);
-    ctx.lineTo(ox + state.px * cell + Math.cos(state.pa) * 8, oy + state.py * cell + Math.sin(state.pa) * 8);
+    ctx.lineTo(ox + state.px * cell + Math.cos(state.pa) * 10, oy + state.py * cell + Math.sin(state.pa) * 10);
     ctx.stroke();
+    ctx.lineWidth = 1;
   }
 
   function gameOver() {
     state.dead = true;
+    state.started = false;
     overlay.classList.remove('hidden');
     overlay.innerHTML = `
       <div class="big dead">GAME OVER</div>
@@ -550,7 +579,9 @@
     state.px = 2.5; state.py = 2.5; state.pa = 0;
     state.hp = 100; state.ammo = state.magSize; state.mag = state.magStored;
     state.kills = 0; state.wave = 1;
-    state.enemies = []; state.dead = false;
+    state.enemies = [];
+    state.dead = false;
+    state.started = true;
     hpEl.textContent = state.hp;
     ammoEl.textContent = state.ammo;
     magEl.textContent = state.mag;
@@ -562,7 +593,7 @@
   }
   startBtn.addEventListener('click', startGame);
 
-  // 입력
+  // 키보드
   document.addEventListener('keydown', (e) => {
     const k = e.key.toLowerCase();
     if (k === 'w' || k === 'ㅈ') state.keys.w = true;
@@ -573,7 +604,7 @@
     if (k === 'r') reload();
     if (k === 'arrowleft') state.keys.left = true;
     if (k === 'arrowright') state.keys.right = true;
-    if (['w','a','s','d','r','shift','arrowleft','arrowright'].includes(k)) e.preventDefault();
+    if (['w','a','s','d','r','arrowleft','arrowright'].includes(k)) e.preventDefault();
   });
   document.addEventListener('keyup', (e) => {
     const k = e.key.toLowerCase();
@@ -587,7 +618,7 @@
   });
 
   canvas.addEventListener('click', () => {
-    if (overlay.classList.contains('hidden') && !state.dead) {
+    if (state.started && !state.dead) {
       canvas.requestPointerLock?.();
       shoot();
     }
@@ -603,7 +634,7 @@
     const el = document.getElementById(id);
     const start = (e) => { e.preventDefault(); on(); };
     const end = (e) => { e.preventDefault(); off(); };
-    el.addEventListener('touchstart', start);
+    el.addEventListener('touchstart', start, { passive: false });
     el.addEventListener('touchend', end);
     el.addEventListener('touchcancel', end);
     el.addEventListener('mousedown', start);
@@ -614,8 +645,9 @@
   hookHold('btnBack', () => state.keys.s = true, () => state.keys.s = false);
   hookHold('btnLeft', () => state.keys.left = true, () => state.keys.left = false);
   hookHold('btnRight', () => state.keys.right = true, () => state.keys.right = false);
-  document.getElementById('btnFire').addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); });
-  document.getElementById('btnFire').addEventListener('mousedown', (e) => { e.preventDefault(); shoot(); });
+  const btnFire = document.getElementById('btnFire');
+  btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); shoot(); }, { passive: false });
+  btnFire.addEventListener('mousedown', (e) => { e.preventDefault(); shoot(); });
 
   requestAnimationFrame(loop);
 })();
