@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="네온 아케이드 스타일 사다리게임. 참가자와 결과를 정하고 사다리를 타고 내려가 오늘의 운을 확인해보세요.">
+<meta name="description" content="네온 아케이드 스타일 사다리게임. 참가자와 결과를 자유롭게 정하고 사다리를 타고 내려가 결과를 확인해보세요.">
 <meta name="theme-color" content="#0a0a12">
 <title>NEON LADDER · 사다리게임</title>
 <style>
@@ -12,6 +12,7 @@
   :root {
     --bg: #0a0a12;
     --panel: #12121f;
+    --panel-2: #181828;
     --accent: #3dff7a;
     --accent-2: #ff2d95;
     --accent-3: #4dd6ff;
@@ -55,7 +56,7 @@
   }
 
   .wrap {
-    max-width: 560px; margin: 0 auto;
+    max-width: 620px; margin: 0 auto;
     display: flex; flex-direction: column; align-items: center;
     gap: 14px; padding: 56px 12px 40px;
   }
@@ -73,6 +74,15 @@
     text-shadow: 0 0 24px rgba(61,255,122,0.35);
   }
 
+  .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+    letter-spacing: .5px;
+    margin-top: -4px;
+  }
+
   .config {
     width: 100%;
     background: var(--panel);
@@ -80,7 +90,7 @@
     border-radius: 12px;
     padding: 14px;
     box-shadow: inset 0 0 16px rgba(0,0,0,0.4);
-    display: flex; flex-direction: column; gap: 12px;
+    display: flex; flex-direction: column; gap: 14px;
   }
 
   .config-row {
@@ -98,9 +108,9 @@
     display: flex; align-items: center; gap: 6px;
   }
   .count-ctrl button {
-    width: 28px; height: 28px;
+    width: 32px; height: 32px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 11px;
+    font-size: 12px;
     background: rgba(77,214,255,0.12);
     color: var(--accent-3);
     border: 1px solid rgba(77,214,255,0.35);
@@ -112,58 +122,106 @@
     opacity: 0.35; cursor: not-allowed;
   }
   .count-ctrl .cnt {
-    min-width: 26px; text-align: center;
+    min-width: 28px; text-align: center;
     font-family: 'Press Start 2P', monospace;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--accent-3);
     text-shadow: 0 0 12px rgba(77,214,255,0.5);
   }
 
+  .mini-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    background: rgba(255,225,77,0.12);
+    color: var(--accent-4);
+    border: 1px solid rgba(255,225,77,0.4);
+  }
+  .mini-btn.pink { background: rgba(255,45,149,0.12); color: var(--accent-2); border-color: rgba(255,45,149,0.4); }
+  .mini-btn:active { transform: scale(0.94); }
+
   .fields {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 14px;
+  }
+  @media (max-width: 480px) {
+    .fields { grid-template-columns: 1fr; gap: 16px; }
   }
   .col {
-    display: flex; flex-direction: column; gap: 6px;
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--panel-2);
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px dashed rgba(120,130,200,0.2);
+  }
+  .col-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(120,130,200,0.15);
+    margin-bottom: 2px;
   }
   .col-title {
     font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 1px;
-    padding-bottom: 4px;
   }
-  .col.players .col-title { color: var(--accent); }
-  .col.results .col-title { color: var(--accent-2); }
+  .col.players .col-title { color: var(--accent); text-shadow: 0 0 10px rgba(61,255,122,0.4); }
+  .col.results .col-title { color: var(--accent-2); text-shadow: 0 0 10px rgba(255,45,149,0.4); }
 
   .field {
-    display: flex; align-items: center;
+    display: flex; align-items: center; gap: 6px;
   }
   .field .idx {
     font-family: 'Press Start 2P', monospace;
     font-size: 9px;
     color: var(--muted);
     min-width: 18px;
+    text-align: right;
   }
   .field input {
     flex: 1;
-    background: rgba(10,10,18,0.6);
-    border: 1px solid rgba(120,130,200,0.22);
+    background: rgba(10,10,18,0.75);
+    border: 1px solid rgba(120,130,200,0.25);
     border-radius: 6px;
-    padding: 8px 10px;
+    padding: 10px 10px;
     color: var(--text);
     font-family: 'Orbitron', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 500;
     outline: none;
     transition: border-color .1s, box-shadow .1s;
     min-width: 0;
+    -webkit-appearance: none;
   }
+  .field input::placeholder { color: rgba(122,130,184,0.5); }
   .field input:focus {
     border-color: rgba(77,214,255,0.55);
     box-shadow: 0 0 10px rgba(77,214,255,0.25);
   }
-  .col.players .field input:focus { border-color: rgba(61,255,122,0.55); box-shadow: 0 0 10px rgba(61,255,122,0.25); }
-  .col.results .field input:focus { border-color: rgba(255,45,149,0.55); box-shadow: 0 0 10px rgba(255,45,149,0.25); }
+  .col.players .field input:focus { border-color: rgba(61,255,122,0.65); box-shadow: 0 0 12px rgba(61,255,122,0.3); }
+  .col.results .field input:focus { border-color: rgba(255,45,149,0.65); box-shadow: 0 0 12px rgba(255,45,149,0.3); }
+
+  .col-actions {
+    display: flex; gap: 6px; margin-top: 4px;
+  }
+  .chip-btn {
+    flex: 1;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 6px 4px;
+    border-radius: 5px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid rgba(120,130,200,0.25);
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .chip-btn:active { transform: scale(0.96); }
 
   .board-frame {
     position: relative;
@@ -216,6 +274,17 @@
     color: var(--accent-2);
     text-shadow: 0 0 10px rgba(255,45,149,0.45);
     cursor: default;
+  }
+  .result-chip.hidden-mask {
+    color: transparent;
+    text-shadow: none;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255,45,149,0.28),
+      rgba(255,45,149,0.28) 6px,
+      rgba(255,45,149,0.10) 6px,
+      rgba(255,45,149,0.10) 12px
+    );
   }
   .result-chip.hit {
     background: linear-gradient(145deg, rgba(255,225,77,0.45), rgba(255,225,77,0.2));
@@ -299,6 +368,14 @@
     line-height: 1.7;
     letter-spacing: .5px;
   }
+
+  .toggle-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .toggle-row input { accent-color: var(--accent-3); width: 15px; height: 15px; }
 </style>
 </head>
 <body>
@@ -306,6 +383,7 @@
 
 <div class="wrap">
   <div class="title">NEON LADDER</div>
+  <div class="subtitle">참가자와 결과를 자유롭게 입력하고 사다리를 타보세요</div>
 
   <div class="config">
     <div class="config-row">
@@ -315,17 +393,32 @@
         <div class="cnt" id="cnt">4</div>
         <button id="inc">+</button>
       </div>
-      <label style="margin-left:auto">2 ~ 8</label>
+      <label style="margin-left:auto">2 ~ 10</label>
     </div>
+
     <div class="fields">
       <div class="col players">
-        <div class="col-title">참가자</div>
+        <div class="col-head">
+          <div class="col-title">참가자</div>
+          <button class="chip-btn" id="clearPlayers" type="button">지우기</button>
+        </div>
         <div id="playerFields"></div>
       </div>
       <div class="col results">
-        <div class="col-title">결과</div>
+        <div class="col-head">
+          <div class="col-title">결과</div>
+          <div style="display:flex; gap:4px;">
+            <button class="chip-btn" id="shuffleResults" type="button">섞기</button>
+            <button class="chip-btn" id="clearResults" type="button">지우기</button>
+          </div>
+        </div>
         <div id="resultFields"></div>
       </div>
+    </div>
+
+    <div class="toggle-row">
+      <input type="checkbox" id="hideResults">
+      <label for="hideResults">START 후 결과 가리기 (사다리 도착 시 공개)</label>
     </div>
   </div>
 
@@ -339,7 +432,7 @@
     </div>
   </div>
 
-  <div class="status" id="status">START 를 눌러 사다리를 생성하세요</div>
+  <div class="status" id="status">참가자·결과를 입력하고 START 를 눌러주세요</div>
 
   <div class="controls">
     <button class="btn" id="startBtn">START</button>
@@ -349,7 +442,7 @@
   </div>
 
   <div class="hint">
-    이름 · 결과 편집 → START로 사다리 생성 → 이름을 누르면 한 명씩, ALL은 전체 결과
+    ① 참가자·결과 입력 → ② START 로 사다리 생성 → ③ 이름을 눌러 한 명씩, 또는 ALL 로 전체 공개
   </div>
 </div>
 
@@ -369,9 +462,13 @@
   const allBtn = document.getElementById('allBtn');
   const resetBtn = document.getElementById('resetBtn');
   const status = document.getElementById('status');
+  const clearPlayersBtn = document.getElementById('clearPlayers');
+  const clearResultsBtn = document.getElementById('clearResults');
+  const shuffleResultsBtn = document.getElementById('shuffleResults');
+  const hideResultsChk = document.getElementById('hideResults');
 
-  const MIN = 2, MAX = 8;
-  const DEFAULT_NAMES = ['철수','영희','민수','수진','지훈','유리','태호','예린'];
+  const MIN = 2, MAX = 10;
+  const DEFAULT_NAMES = ['철수','영희','민수','수진','지훈','유리','태호','예린','도현','서아'];
   const DEFAULT_RESULTS_BY_N = {
     2: ['커피 🍵','당첨 🎁'],
     3: ['꽝','커피 🍵','당첨 🎁'],
@@ -379,21 +476,20 @@
     5: ['꽝','꽝','커피 🍵','디저트 🍰','당첨 🎁'],
     6: ['꽝','꽝','커피 🍵','간식 🍫','디저트 🍰','당첨 🎁'],
     7: ['꽝','꽝','커피 🍵','간식 🍫','디저트 🍰','상품권 🎫','당첨 🎁'],
-    8: ['꽝','꽝','꽝','커피 🍵','간식 🍫','디저트 🍰','상품권 🎫','당첨 🎁']
+    8: ['꽝','꽝','꽝','커피 🍵','간식 🍫','디저트 🍰','상품권 🎫','당첨 🎁'],
+    9: ['꽝','꽝','꽝','커피 🍵','간식 🍫','디저트 🍰','상품권 🎫','치킨 🍗','당첨 🎁'],
+    10: ['꽝','꽝','꽝','꽝','커피 🍵','간식 🍫','디저트 🍰','상품권 🎫','치킨 🍗','당첨 🎁']
   };
 
   let n = 4;
   let players = DEFAULT_NAMES.slice(0, n);
   let results = DEFAULT_RESULTS_BY_N[n].slice();
-  let rungs = [];           // array of rows; each row is a boolean array of length n-1 (left connections)
+  let rungs = [];
   let rowCount = 12;
   let built = false;
   let animating = false;
-  let animQueue = [];
-  let revealed = new Set(); // player indices already traced this round
-  let mapping = [];         // playerIndex -> resultIndex after ladder resolves
-
-  function rand(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  let revealed = new Set();
+  let mapping = [];
 
   function renderFields() {
     playerFields.innerHTML = '';
@@ -403,7 +499,7 @@
       pf.innerHTML = `<span class="idx">${i+1}.</span>`;
       const pi = document.createElement('input');
       pi.type = 'text'; pi.value = players[i] || '';
-      pi.maxLength = 10;
+      pi.maxLength = 12;
       pi.placeholder = `참가자${i+1}`;
       pi.addEventListener('input', () => { players[i] = pi.value; syncChips(); });
       pf.appendChild(pi);
@@ -413,7 +509,7 @@
       rf.innerHTML = `<span class="idx">${i+1}.</span>`;
       const ri = document.createElement('input');
       ri.type = 'text'; ri.value = results[i] || '';
-      ri.maxLength = 12;
+      ri.maxLength = 14;
       ri.placeholder = `결과${i+1}`;
       ri.addEventListener('input', () => { results[i] = ri.value; syncChips(); });
       rf.appendChild(ri);
@@ -425,6 +521,7 @@
     rowTop.innerHTML = ''; rowBot.innerHTML = '';
     rowTop.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
     rowBot.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+    const hide = built && hideResultsChk.checked;
     for (let i = 0; i < n; i++) {
       const p = document.createElement('div');
       p.className = 'name-chip'; p.textContent = players[i] || `참가자${i+1}`;
@@ -433,8 +530,10 @@
       rowTop.appendChild(p);
 
       const r = document.createElement('div');
-      r.className = 'result-chip'; r.textContent = results[i] || `결과${i+1}`;
+      r.className = 'result-chip';
+      r.textContent = results[i] || `결과${i+1}`;
       r.dataset.idx = i;
+      if (hide) r.classList.add('hidden-mask');
       rowBot.appendChild(r);
     }
   }
@@ -453,12 +552,13 @@
     cntEl.textContent = n;
     incBtn.disabled = n >= MAX;
     decBtn.disabled = n <= MIN;
-    // preserve typed names/results where possible
     while (players.length < n) players.push(DEFAULT_NAMES[players.length] || `참가자${players.length+1}`);
     while (results.length < n) results.push('');
     players = players.slice(0, n);
     results = results.slice(0, n);
-    if (results.every(r => !r || DEFAULT_RESULTS_BY_N[8].includes(r))) {
+    const defaultsPool = new Set();
+    Object.values(DEFAULT_RESULTS_BY_N).forEach(arr => arr.forEach(v => defaultsPool.add(v)));
+    if (results.every(r => !r || defaultsPool.has(r))) {
       results = DEFAULT_RESULTS_BY_N[n].slice();
     }
     renderFields();
@@ -469,14 +569,14 @@
   function resetLadder() {
     rungs = [];
     built = false;
-    animQueue = [];
     revealed = new Set();
     mapping = [];
+    activePaths.length = 0;
     oneBtn.disabled = true;
     allBtn.disabled = true;
     document.querySelectorAll('.name-chip').forEach(c => { c.classList.remove('active','dim'); });
-    document.querySelectorAll('.result-chip').forEach(c => c.classList.remove('hit'));
-    status.textContent = 'START 를 눌러 사다리를 생성하세요';
+    document.querySelectorAll('.result-chip').forEach(c => c.classList.remove('hit','hidden-mask'));
+    status.textContent = '참가자·결과를 입력하고 START 를 눌러주세요';
     drawLadder();
   }
 
@@ -485,46 +585,37 @@
     rungs = [];
     for (let r = 0; r < rowCount; r++) {
       const row = new Array(n - 1).fill(false);
-      // random rungs, avoid adjacency (no two connected rungs on the same row)
       for (let c = 0; c < n - 1; c++) {
         if (c > 0 && row[c - 1]) continue;
         if (Math.random() < 0.42) row[c] = true;
       }
       rungs.push(row);
     }
-    // compute mapping
     mapping = [];
     for (let i = 0; i < n; i++) mapping.push(resolvePath(i).finalCol);
     built = true;
-    animQueue = [];
     revealed = new Set();
     oneBtn.disabled = false;
     allBtn.disabled = false;
-    document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active','dim'));
-    document.querySelectorAll('.result-chip').forEach(c => c.classList.remove('hit'));
+    renderChips();
     status.innerHTML = '이름을 눌러 한 명씩, 또는 <span class="hi">ALL</span> 로 전체 공개';
     drawLadder();
   }
 
   function resolvePath(startCol) {
-    // returns { points: [{r,c}], finalCol }
     let c = startCol;
     const points = [{ r: 0, c: c }];
     for (let r = 0; r < rowCount; r++) {
-      // check horizontal move at row r
       const row = rungs[r];
-      // rung between (c-1, c) means row[c-1] === true -> move left
-      // rung between (c, c+1) means row[c] === true -> move right
       if (c > 0 && row[c - 1]) {
-        points.push({ r: r, c: c });          // enter rung point (top of segment r)
+        points.push({ r: r, c: c });
         c = c - 1;
-        points.push({ r: r, c: c });          // moved
+        points.push({ r: r, c: c });
       } else if (c < n - 1 && row[c]) {
         points.push({ r: r, c: c });
         c = c + 1;
         points.push({ r: r, c: c });
       }
-      // vertical to next row
       points.push({ r: r + 1, c: c });
     }
     return { points, finalCol: c };
@@ -558,8 +649,7 @@
     cv.width = Math.floor(cssW * dpr);
     cv.height = Math.floor(heightCss * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    // recompute using CSS-pixel dimensions
-    cv.width = cssW;   // we treat cv.width/height in CSS px for geometry
+    cv.width = cssW;
     cv.height = heightCss;
     cv.style.width = cssW + 'px';
     drawLadder();
@@ -569,7 +659,6 @@
     const W = cv.width, H = cv.height;
     ctx.clearRect(0, 0, W, H);
     if (!built && rungs.length === 0) {
-      // placeholder
       ctx.fillStyle = 'rgba(122,130,184,0.55)';
       ctx.font = "11px 'Press Start 2P', monospace";
       ctx.textAlign = 'center';
@@ -577,7 +666,6 @@
       return;
     }
     const g = getGeometry();
-    // vertical lines
     ctx.strokeStyle = 'rgba(77,214,255,0.55)';
     ctx.lineWidth = 2;
     ctx.shadowColor = 'rgba(77,214,255,0.6)';
@@ -589,7 +677,6 @@
       ctx.lineTo(x, g.padY + rowCount * g.rowH);
       ctx.stroke();
     }
-    // rungs
     ctx.strokeStyle = 'rgba(120,130,200,0.75)';
     ctx.shadowColor = 'rgba(120,130,200,0.35)';
     ctx.lineWidth = 3;
@@ -610,13 +697,12 @@
   function drawPath(points, colorIdx, progressPct) {
     const colors = [
       '#3dff7a', '#ff2d95', '#4dd6ff', '#ffe14d',
-      '#c86bff', '#ff8a4d', '#4dffcf', '#ff4d6b'
+      '#c86bff', '#ff8a4d', '#4dffcf', '#ff4d6b',
+      '#8affc1', '#ff9de2'
     ];
     const color = colors[colorIdx % colors.length];
     if (points.length < 2) return;
-    // build path segments in canvas coords
     const pts = points.map(p => ({ x: colToX(p.c), y: rowToY(p.r) }));
-    // compute total length
     let total = 0;
     const segLens = [];
     for (let i = 1; i < pts.length; i++) {
@@ -634,25 +720,22 @@
     ctx.lineJoin = 'round';
     ctx.beginPath();
     ctx.moveTo(pts[0].x, pts[0].y);
-    let drawn = 0;
     for (let i = 1; i < pts.length && want > 0; i++) {
       const seg = segLens[i-1];
       if (want >= seg) {
         ctx.lineTo(pts[i].x, pts[i].y);
-        drawn += seg; want -= seg;
+        want -= seg;
       } else {
         const t = want / seg;
         const x = pts[i-1].x + (pts[i].x - pts[i-1].x) * t;
         const y = pts[i-1].y + (pts[i].y - pts[i-1].y) * t;
         ctx.lineTo(x, y);
-        drawn += want; want = 0;
+        want = 0;
         break;
       }
     }
     ctx.stroke();
-    // head dot
     if (progressPct < 1) {
-      // find head position (last drawn point)
       let acc = 0; let head = pts[0];
       for (let i = 1; i < pts.length; i++) {
         const seg = segLens[i-1];
@@ -671,21 +754,24 @@
     ctx.restore();
   }
 
-  const activePaths = []; // { player, points, startTs, dur, colorIdx, done }
+  const activePaths = [];
 
   function animate(ts) {
     drawLadder();
     let stillGoing = false;
     for (const p of activePaths) {
       const t = Math.min(1, (ts - p.startTs) / p.dur);
+      if (t < 0) { stillGoing = true; continue; }
       drawPath(p.points, p.colorIdx, t);
       if (t < 1) stillGoing = true;
       else if (!p.done) {
         p.done = true;
-        // mark result
         const finalCol = p.points[p.points.length - 1].c;
         const chip = rowBot.children[finalCol];
-        if (chip) chip.classList.add('hit');
+        if (chip) {
+          chip.classList.remove('hidden-mask');
+          chip.classList.add('hit');
+        }
         const nameChip = rowTop.children[p.player];
         if (nameChip) nameChip.classList.remove('active');
       }
@@ -694,7 +780,6 @@
       requestAnimationFrame(animate);
     } else {
       animating = false;
-      // dim all traced players that already finished
       document.querySelectorAll('.name-chip').forEach(c => {
         const i = parseInt(c.dataset.idx, 10);
         if (revealed.has(i)) c.classList.add('dim');
@@ -731,6 +816,7 @@
 
   function traceAll() {
     if (!built) return;
+    const now = performance.now();
     for (let i = 0; i < n; i++) {
       if (revealed.has(i)) continue;
       revealed.add(i);
@@ -740,7 +826,7 @@
       activePaths.push({
         player: i,
         points: path.points,
-        startTs: performance.now() + i * 90,
+        startTs: now + i * 90,
         dur: 900 + Math.min(600, rowCount * 40),
         colorIdx: i,
         done: false
@@ -761,18 +847,26 @@
     tracePlayer(i);
   }
 
+  function shuffleArray(arr) {
+    const out = arr.slice();
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  }
+
   incBtn.addEventListener('click', () => updateCount(n + 1));
   decBtn.addEventListener('click', () => updateCount(n - 1));
   startBtn.addEventListener('click', () => {
     activePaths.length = 0;
     revealed = new Set();
     document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active','dim'));
-    document.querySelectorAll('.result-chip').forEach(c => c.classList.remove('hit'));
+    document.querySelectorAll('.result-chip').forEach(c => c.classList.remove('hit','hidden-mask'));
     buildLadder();
     resizeCanvas();
   });
   oneBtn.addEventListener('click', () => {
-    // pick first not-yet-revealed
     for (let i = 0; i < n; i++) {
       if (!revealed.has(i)) { tracePlayer(i); return; }
     }
@@ -784,9 +878,30 @@
     resetLadder();
   });
 
+  clearPlayersBtn.addEventListener('click', () => {
+    players = new Array(n).fill('');
+    renderFields();
+    syncChips();
+    resetLadder();
+  });
+  clearResultsBtn.addEventListener('click', () => {
+    results = new Array(n).fill('');
+    renderFields();
+    syncChips();
+    resetLadder();
+  });
+  shuffleResultsBtn.addEventListener('click', () => {
+    results = shuffleArray(results);
+    renderFields();
+    syncChips();
+    resetLadder();
+  });
+  hideResultsChk.addEventListener('change', () => {
+    if (built) renderChips();
+  });
+
   window.addEventListener('resize', () => { resizeCanvas(); });
 
-  // init
   updateCount(n);
   resizeCanvas();
 })();
