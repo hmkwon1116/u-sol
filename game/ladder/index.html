@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="네온 아케이드 스타일 사다리게임. 참가자와 결과를 정하고 사다리를 타고 내려가 오늘의 운을 확인해보세요.">
+<meta name="theme-color" content="#0a0a12">
+<title>NEON LADDER · 사다리게임</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@500;700;900&display=swap');
+
+  :root {
+    --bg: #0a0a12;
+    --panel: #12121f;
+    --accent: #3dff7a;
+    --accent-2: #ff2d95;
+    --accent-3: #4dd6ff;
+    --accent-4: #ffe14d;
+    --text: #e8ecff;
+    --muted: #7a82b8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    min-height: 100%;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(61,255,122,0.14), transparent 55%),
+      radial-gradient(ellipse at 80% 120%, rgba(255,45,149,0.12), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Orbitron', sans-serif;
+    user-select: none;
+  }
+
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.18) 3px,
+      rgba(0,0,0,0) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+    mix-blend-mode: multiply;
+  }
+
+  .back-link {
+    position: fixed; top: 14px; left: 16px; z-index: 200;
+    color: var(--muted); text-decoration: none;
+    font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 1px;
+  }
+
+  .wrap {
+    max-width: 560px; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 14px; padding: 56px 12px 40px;
+  }
+
+  .title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(14px, 4vw, 22px);
+    letter-spacing: 1px;
+    text-align: center;
+    line-height: 1.6;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 24px rgba(61,255,122,0.35);
+  }
+
+  .config {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid rgba(120,130,200,0.18);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: inset 0 0 16px rgba(0,0,0,0.4);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .config-row {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .config-row label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .count-ctrl {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .count-ctrl button {
+    width: 28px; height: 28px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    background: rgba(77,214,255,0.12);
+    color: var(--accent-3);
+    border: 1px solid rgba(77,214,255,0.35);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .count-ctrl button:disabled {
+    opacity: 0.35; cursor: not-allowed;
+  }
+  .count-ctrl .cnt {
+    min-width: 26px; text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    color: var(--accent-3);
+    text-shadow: 0 0 12px rgba(77,214,255,0.5);
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .col {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .col-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding-bottom: 4px;
+  }
+  .col.players .col-title { color: var(--accent); }
+  .col.results .col-title { color: var(--accent-2); }
+
+  .field {
+    display: flex; align-items: center;
+  }
+  .field .idx {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    min-width: 18px;
+  }
+  .field input {
+    flex: 1;
+    background: rgba(10,10,18,0.6);
+    border: 1px solid rgba(120,130,200,0.22);
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: var(--text);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .1s, box-shadow .1s;
+    min-width: 0;
+  }
+  .field input:focus {
+    border-color: rgba(77,214,255,0.55);
+    box-shadow: 0 0 10px rgba(77,214,255,0.25);
+  }
+  .col.players .field input:focus { border-color: rgba(61,255,122,0.55); box-shadow: 0 0 10px rgba(61,255,122,0.25); }
+  .col.results .field input:focus { border-color: rgba(255,45,149,0.55); box-shadow: 0 0 10px rgba(255,45,149,0.25); }
+
+  .board-frame {
+    position: relative;
+    width: 100%;
+    padding: 8px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(61,255,122,0.5), rgba(255,45,149,0.5));
+    box-shadow: 0 0 40px rgba(61,255,122,0.22), inset 0 0 20px rgba(0,0,0,0.6);
+  }
+  .board-inner {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  .row-top, .row-bot {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .row-bot { margin-bottom: 0; margin-top: 8px; }
+
+  .name-chip, .result-chip {
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .1s, box-shadow .1s;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    min-width: 0;
+  }
+  .name-chip {
+    background: linear-gradient(145deg, rgba(61,255,122,0.18), rgba(61,255,122,0.06));
+    border: 1px solid rgba(61,255,122,0.45);
+    color: var(--accent);
+    text-shadow: 0 0 10px rgba(61,255,122,0.45);
+  }
+  .name-chip.active {
+    background: linear-gradient(145deg, rgba(61,255,122,0.45), rgba(61,255,122,0.2));
+    box-shadow: 0 0 16px rgba(61,255,122,0.55);
+    transform: translateY(-1px);
+  }
+  .name-chip.dim { opacity: 0.45; }
+  .result-chip {
+    background: linear-gradient(145deg, rgba(255,45,149,0.18), rgba(255,45,149,0.06));
+    border: 1px solid rgba(255,45,149,0.45);
+    color: var(--accent-2);
+    text-shadow: 0 0 10px rgba(255,45,149,0.45);
+    cursor: default;
+  }
+  .result-chip.hit {
+    background: linear-gradient(145deg, rgba(255,225,77,0.45), rgba(255,225,77,0.2));
+    color: var(--accent-4);
+    border-color: rgba(255,225,77,0.7);
+    text-shadow: 0 0 14px rgba(255,225,77,0.7);
+    animation: hit-pulse .5s ease-out;
+  }
+  @keyframes hit-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+
+  .canvas-wrap {
+    position: relative;
+    width: 100%;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: rgba(10,10,18,0.4);
+    border-radius: 6px;
+    box-shadow: inset 0 0 22px rgba(0,0,0,0.5);
+  }
+
+  .controls {
+    display: flex; gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #061015;
+    background: linear-gradient(90deg, var(--accent), #b6ffcf);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    box-shadow: 0 0 22px rgba(61,255,122,0.5);
+    transition: transform .06s, box-shadow .1s;
+    letter-spacing: 1px;
+  }
+  .btn.ghost {
+    background: transparent;
+    color: var(--muted);
+    box-shadow: none;
+    border: 1px solid rgba(120,130,200,0.3);
+  }
+  .btn.pink {
+    background: linear-gradient(90deg, var(--accent-2), #ffa9d5);
+    color: #1b0210;
+    box-shadow: 0 0 22px rgba(255,45,149,0.5);
+  }
+  .btn.blue {
+    background: linear-gradient(90deg, var(--accent-3), #a8ecff);
+    color: #011020;
+    box-shadow: 0 0 22px rgba(77,214,255,0.5);
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+
+  .status {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    min-height: 14px;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .status .hi { color: var(--accent-4); text-shadow: 0 0 10px rgba(255,225,77,0.55); }
+
+  .hint {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.7;
+    letter-spacing: .5px;
+  }
+</style>
+</head>
+<body>
+<a class="back-link" href="/game/">← 게임</a>
+
+<div class="wrap">
+  <div class="title">NEON LADDER</div>
+
+  <div class="config">
+    <div class="config-row">
+      <label>참가자 수</label>
+      <div class="count-ctrl">
+        <button id="dec">−</button>
+        <div class="cnt" id="cnt">4</div>
+        <button id="inc">+</button>
+      </div>
+      <label style="margin-left:auto">2 ~ 8</label>
+    </div>
+    <div class="fields">
+      <div class="col players">
+        <div class="col-title">참가자</div>
+        <div id="playerFields"></div>
+      </div>
+      <div class="col results">
+        <div class="col-title">결과</div>
+        <div id="resultFields"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="board-frame">
+    <div class="board-inner">
+      <div class="row-top" id="rowTop"></div>
+      <div class="canvas-wrap">
+        <canvas id="cv" width="600" height="420"></canvas>
+      </div>
+      <div class="row-bot" id="rowBot"></div>
+    </div>
+  </div>
+
+  <div class="status" id="status">START 를 눌러 사다리를 생성하세요</div>
+
+  <div class="controls">
+    <button class="btn" id="startBtn">START</button>
+    <button class="btn blue" id="oneBtn" disabled>ONE</button>
+    <button class="btn pink" id="allBtn" disabled>ALL</button>
+    <button class="btn ghost" id="resetBtn">RESET</button>
+  </div>
+
+  <div class="hint">
+    이름 · 결과 편집 → START로 사다리 생성 → 이름을 누르면 한 명씩, ALL은 전체 결과
+  </div>
+</div>
+
+<script>
+(function () {
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const rowTop = document.getElementById('rowTop');
+  const rowBot = document.getElementById('rowBot');
+  const playerFields = document.getElementById('playerFields');
+  const resultFields = document.getElementById('resultFields');
+  const cntEl = document.getElementById('cnt');
+  const incBtn = document.getElementById('inc');
+  const decBtn = document.getElementById('dec');
+  const startBtn = document.getElementById('startBtn');
+  const oneBtn = document.getElementById('oneBtn');
+  const allBtn = document.getElementById('allBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const status = document.getElementById('status');
+
+  const MIN = 2, MAX = 8;
+  const DEFAULT_NAMES = ['철수','영희','민수','수진','지훈','유리','태호','예린'];
+  const DEFAULT_RESULTS_BY_N = {
+    2: ['커피 🍵','당첨 🎁'],
+    3: ['꽝','커피 🍵','당첨 🎁'],
+    4: ['꽝','커피 🍵','디저트 🍰','당첨 🎁'],
+    5: ['꽝','꽝','커피 🍵','디저트 🍰','당첨 🎁'],
+    6: ['꽝','꽝','커피 🍵','간식 🍫','디저트 🍰','당첨 🎁'],
+    7: ['꽝','꽝','커피 🍵','간식 🍫','디저트 🍰','상품권 🎫','당첨 🎁'],
+    8: ['꽝','꽝','꽝','커피 🍵','간식 🍫','디저트 🍰','상품권 🎫','당첨 🎁']
+  };
+
+  let n = 4;
+  let players = DEFAULT_NAMES.slice(0, n);
+  let results = DEFAULT_RESULTS_BY_N[n].slice();
+  let rungs = [];           // array of rows; each row is a boolean array of length n-1 (left connections)
+  let rowCount = 12;
+  let built = false;
+  let animating = false;
+  let animQueue = [];
+  let revealed = new Set(); // player indices already traced this round
+  let mapping = [];         // playerIndex -> resultIndex after ladder resolves
+
+  function rand(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+
+  function renderFields() {
+    playerFields.innerHTML = '';
+    resultFields.innerHTML = '';
+    for (let i = 0; i < n; i++) {
+      const pf = document.createElement('div'); pf.className = 'field';
+      pf.innerHTML = `<span class="idx">${i+1}.</span>`;
+      const pi = document.createElement('input');
+      pi.type = 'text'; pi.value = players[i] || '';
+      pi.maxLength = 10;
+      pi.placeholder = `참가자${i+1}`;
+      pi.addEventListener('input', () => { players[i] = pi.value; syncChips(); });
+      pf.appendChild(pi);
+      playerFields.appendChild(pf);
+
+      const rf = document.createElement('div'); rf.className = 'field';
+      rf.innerHTML = `<span class="idx">${i+1}.</span>`;
+      const ri = document.createElement('input');
+      ri.type = 'text'; ri.value = results[i] || '';
+      ri.maxLength = 12;
+      ri.placeholder = `결과${i+1}`;
+      ri.addEventListener('input', () => { results[i] = ri.value; syncChips(); });
+      rf.appendChild(ri);
+      resultFields.appendChild(rf);
+    }
+  }
+
+  function renderChips() {
+    rowTop.innerHTML = ''; rowBot.innerHTML = '';
+    rowTop.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+    rowBot.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement('div');
+      p.className = 'name-chip'; p.textContent = players[i] || `참가자${i+1}`;
+      p.dataset.idx = i;
+      p.addEventListener('click', () => onPickPlayer(i));
+      rowTop.appendChild(p);
+
+      const r = document.createElement('div');
+      r.className = 'result-chip'; r.textContent = results[i] || `결과${i+1}`;
+      r.dataset.idx = i;
+      rowBot.appendChild(r);
+    }
+  }
+
+  function syncChips() {
+    const tops = rowTop.querySelectorAll('.name-chip');
+    const bots = rowBot.querySelectorAll('.result-chip');
+    for (let i = 0; i < n; i++) {
+      if (tops[i]) tops[i].textContent = players[i] || `참가자${i+1}`;
+      if (bots[i]) bots[i].textContent = results[i] || `결과${i+1}`;
+    }
+  }
+
+  function updateCount(next) {
+    n = Math.max(MIN, Math.min(MAX, next));
+    cntEl.textContent = n;
+    incBtn.disabled = n >= MAX;
+    decBtn.disabled = n <= MIN;
+    // preserve typed names/results where possible
+    while (players.length < n) players.push(DEFAULT_NAMES[players.length] || `참가자${players.length+1}`);
+    while (results.length < n) results.push('');
+    players = players.slice(0, n);
+    results = results.slice(0, n);
+    if (results.every(r => !r || DEFAULT_RESULTS_BY_N[8].includes(r))) {
+      results = DEFAULT_RESULTS_BY_N[n].slice();
+    }
+    renderFields();
+    renderChips();
+    resetLadder();
+  }
+
+  function resetLadder() {
+    rungs = [];
+    built = false;
+    animQueue = [];
+    revealed = new Set();
+    mapping = [];
+    oneBtn.disabled = true;
+    allBtn.disabled = true;
+    document.querySelectorAll('.name-chip').forEach(c => { c.classList.remove('active','dim'); });
+    document.querySelectorAll('.result-chip').forEach(c => c.classList.remove('hit'));
+    status.textContent = 'START 를 눌러 사다리를 생성하세요';
+    drawLadder();
+  }
+
+  function buildLadder() {
+    rowCount = Math.max(8, n * 3);
+    rungs = [];
+    for (let r = 0; r < rowCount; r++) {
+      const row = new Array(n - 1).fill(false);
+      // random rungs, avoid adjacency (no two connected rungs on the same row)
+      for (let c = 0; c < n - 1; c++) {
+        if (c > 0 && row[c - 1]) continue;
+        if (Math.random() < 0.42) row[c] = true;
+      }
+      rungs.push(row);
+    }
+    // compute mapping
+    mapping = [];
+    for (let i = 0; i < n; i++) mapping.push(resolvePath(i).finalCol);
+    built = true;
+    animQueue = [];
+    revealed = new Set();
+    oneBtn.disabled = false;
+    allBtn.disabled = false;
+    document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active','dim'));
+    document.querySelectorAll('.result-chip').forEach(c => c.classList.remove('hit'));
+    status.innerHTML = '이름을 눌러 한 명씩, 또는 <span class="hi">ALL</span> 로 전체 공개';
+    drawLadder();
+  }
+
+  function resolvePath(startCol) {
+    // returns { points: [{r,c}], finalCol }
+    let c = startCol;
+    const points = [{ r: 0, c: c }];
+    for (let r = 0; r < rowCount; r++) {
+      // check horizontal move at row r
+      const row = rungs[r];
+      // rung between (c-1, c) means row[c-1] === true -> move left
+      // rung between (c, c+1) means row[c] === true -> move right
+      if (c > 0 && row[c - 1]) {
+        points.push({ r: r, c: c });          // enter rung point (top of segment r)
+        c = c - 1;
+        points.push({ r: r, c: c });          // moved
+      } else if (c < n - 1 && row[c]) {
+        points.push({ r: r, c: c });
+        c = c + 1;
+        points.push({ r: r, c: c });
+      }
+      // vertical to next row
+      points.push({ r: r + 1, c: c });
+    }
+    return { points, finalCol: c };
+  }
+
+  function getGeometry() {
+    const W = cv.width, H = cv.height;
+    const padX = 30, padY = 16;
+    const usableW = W - padX * 2;
+    const step = usableW / (n - 1);
+    const usableH = H - padY * 2;
+    const rowH = usableH / rowCount;
+    return { W, H, padX, padY, step, rowH };
+  }
+
+  function colToX(c) {
+    const g = getGeometry();
+    return g.padX + c * g.step;
+  }
+  function rowToY(r) {
+    const g = getGeometry();
+    return g.padY + r * g.rowH;
+  }
+
+  function resizeCanvas() {
+    const wrap = cv.parentElement;
+    const cssW = wrap.clientWidth;
+    const dpr = window.devicePixelRatio || 1;
+    const heightCss = Math.max(320, Math.min(520, 22 + rowCount * 22));
+    cv.style.height = heightCss + 'px';
+    cv.width = Math.floor(cssW * dpr);
+    cv.height = Math.floor(heightCss * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // recompute using CSS-pixel dimensions
+    cv.width = cssW;   // we treat cv.width/height in CSS px for geometry
+    cv.height = heightCss;
+    cv.style.width = cssW + 'px';
+    drawLadder();
+  }
+
+  function drawLadder() {
+    const W = cv.width, H = cv.height;
+    ctx.clearRect(0, 0, W, H);
+    if (!built && rungs.length === 0) {
+      // placeholder
+      ctx.fillStyle = 'rgba(122,130,184,0.55)';
+      ctx.font = "11px 'Press Start 2P', monospace";
+      ctx.textAlign = 'center';
+      ctx.fillText('LADDER OFFLINE', W / 2, H / 2);
+      return;
+    }
+    const g = getGeometry();
+    // vertical lines
+    ctx.strokeStyle = 'rgba(77,214,255,0.55)';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = 'rgba(77,214,255,0.6)';
+    ctx.shadowBlur = 6;
+    for (let c = 0; c < n; c++) {
+      const x = colToX(c);
+      ctx.beginPath();
+      ctx.moveTo(x, g.padY);
+      ctx.lineTo(x, g.padY + rowCount * g.rowH);
+      ctx.stroke();
+    }
+    // rungs
+    ctx.strokeStyle = 'rgba(120,130,200,0.75)';
+    ctx.shadowColor = 'rgba(120,130,200,0.35)';
+    ctx.lineWidth = 3;
+    for (let r = 0; r < rowCount; r++) {
+      for (let c = 0; c < n - 1; c++) {
+        if (rungs[r] && rungs[r][c]) {
+          const y = g.padY + (r + 1) * g.rowH;
+          ctx.beginPath();
+          ctx.moveTo(colToX(c), y);
+          ctx.lineTo(colToX(c + 1), y);
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  function drawPath(points, colorIdx, progressPct) {
+    const colors = [
+      '#3dff7a', '#ff2d95', '#4dd6ff', '#ffe14d',
+      '#c86bff', '#ff8a4d', '#4dffcf', '#ff4d6b'
+    ];
+    const color = colors[colorIdx % colors.length];
+    if (points.length < 2) return;
+    // build path segments in canvas coords
+    const pts = points.map(p => ({ x: colToX(p.c), y: rowToY(p.r) }));
+    // compute total length
+    let total = 0;
+    const segLens = [];
+    for (let i = 1; i < pts.length; i++) {
+      const dx = pts[i].x - pts[i-1].x, dy = pts[i].y - pts[i-1].y;
+      const L = Math.hypot(dx, dy);
+      segLens.push(L); total += L;
+    }
+    let want = total * progressPct;
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 12;
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    let drawn = 0;
+    for (let i = 1; i < pts.length && want > 0; i++) {
+      const seg = segLens[i-1];
+      if (want >= seg) {
+        ctx.lineTo(pts[i].x, pts[i].y);
+        drawn += seg; want -= seg;
+      } else {
+        const t = want / seg;
+        const x = pts[i-1].x + (pts[i].x - pts[i-1].x) * t;
+        const y = pts[i-1].y + (pts[i].y - pts[i-1].y) * t;
+        ctx.lineTo(x, y);
+        drawn += want; want = 0;
+        break;
+      }
+    }
+    ctx.stroke();
+    // head dot
+    if (progressPct < 1) {
+      // find head position (last drawn point)
+      let acc = 0; let head = pts[0];
+      for (let i = 1; i < pts.length; i++) {
+        const seg = segLens[i-1];
+        if (acc + seg >= total * progressPct) {
+          const t = (total * progressPct - acc) / seg;
+          head = { x: pts[i-1].x + (pts[i].x - pts[i-1].x) * t, y: pts[i-1].y + (pts[i].y - pts[i-1].y) * t };
+          break;
+        }
+        acc += seg; head = pts[i];
+      }
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  const activePaths = []; // { player, points, startTs, dur, colorIdx, done }
+
+  function animate(ts) {
+    drawLadder();
+    let stillGoing = false;
+    for (const p of activePaths) {
+      const t = Math.min(1, (ts - p.startTs) / p.dur);
+      drawPath(p.points, p.colorIdx, t);
+      if (t < 1) stillGoing = true;
+      else if (!p.done) {
+        p.done = true;
+        // mark result
+        const finalCol = p.points[p.points.length - 1].c;
+        const chip = rowBot.children[finalCol];
+        if (chip) chip.classList.add('hit');
+        const nameChip = rowTop.children[p.player];
+        if (nameChip) nameChip.classList.remove('active');
+      }
+    }
+    if (stillGoing) {
+      requestAnimationFrame(animate);
+    } else {
+      animating = false;
+      // dim all traced players that already finished
+      document.querySelectorAll('.name-chip').forEach(c => {
+        const i = parseInt(c.dataset.idx, 10);
+        if (revealed.has(i)) c.classList.add('dim');
+      });
+      if (revealed.size === n) {
+        status.innerHTML = '전원 공개 완료 · <span class="hi">START</span> 로 새 판';
+      } else {
+        status.innerHTML = `${revealed.size}/${n} 공개됨 · 남은 참가자를 눌러보세요`;
+      }
+    }
+  }
+
+  function tracePlayer(idx) {
+    if (!built) return;
+    if (revealed.has(idx)) return;
+    revealed.add(idx);
+    const path = resolvePath(idx);
+    const nameChip = rowTop.children[idx];
+    if (nameChip) nameChip.classList.add('active');
+    activePaths.push({
+      player: idx,
+      points: path.points,
+      startTs: performance.now(),
+      dur: 900 + Math.min(600, rowCount * 40),
+      colorIdx: idx,
+      done: false
+    });
+    if (!animating) {
+      animating = true;
+      requestAnimationFrame(animate);
+    }
+    status.innerHTML = `${players[idx] || '참가자'+(idx+1)} 결과 확인 중…`;
+  }
+
+  function traceAll() {
+    if (!built) return;
+    for (let i = 0; i < n; i++) {
+      if (revealed.has(i)) continue;
+      revealed.add(i);
+      const path = resolvePath(i);
+      const nameChip = rowTop.children[i];
+      if (nameChip) nameChip.classList.add('active');
+      activePaths.push({
+        player: i,
+        points: path.points,
+        startTs: performance.now() + i * 90,
+        dur: 900 + Math.min(600, rowCount * 40),
+        colorIdx: i,
+        done: false
+      });
+    }
+    if (!animating) {
+      animating = true;
+      requestAnimationFrame(animate);
+    }
+    status.innerHTML = '전원 사다리 타는 중…';
+  }
+
+  function onPickPlayer(i) {
+    if (!built) {
+      status.innerHTML = '먼저 <span class="hi">START</span> 를 눌러 사다리를 만드세요';
+      return;
+    }
+    tracePlayer(i);
+  }
+
+  incBtn.addEventListener('click', () => updateCount(n + 1));
+  decBtn.addEventListener('click', () => updateCount(n - 1));
+  startBtn.addEventListener('click', () => {
+    activePaths.length = 0;
+    revealed = new Set();
+    document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active','dim'));
+    document.querySelectorAll('.result-chip').forEach(c => c.classList.remove('hit'));
+    buildLadder();
+    resizeCanvas();
+  });
+  oneBtn.addEventListener('click', () => {
+    // pick first not-yet-revealed
+    for (let i = 0; i < n; i++) {
+      if (!revealed.has(i)) { tracePlayer(i); return; }
+    }
+    status.textContent = '이미 전원 공개됨';
+  });
+  allBtn.addEventListener('click', traceAll);
+  resetBtn.addEventListener('click', () => {
+    activePaths.length = 0;
+    resetLadder();
+  });
+
+  window.addEventListener('resize', () => { resizeCanvas(); });
+
+  // init
+  updateCount(n);
+  resizeCanvas();
+})();
+</script>
+</body>
+</html>
