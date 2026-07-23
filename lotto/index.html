@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="로또 6/45 번호 추천 — 최근 1등 당첨번호를 분석해 통계 기반으로 6개 번호 5세트를 추천해드려요.">
+<meta name="theme-color" content="#fbfaf7">
+<title>로또 번호 추천 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+    --c1: #fbc400; --c2: #69c8f2; --c3: #ff7272; --c4: #aaa; --c5: #b0d840;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .back { position: fixed; top: 16px; left: 18px; color: var(--muted); text-decoration: none; font-size: 13px; letter-spacing: .04em; z-index: 10; }
+  .back:hover { color: var(--accent); }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 64px 22px 70px; }
+  .crumb { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .crumb a { color: var(--accent); text-decoration: none; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+  .desc { color: var(--muted); margin-top: 8px; font-size: 15px; padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+  .label { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin: 28px 0 12px 2px; display: flex; align-items: center; justify-content: space-between; }
+  .label .sub { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 12px; color: var(--muted); }
+  .status-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 18px; box-shadow: var(--shadow); font-size: 14px; color: var(--muted);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .status-card.err { color: var(--accent); border-color: #f2c9c0; background: #fff7f4; }
+  .spinner {
+    width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .recent-list { display: flex; flex-direction: column; gap: 10px; }
+  .recent-row {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 12px 14px; box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .recent-meta { font-size: 12px; color: var(--muted); min-width: 92px; }
+  .recent-meta strong { color: var(--ink); font-size: 13.5px; font-weight: 700; display: block; }
+  .balls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .ball {
+    width: 30px; height: 30px; border-radius: 50%; display: inline-flex;
+    align-items: center; justify-content: center; font-weight: 700; font-size: 13px;
+    color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.08) inset, 0 1px 2px rgba(0,0,0,0.08);
+    font-variant-numeric: tabular-nums;
+  }
+  .ball.plus { color: var(--muted); font-size: 14px; background: transparent; box-shadow: none; width: 16px; }
+  .ball.bn { position: relative; }
+  .ball.bn::after { content: '보너스'; position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); font-size: 9px; color: var(--muted); font-weight: 500; }
+  .recent-row.bn-pad { padding-bottom: 22px; }
+
+  .picks-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+  .pick-row {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; box-shadow: var(--shadow);
+  }
+  .pick-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .pick-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .pick-note { font-size: 11.5px; color: var(--muted); }
+  .roll-btn {
+    font-family: 'Spline Sans', sans-serif; font-size: 15px; font-weight: 600;
+    color: #fff; background: var(--accent); border: none; border-radius: 12px;
+    padding: 13px 20px; cursor: pointer; width: 100%; transition: all .15s;
+  }
+  .roll-btn:hover { filter: brightness(1.05); }
+  .roll-btn:active { transform: scale(0.99); }
+
+  .stats-grid {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 12px; box-shadow: var(--shadow);
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 6px 4px;
+  }
+  .stat {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 6px 4px; border-radius: 8px;
+  }
+  .stat .n {
+    width: 26px; height: 26px; border-radius: 50%; display: inline-flex;
+    align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+    color: #fff;
+  }
+  .stat .cnt { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stat.hot .cnt { color: var(--accent); font-weight: 700; }
+  .stat.cold .cnt { color: #6db3d8; font-weight: 600; }
+
+  .note { margin-top: 22px; font-size: 12.5px; color: var(--muted); line-height: 1.8; }
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 30px; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/">← U-SOL</a>
+  <div class="wrap">
+    <div class="crumb"><a href="/">U-SOL</a> · 로또 번호 추천</div>
+    <h1>🎰 로또 번호 추천</h1>
+    <p class="desc">최근 1등 당첨번호(로또 6/45)를 분석해 통계 기반으로 6개 번호를 5세트 추천해드려요. 재미로만 봐주세요.</p>
+
+    <div class="status-card" id="status">
+      <span class="spinner"></span>
+      <span id="statusText">최근 당첨번호를 불러오는 중…</span>
+    </div>
+
+    <section id="recentSection" hidden>
+      <div class="label">
+        최근 1등 당첨번호
+        <span class="sub" id="recentRange"></span>
+      </div>
+      <div class="recent-list" id="recentList"></div>
+    </section>
+
+    <section id="picksSection" hidden>
+      <div class="label">
+        추천 번호 5세트
+        <span class="sub" id="picksNote">최근 회차 통계 기반</span>
+      </div>
+      <div class="picks-list" id="picksList"></div>
+      <button class="roll-btn" id="rollBtn">🎲 다시 뽑기</button>
+    </section>
+
+    <section id="statsSection" hidden>
+      <div class="label">
+        1~45 번호별 출현 횟수
+        <span class="sub">진한 빨강 = 자주 나옴</span>
+      </div>
+      <div class="stats-grid" id="statsGrid"></div>
+    </section>
+
+    <p class="note">
+      추천 알고리즘: 최근 30회차 1등 당첨번호를 가져와 자주 나온 번호(핫)와 덜 나온 번호(콜드), 홀짝·구간·번호합 균형을 조합해 5세트를 생성해요. 로또는 매 회 독립 사건이라 통계로 다음 번호를 맞힐 수는 없으니 순수 재미로만 사용해주세요.
+      <br><br>
+      데이터 출처: 동행복권(dhlottery.co.kr) 공식 회차별 당첨번호 API.
+    </p>
+  </div>
+  <footer>© 2026 U-SOL · <a href="/">메인으로</a></footer>
+
+<script>
+  // ---------- ball color (동행복권 공식 컬러 규칙) ----------
+  function ballColor(n) {
+    if (n <= 10) return '#fbc400';       // 노랑
+    if (n <= 20) return '#69c8f2';       // 파랑
+    if (n <= 30) return '#ff7272';       // 빨강
+    if (n <= 40) return '#aaaaaa';       // 회색
+    return '#b0d840';                    // 초록
+  }
+  function ballEl(n, opts = {}) {
+    const el = document.createElement('span');
+    el.className = 'ball' + (opts.bonus ? ' bn' : '');
+    el.style.background = ballColor(n);
+    el.textContent = n;
+    return el;
+  }
+
+  // ---------- 최신 회차 추정 (2002-12-07 첫 추첨, 매주 토요일) ----------
+  function estimateLatestRound() {
+    const first = new Date('2002-12-07T20:45:00+09:00'); // 1회차 추첨일
+    const now = new Date();
+    const weeks = Math.floor((now - first) / (7 * 24 * 3600 * 1000));
+    return 1 + weeks;
+  }
+
+  // ---------- 회차별 fetch ----------
+  const cache = new Map();
+  async function fetchRound(drwNo) {
+    if (cache.has(drwNo)) return cache.get(drwNo);
+    const url = `https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`;
+    const res = await fetch(url, { mode: 'cors' });
+    if (!res.ok) throw new Error('네트워크 오류');
+    const data = await res.json();
+    cache.set(drwNo, data);
+    return data;
+  }
+
+  // 가장 최근 성공 회차 찾기 (미래 회차/미추첨 회차 대비)
+  async function findLatestSuccessRound() {
+    let round = estimateLatestRound() + 1;
+    for (let i = 0; i < 4; i++) {
+      try {
+        const d = await fetchRound(round);
+        if (d && d.returnValue === 'success') return round;
+      } catch (_) {}
+      round--;
+    }
+    throw new Error('최신 회차를 찾지 못했어요');
+  }
+
+  async function fetchRecentDraws(count = 30) {
+    const latest = await findLatestSuccessRound();
+    const rounds = [];
+    for (let i = 0; i < count; i++) rounds.push(latest - i);
+    const results = await Promise.all(rounds.map(r =>
+      fetchRound(r).catch(() => null)
+    ));
+    return results.filter(d => d && d.returnValue === 'success');
+  }
+
+  // ---------- 추천 알고리즘 ----------
+  function computeFrequency(draws) {
+    const freq = new Array(46).fill(0);
+    for (const d of draws) {
+      for (let i = 1; i <= 6; i++) freq[d['drwtNo' + i]]++;
+    }
+    return freq;
+  }
+
+  function sortByFreq(freq, desc = true) {
+    const arr = [];
+    for (let n = 1; n <= 45; n++) arr.push({ n, c: freq[n] });
+    arr.sort((a, b) => desc ? (b.c - a.c || a.n - b.n) : (a.c - b.c || a.n - b.n));
+    return arr;
+  }
+
+  function pickN(pool, count) {
+    const src = pool.slice();
+    const out = [];
+    while (out.length < count && src.length) {
+      const idx = Math.floor(Math.random() * src.length);
+      out.push(src.splice(idx, 1)[0]);
+    }
+    return out;
+  }
+
+  function pickWeighted(weights, count, exclude = new Set()) {
+    const out = new Set();
+    const w = weights.slice();
+    while (out.size < count) {
+      let total = 0;
+      for (let n = 1; n <= 45; n++) if (!exclude.has(n) && !out.has(n)) total += w[n];
+      if (total <= 0) {
+        // fallback pure random
+        for (let n = 1; n <= 45; n++) if (!exclude.has(n) && !out.has(n)) { out.add(n); if (out.size >= count) break; }
+        break;
+      }
+      let r = Math.random() * total;
+      for (let n = 1; n <= 45; n++) {
+        if (exclude.has(n) || out.has(n)) continue;
+        r -= w[n];
+        if (r <= 0) { out.add(n); break; }
+      }
+    }
+    return Array.from(out).sort((a, b) => a - b);
+  }
+
+  function sortAsc(arr) { return arr.slice().sort((a, b) => a - b); }
+  function sum(arr) { return arr.reduce((a, b) => a + b, 0); }
+  function oddCount(arr) { return arr.filter(n => n % 2 === 1).length; }
+
+  function generatePicks(draws) {
+    const freq = computeFrequency(draws);
+    const byHot = sortByFreq(freq, true);
+    const byCold = sortByFreq(freq, false);
+
+    const picks = [];
+
+    // 1) 핫: 자주 나온 상위군에서 가중 추출
+    {
+      const w = new Array(46).fill(0);
+      for (let n = 1; n <= 45; n++) w[n] = Math.pow(freq[n] + 1, 2); // 자주 나온 번호에 큰 가중치
+      picks.push({
+        tag: '🔥 핫 픽',
+        note: '최근 자주 나온 번호 중심',
+        nums: pickWeighted(w, 6),
+      });
+    }
+
+    // 2) 콜드: 덜 나온 번호 중심 (평균 회귀 관점)
+    {
+      const maxF = Math.max(...freq.slice(1));
+      const w = new Array(46).fill(0);
+      for (let n = 1; n <= 45; n++) w[n] = Math.pow((maxF - freq[n]) + 1, 2);
+      picks.push({
+        tag: '❄️ 콜드 픽',
+        note: '최근 덜 나온 번호 중심 (평균 회귀)',
+        nums: pickWeighted(w, 6),
+      });
+    }
+
+    // 3) 밸런스: 홀짝 3:3, 구간 분산, 합계 100~175
+    {
+      let best = null;
+      for (let attempt = 0; attempt < 400; attempt++) {
+        const w = new Array(46).fill(0);
+        for (let n = 1; n <= 45; n++) w[n] = freq[n] + 1;
+        const candidate = pickWeighted(w, 6);
+        const s = sum(candidate);
+        const o = oddCount(candidate);
+        // 구간별 개수 계산
+        const seg = [0, 0, 0, 0, 0]; // 1-9, 10-19, 20-29, 30-39, 40-45
+        for (const n of candidate) {
+          if (n <= 9) seg[0]++;
+          else if (n <= 19) seg[1]++;
+          else if (n <= 29) seg[2]++;
+          else if (n <= 39) seg[3]++;
+          else seg[4]++;
+        }
+        const maxSeg = Math.max(...seg);
+        if (s >= 100 && s <= 175 && o >= 2 && o <= 4 && maxSeg <= 3) {
+          best = candidate; break;
+        }
+        if (!best) best = candidate;
+      }
+      picks.push({
+        tag: '⚖️ 밸런스 픽',
+        note: '홀짝·구간·번호합 균형',
+        nums: best,
+      });
+    }
+
+    // 4) 혼합: 핫 3 + 콜드 3
+    {
+      const hotPool = byHot.slice(0, 15).map(x => x.n);
+      const coldPool = byCold.slice(0, 15).map(x => x.n);
+      const hot3 = pickN(hotPool, 3);
+      const coldFiltered = coldPool.filter(n => !hot3.includes(n));
+      const cold3 = pickN(coldFiltered, 3);
+      picks.push({
+        tag: '🎯 혼합 픽',
+        note: '핫 3개 + 콜드 3개',
+        nums: sortAsc([...hot3, ...cold3]),
+      });
+    }
+
+    // 5) 완전 랜덤
+    {
+      const pool = [];
+      for (let n = 1; n <= 45; n++) pool.push(n);
+      picks.push({
+        tag: '🎲 랜덤 픽',
+        note: '통계 없이 순수 랜덤',
+        nums: sortAsc(pickN(pool, 6)),
+      });
+    }
+
+    return picks;
+  }
+
+  function generatePicksOffline() {
+    // 데이터 없이 랜덤 5세트
+    const picks = [];
+    const labels = [
+      { tag: '🎲 랜덤 A', note: '순수 랜덤' },
+      { tag: '🎲 랜덤 B', note: '순수 랜덤' },
+      { tag: '🎲 랜덤 C', note: '순수 랜덤' },
+      { tag: '🎲 랜덤 D', note: '순수 랜덤' },
+      { tag: '🎲 랜덤 E', note: '순수 랜덤' },
+    ];
+    for (const l of labels) {
+      const pool = [];
+      for (let n = 1; n <= 45; n++) pool.push(n);
+      picks.push({ ...l, nums: sortAsc(pickN(pool, 6)) });
+    }
+    return picks;
+  }
+
+  // ---------- 렌더 ----------
+  function renderRecent(draws) {
+    const list = document.getElementById('recentList');
+    list.innerHTML = '';
+    const showCount = Math.min(5, draws.length);
+    for (let i = 0; i < showCount; i++) {
+      const d = draws[i];
+      const row = document.createElement('div');
+      row.className = 'recent-row bn-pad';
+      const meta = document.createElement('div');
+      meta.className = 'recent-meta';
+      meta.innerHTML = `<strong>${d.drwNo}회</strong>${d.drwNoDate || ''}`;
+      row.appendChild(meta);
+      const balls = document.createElement('div');
+      balls.className = 'balls';
+      const nums = [d.drwtNo1, d.drwtNo2, d.drwtNo3, d.drwtNo4, d.drwtNo5, d.drwtNo6]
+        .sort((a, b) => a - b);
+      nums.forEach(n => balls.appendChild(ballEl(n)));
+      const plus = document.createElement('span');
+      plus.className = 'ball plus';
+      plus.textContent = '+';
+      balls.appendChild(plus);
+      balls.appendChild(ballEl(d.bnusNo, { bonus: true }));
+      row.appendChild(balls);
+      list.appendChild(row);
+    }
+    if (draws.length) {
+      document.getElementById('recentRange').textContent =
+        `${draws[showCount - 1].drwNo}~${draws[0].drwNo}회 분석`;
+    }
+    document.getElementById('recentSection').hidden = false;
+  }
+
+  function renderPicks(picks) {
+    const list = document.getElementById('picksList');
+    list.innerHTML = '';
+    for (const p of picks) {
+      const row = document.createElement('div');
+      row.className = 'pick-row';
+      const head = document.createElement('div');
+      head.className = 'pick-head';
+      head.innerHTML = `<span class="pick-tag">${p.tag}</span><span class="pick-note">${p.note}</span>`;
+      row.appendChild(head);
+      const balls = document.createElement('div');
+      balls.className = 'balls';
+      p.nums.forEach(n => balls.appendChild(ballEl(n)));
+      row.appendChild(balls);
+      list.appendChild(row);
+    }
+    document.getElementById('picksSection').hidden = false;
+  }
+
+  function renderStats(freq) {
+    const grid = document.getElementById('statsGrid');
+    grid.innerHTML = '';
+    const max = Math.max(...freq.slice(1));
+    const min = Math.min(...freq.slice(1));
+    for (let n = 1; n <= 45; n++) {
+      const stat = document.createElement('div');
+      const isHot = freq[n] === max && max > 0;
+      const isCold = freq[n] === min;
+      stat.className = 'stat' + (isHot ? ' hot' : '') + (isCold ? ' cold' : '');
+      const nEl = document.createElement('span');
+      nEl.className = 'n';
+      nEl.style.background = ballColor(n);
+      nEl.textContent = n;
+      stat.appendChild(nEl);
+      const cnt = document.createElement('span');
+      cnt.className = 'cnt';
+      cnt.textContent = freq[n] + '회';
+      stat.appendChild(cnt);
+      grid.appendChild(stat);
+    }
+    document.getElementById('statsSection').hidden = false;
+  }
+
+  // ---------- 메인 ----------
+  let currentDraws = null;
+
+  async function init() {
+    const statusEl = document.getElementById('status');
+    const statusText = document.getElementById('statusText');
+    try {
+      const draws = await fetchRecentDraws(30);
+      if (!draws.length) throw new Error('데이터가 비어있어요');
+      currentDraws = draws;
+      statusEl.hidden = true;
+      renderRecent(draws);
+      renderPicks(generatePicks(draws));
+      renderStats(computeFrequency(draws));
+    } catch (err) {
+      statusEl.className = 'status-card err';
+      statusText.textContent = '실시간 당첨번호를 불러오지 못했어요. 통계 없이 랜덤으로 추천했어요.';
+      // 통계 없이 랜덤 5세트
+      document.getElementById('picksNote').textContent = '실시간 데이터 없음 · 순수 랜덤';
+      renderPicks(generatePicksOffline());
+    }
+  }
+
+  document.getElementById('rollBtn').addEventListener('click', () => {
+    if (currentDraws) renderPicks(generatePicks(currentDraws));
+    else renderPicks(generatePicksOffline());
+    window.scrollTo({ top: document.getElementById('picksSection').offsetTop - 20, behavior: 'smooth' });
+  });
+
+  init();
+</script>
+</body>
+</html>
