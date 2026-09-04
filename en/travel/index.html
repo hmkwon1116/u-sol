@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Destination of the day — one of 31 places at home and abroad each day, with what makes it worth the trip, a surprising fact and why to go, all on one page.">
+<meta name="theme-color" content="#fff8ec">
+<title>Destination of the Day · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfdff; --bg2: #fff8ec;
+    --ink: #1a1916; --muted: #8a8780;
+    --line: #ecf0f6; --card: #ffffff;
+    --accent: #d6452a; --accent-soft: #fce7e0; --accent-dark: #b03721;
+    --sun: #f4a13a; --sun-soft: #ffe8c8;
+    --leaf: #4aa376; --leaf-soft: #d8efe1;
+    --shadow: 0 1px 2px rgba(26,25,22,0.025), 0 4px 12px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 0% 0%, #fff3df 0%, transparent 45%),
+      radial-gradient(ellipse at 100% 0%, #fde3da 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg) 0%, #ffffff 70%, var(--bg2) 100%);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', system-ui, sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .back {
+    position: fixed; top: 16px; left: 18px;
+    color: var(--muted); text-decoration: none; font-size: 13.5px;
+    letter-spacing: .02em; z-index: 5;
+    background: rgba(255,255,255,0.7); backdrop-filter: blur(6px);
+    padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--line);
+  }
+  .back:hover { color: var(--accent); border-color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 72px 20px 60px; }
+
+  .eyebrow {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+    font-size: 14px; letter-spacing: .04em;
+    color: var(--accent); text-align: center; margin-bottom: 6px;
+  }
+  .title-row {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 4px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(34px, 6.4vw, 48px); line-height: 1.05;
+    letter-spacing: -0.02em; text-align: center;
+  }
+  h1 .accent { color: var(--sun); }
+  .lede {
+    text-align: center; color: var(--muted); font-size: 14px;
+    max-width: 520px; margin: 12px auto 22px; line-height: 1.75;
+    word-break: keep-all;
+  }
+  .date-strip {
+    display: flex; gap: 8px; justify-content: center; align-items: center;
+    margin-bottom: 26px; flex-wrap: wrap;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 13px; font-size: 12.5px;
+    box-shadow: var(--shadow);
+  }
+  .chip .k { color: var(--muted); }
+  .chip .v { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .chip .dot-accent { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .chip .dot-sun { width: 7px; height: 7px; border-radius: 50%; background: var(--sun); }
+
+  /* hero card */
+  .hero {
+    position: relative;
+    background: var(--card); border: 1px solid var(--line); border-radius: 24px;
+    overflow: hidden; box-shadow: var(--shadow);
+    animation: fade .55s ease both;
+  }
+  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .hero-banner {
+    position: relative; padding: 28px 24px 22px;
+    background: linear-gradient(135deg, var(--accent) 0%, #e86d4f 55%, var(--sun) 130%);
+    color: #fff; overflow: hidden;
+  }
+  .hero-banner::before {
+    content: ""; position: absolute; right: -40px; top: -40px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: rgba(255,255,255,0.18); filter: blur(2px);
+  }
+  .hero-banner::after {
+    content: ""; position: absolute; right: 40px; bottom: -60px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+  .region-tag {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.22); backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px; padding: 5px 11px;
+    font-size: 12px; font-weight: 700; letter-spacing: .06em;
+  }
+  .place-name {
+    position: relative; z-index: 1;
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(32px, 6.8vw, 46px); line-height: 1.05;
+    margin-top: 14px; letter-spacing: -0.02em;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.12);
+  }
+  .place-sub {
+    position: relative; z-index: 1;
+    font-size: 14px; opacity: 0.94; margin-top: 8px;
+    font-weight: 500; letter-spacing: .02em;
+  }
+  .place-emoji {
+    position: absolute; right: 20px; top: 18px; z-index: 1;
+    font-size: 44px; line-height: 1; opacity: 0.95;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+  }
+
+  .hero-body { padding: 22px 24px 24px; }
+  .lead {
+    font-size: 15.5px; line-height: 1.8; word-break: keep-all;
+    color: var(--ink); margin-bottom: 18px;
+  }
+  .lead strong { color: var(--accent); font-weight: 700; }
+
+  .section { margin-top: 18px; }
+  .section-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Fraunces', serif; font-weight: 700; font-style: italic;
+    font-size: 13px; letter-spacing: .04em;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .section-label.sun { color: var(--sun); }
+  .section-label.leaf { color: var(--leaf); }
+  .section-label .bar { width: 18px; height: 2px; background: currentColor; border-radius: 2px; opacity: .55; }
+
+  .points {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .point {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--accent-soft); border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .point.sun { background: var(--sun-soft); }
+  .point.leaf { background: var(--leaf-soft); }
+  .point .ico {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; box-shadow: 0 1px 4px rgba(31,39,51,0.06);
+    margin-top: 1px;
+  }
+  .point .txt { font-size: 14.5px; line-height: 1.7; word-break: keep-all; flex: 1; }
+  .point .txt b { font-weight: 700; }
+
+  .fact-card {
+    background: linear-gradient(135deg, #fffbf2 0%, #fff5e2 100%);
+    border: 1px dashed #f0c98a; border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .fact-card .ftxt { font-size: 14.5px; line-height: 1.75; word-break: keep-all; color: var(--ink); }
+  .fact-card .ftxt b { color: var(--sun); font-weight: 700; }
+
+  .why {
+    background: linear-gradient(180deg, #f3faf6 0%, #e8f4ec 100%);
+    border-left: 3px solid var(--leaf);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 14.5px; line-height: 1.8; word-break: keep-all;
+  }
+  .why b { color: var(--leaf); font-weight: 700; }
+
+  /* tags */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .tag {
+    font-size: 12px; color: var(--muted);
+    background: #f4f7fb; border: 1px solid var(--line);
+    border-radius: 999px; padding: 4px 10px;
+  }
+
+  /* actions */
+  .actions {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .btn {
+    font-family: 'Noto Sans KR', sans-serif; font-size: 14px; font-weight: 700;
+    background: var(--card); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 11px 20px; cursor: pointer; letter-spacing: .01em;
+    transition: all .15s; box-shadow: var(--shadow);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--accent); }
+  .btn:active { transform: translateY(0); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; }
+  .btn .em { font-size: 15px; }
+
+  /* footer hint */
+  .hint {
+    text-align: center; color: var(--muted); font-size: 12.5px;
+    margin-top: 22px; letter-spacing: .02em;
+  }
+  .hint b { color: var(--accent); font-weight: 700; }
+
+  /* mini grid of all destinations */
+  .all-section {
+    margin-top: 36px; padding-top: 28px;
+    border-top: 1px dashed var(--line);
+  }
+  .all-title {
+    text-align: center; font-family: 'Fraunces', serif; font-weight: 700;
+    font-size: 18px; margin-bottom: 6px;
+  }
+  .all-sub { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+  .mini-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .mini {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 12px; cursor: pointer; text-align: left;
+    transition: all .15s; font-family: inherit;
+  }
+  .mini:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .mini.active { border-color: var(--accent); background: var(--accent-soft); }
+  .mini .em { font-size: 18px; }
+  .mini .nm { font-size: 13.5px; font-weight: 700; margin-top: 4px; line-height: 1.3; }
+  .mini .rg { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<a class="back" href="/en/">← U-SOL</a>
+
+<div class="wrap">
+  <div class="eyebrow">today's destination</div>
+  <div class="title-row">
+    <h1>Today's <span class="accent">destination</span></h1>
+  </div>
+  <p class="lede">One of 31 places in Korea and abroad, picked fresh each day. Where has today landed?</p>
+
+  <div class="date-strip">
+    <span class="chip"><span class="dot-accent"></span><span class="k">Today</span><span class="v" id="todayDate">—</span></span>
+    <span class="chip"><span class="dot-sun"></span><span class="v" id="totalCount">31</span><span class="k">places</span></span>
+    <span class="chip"><span class="k">#</span><span class="v" id="placeNo">—</span></span>
+  </div>
+
+  <article class="hero">
+    <div class="hero-banner">
+      <span class="region-tag" id="regionTag">—</span>
+      <div class="place-emoji" id="placeEmoji">🌍</div>
+      <h2 class="place-name" id="placeName">Loading a destination…</h2>
+      <div class="place-sub" id="placeSub">—</div>
+    </div>
+
+    <div class="hero-body">
+      <p class="lead" id="placeLead">One moment.</p>
+
+      <div class="section">
+        <div class="section-label"><span class="bar"></span>What makes it</div>
+        <div class="points" id="pointsList"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label sun"><span class="bar"></span>A surprising fact</div>
+        <div class="fact-card">
+          <p class="ftxt" id="factText">—</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label leaf"><span class="bar"></span>Why go</div>
+        <p class="why" id="whyText">—</p>
+      </div>
+
+      <div class="tags" id="tagList"></div>
+    </div>
+  </article>
+
+  <div class="actions">
+    <button class="btn primary" id="randomBtn"><span class="em">🎲</span> Another destination</button>
+    <button class="btn" id="todayBtn"><span class="em">📅</span> Back to today's</button>
+  </div>
+
+  <p class="hint">It refreshes at midnight — one place at a time, cycling through all 31.</p>
+
+  <div class="all-section">
+    <div class="all-title">All 31 destinations</div>
+    <div class="all-sub">Tap to jump straight there</div>
+    <div class="mini-grid" id="miniGrid"></div>
+  </div>
+</div>
+
+<script>
+const DESTINATIONS = [
+  {
+    name: "Udo, Jeju", sub: "A cow-shaped island off Jeju's east coast",
+    region: "🇰🇷 South Korea · Jeju", emoji: "🐄",
+    lead: "Fifteen minutes by boat from Seongsan Port. Rent a bicycle and two hours is enough to ride the whole way round this <strong>small, perfect island</strong>.",
+    points: [
+      { ico: "🏖️", txt: "<b>Seobinbaeksa</b> — the only beach in Korea made of broken coral. In sunlight it glows milk-white." },
+      { ico: "🌊", txt: "<b>Geommulle Beach</b> — black sand and caves that look like a film set, with secret cave concerts held inside." },
+      { ico: "🍦", txt: "<b>Peanut ice cream</b> is Udo's signature, made with peanuts grown on the island. The nuttiness is on another level." }
+    ],
+    fact: "Udo means 'cow island' because <b>from above it looks like a cow lying down</b>. The lighthouse end is the head, Hagosudong the tail.",
+    why: "Circle it by bicycle or electric scooter, no car needed — <b>the ideal introduction to slow travel</b>. A day trip is plenty, but stay a night and you get stars and sunrise too.",
+    tags: ["island", "cycling", "day trip", "photo spot"]
+  },
+  {
+    name: "Anmok Beach, Gangneung", sub: "Where the coffee and the waves swell together",
+    region: "🇰🇷 South Korea · Gangwon", emoji: "☕",
+    lead: "A cup of coffee looking out at the East Sea. <strong>The only beach in Korea with an official 'coffee street'</strong>.",
+    points: [
+      { ico: "☕", txt: "<b>Over thirty cafés</b> stand in a row, each with its own signature cup. Bohemian and Terarosa are headquartered here." },
+      { ico: "🌅", txt: "<b>Morning coffee with the sunrise</b> — get there around 5:30am and you have a front-row seat as the sun comes up over the sea." },
+      { ico: "🚤", txt: "A plate of just-landed sashimi at one of the raw fish restaurants by Anmok Port. Coffee then lunch, sorted in one stop." }
+    ],
+    fact: "Gangneung became 'the coffee city' because of the <b>vending machines that lined Anmok Beach in the 1980s</b>. Some of those machines are still standing.",
+    why: "<b>The nearest real sea to Seoul, two hours on the KTX.</b> Arrive at dawn on a weekday, have lunch and head back, and the day still feels full.",
+    tags: ["sea", "coffee", "KTX", "day trip"]
+  },
+  {
+    name: "Hwangnidan-gil, Gyeongju", sub: "One lane beside a thousand years of Silla",
+    region: "🇰🇷 South Korea · North Gyeongsang", emoji: "🏛️",
+    lead: "<strong>Cafés, gift shops and restaurants converted from hanok houses</strong> run for almost a kilometre along the stone wall of Daereungwon. Coffee with thousand-year-old royal tombs next door.",
+    points: [
+      { ico: "🏯", txt: "<b>Daereungwon, Cheomseongdae, Donggung and Wolji</b> — the Silla sites all sit within a ten-minute walk of the street." },
+      { ico: "👘", txt: "Renting hanbok and walking the photo route is the official local course: Hwangnidan-gil → Cheomseongdae → Woljeonggyo → Donggung and Wolji." },
+      { ico: "🍞", txt: "<b>Hwangnam-bbang</b> is the street's ancestor, baked in the same spot to the same recipe for nearly a hundred years." }
+    ],
+    fact: "Donggung and Wolji are prettier after dark. <b>The old name 'Anapji' dates from the Japanese colonial period</b>; the original name Wolji was restored only in 2011.",
+    why: "<b>The closest thing in Korea to walking a city as it was a thousand years ago.</b> It is regularly voted the country's best city after dark, so sunset is where it really starts.",
+    tags: ["history", "hanok", "night views", "photo spot"]
+  },
+  {
+    name: "Yeosu at night", sub: "Night views swelling to a busker's tune",
+    region: "🇰🇷 South Korea · South Jeolla", emoji: "🌃",
+    lead: "Yeosu is fine by day, but <strong>the city's true face comes out after sunset</strong>. Once the lights on Dolsan Bridge come on, the sea looks twice as wide.",
+    points: [
+      { ico: "🌉", txt: "<b>The Dolsan Bridge light show</b> — the colours shift minute by minute, laying a rainbow across the water." },
+      { ico: "🎸", txt: "<b>Live busking at night</b> down at Nangman Pocha. Jang Beom-june's 'Yeosu Night Sea' follows you everywhere." },
+      { ico: "🚡", txt: "<b>The maritime cable car</b> for a walk in the air over the sea — including crystal cabins with transparent floors." }
+    ],
+    fact: "What made Yeosu famous as a 'night sea city' was <b>Expo 2012</b>. The night-view infrastructure built for it created the reputation the city has now.",
+    why: "<b>A rare city that comes alive after dark.</b> Sashimi, seafood and gat-kimchi tie in with the night views, which makes one night and two days add up neatly.",
+    tags: ["night sea", "night views", "busking", "sashimi"]
+  },
+  {
+    name: "Gamcheon Culture Village, Busan", sub: "A rainbow city spread down a hillside",
+    region: "🇰🇷 South Korea · Busan", emoji: "🏘️",
+    lead: "A hillside village <strong>nicknamed 'the Machu Picchu of Korea'</strong>, with murals and sculptures hidden down every alley.",
+    points: [
+      { ico: "🎨", txt: "<b>Stepped colour houses</b> — every house is built lower than the roof of the one in front, so every home has a sea view." },
+      { ico: "🦊", txt: "<b>The Little Prince and the fox</b> photo spot is the village signature. Worth queueing for, once." },
+      { ico: "🍜", txt: "Start with fish cake and seed hotteok at the village entrance and take the endless alleys slowly — Busan's food comes with the walk." }
+    ],
+    fact: "It began in the 1950s as <b>a shanty town settled by Korean War refugees</b>. A 2009 village art project added the colour that made it what it is.",
+    why: "<b>A world-renowned success story of urban regeneration — a slum turned into art.</b> Give it half a day in a Busan itinerary and it is the part that stays with you longest.",
+    tags: ["mural village", "photo spot", "regeneration", "hillside road"]
+  },
+  {
+    name: "Manchunha Skywalk, Danyang", sub: "80m above the Namhan River, nothing underfoot",
+    region: "🇰🇷 South Korea · North Chungcheong", emoji: "🌉",
+    lead: "<strong>A transparent glass floor 80m above the Namhan River.</strong> The moment you step out, your toes tingle slightly.",
+    points: [
+      { ico: "🪨", txt: "<b>Dodamsambong</b> — the three peaks Jeong Do-jeon took his pen name from, floating out in the river." },
+      { ico: "🎢", txt: "The skywalk comes bundled with <b>an alpine coaster and a zipline</b>, so the activities make a full day on their own." },
+      { ico: "🍓", txt: "Danyang garlic and gondeure rice, and in spring <b>strawberry farm picking</b> on top." }
+    ],
+    fact: "Danyang has <b>the most developed limestone karst terrain on the Korean peninsula</b>. That is why there are so many caves here — Gosu, Cheondong and the rest.",
+    why: "Two hours by car from Seoul, and you get <b>thrills, scenery and good food in one small town</b>. Satisfying even on a short schedule.",
+    tags: ["skywalk", "activities", "Namhan River", "day trip"]
+  },
+  {
+    name: "Jeonju Hanok Village", sub: "The city of bibimbap, hanok and hanji paper",
+    region: "🇰🇷 South Korea · North Jeolla", emoji: "🏯",
+    lead: "Korea's largest hanok village, with <strong>over 700 traditional houses</strong> gathered together. The alleys themselves are the museum.",
+    points: [
+      { ico: "🥢", txt: "<b>Jeonju bibimbap</b> only makes sense once you have eaten it in Jeonju. A bowl of the original with thirty different vegetables in it." },
+      { ico: "📜", txt: "<b>Gyeonggijeon</b> houses the portrait of King Taejo Yi Seong-gye — and it is the spot for hanbok photographs." },
+      { ico: "🥃", txt: "<b>The makgeolli alley</b> — a legendary deal where ₩5,000 a head brings a table covered in side dishes." }
+    ],
+    fact: "Jeonju is <b>the only Korean city designated a UNESCO City of Gastronomy</b>. It is home turf for the four-way combination of bean sprouts, hanjeongsik, bibimbap and makgeolli.",
+    why: "<b>The most concentrated dose of Korean traditional culture in one city.</b> Even one night in, and you will still be thinking about the food the next day.",
+    tags: ["hanok", "bibimbap", "makgeolli", "tradition"]
+  },
+  {
+    name: "Surfyy Beach, Yangyang", sub: "Where Koreans go when they think of surfing",
+    region: "🇰🇷 South Korea · Gangwon", emoji: "🏄",
+    lead: "<strong>Korea's surfing address.</strong> The gentle East Sea swell suits beginners perfectly, so in season there is barely room to stand.",
+    points: [
+      { ico: "🏄‍♂️", txt: "Packages bundle <b>one lesson, board rental and photos</b>, so a total beginner rides a wave the same day." },
+      { ico: "🎵", txt: "<b>Beach clubs and a food truck zone</b> next door — that post-surf cocktail on the sand." },
+      { ico: "🌅", txt: "<b>Sunset at Jukdo Beach</b> is the best view here. Ten minutes gets you to the top of Jukdo." }
+    ],
+    fact: "Yangyang became the surf capital <b>when young surfers started settling here in the early 2010s</b>. It now has the highest density of surf shops per head in Korea.",
+    why: "<b>A slice of Hawaii two hours from Seoul.</b> Music festivals in summer, winter surfing in the cold — it stays open all four seasons.",
+    tags: ["surfing", "sea", "summer", "activities"]
+  },
+  {
+    name: "Bukchon Hanok Village, Seoul", sub: "600-year-old lanes between the palaces",
+    region: "🇰🇷 South Korea · Seoul", emoji: "🏘️",
+    lead: "<strong>Between Gyeongbokgung and Changdeokgung</strong>, the neighbourhood where Joseon-era nobility lived survives almost in its original form.",
+    points: [
+      { ico: "📸", txt: "<b>The Eight Views of Bukchon</b> — eight officially designated lanes that photograph best. The third (11 Gahoe-dong) is the finest." },
+      { ico: "🏛️", txt: "A neighbourhood with <b>three UNESCO sites</b> — Gyeongbokgung, Changdeokgung and Jongmyo — all within walking distance." },
+      { ico: "🫖", txt: "<b>Hanok guesthouses and traditional tea rooms</b>: sitting on the wooden floor with a cup of tea is the real luxury." }
+    ],
+    fact: "Bukchon's hanok are in fact <b>urban hanok built in the 1930s, under Japanese rule, to ease a housing shortage</b> — late colonial, not Joseon.",
+    why: "<b>The course that goes down best with visiting friends from abroad.</b> Palaces, museums and craft workshops all tie together in half a day.",
+    tags: ["hanok", "Seoul", "UNESCO", "walking"]
+  },
+  {
+    name: "Incheon Chinatown", sub: "Korea's first overseas Chinese quarter",
+    region: "🇰🇷 South Korea · Incheon", emoji: "🥟",
+    lead: "<strong>The neighbourhood where jajangmyeon was invented.</strong> The noodles Qing dockworkers ate here a century ago are where the dish begins.",
+    points: [
+      { ico: "🍜", txt: "<b>Gonghwachun and the Jajangmyeon Museum</b> — a bowl alongside its history. The weight of the black bean paste on top is different here." },
+      { ico: "🎨", txt: "<b>Songwol-dong Fairytale Village</b> — the lanes right beside Chinatown, turned into storybook covers." },
+      { ico: "🚉", txt: "It starts the moment you get off Line 1 at Incheon Station. <b>An hour from Seoul</b> for a lane that feels foreign." }
+    ],
+    fact: "Chinese migrants who arrived with Qing troops during the 1882 Imo Incident <b>adapted 'zhajiangmian' here into jajangmyeon</b>. The area is officially recognised as its birthplace.",
+    why: "<b>The shortest trip abroad you can take by subway.</b> A bowl of jajangmyeon, the fairytale village and the night view over Incheon Port make a full half-day.",
+    tags: ["Chinatown", "jajangmyeon", "day trip", "alleys"]
+  },
+  {
+    name: "Kyoto", sub: "A city that serves the gods, capital for 1,200 years",
+    region: "🇯🇵 Japan · Kansai", emoji: "⛩️",
+    lead: "<strong>Over 1,600 temples and more than 400 shrines</strong> in a single city. Time runs differently in each lane.",
+    points: [
+      { ico: "🦊", txt: "<b>Fushimi Inari</b> — ten thousand red torii, one after another. Two hours to the summit, and meditative in itself." },
+      { ico: "🎋", txt: "<b>The Arashiyama bamboo grove</b>, whose very sound the Japanese government listed among the '100 soundscapes to preserve'." },
+      { ico: "🍵", txt: "In <b>the Gion district</b>, if you are lucky, you will pass a real geiko or maiko. Photographs from a distance only — that is the etiquette." }
+    ],
+    fact: "Kyoto was <b>on the shortlist for the atomic bomb</b>. The US Secretary of War objected to the end, on the grounds that it held too much cultural heritage, and Hiroshima took its place.",
+    why: "<b>Almost every answer to 'if I only visit one city in Japan'.</b> In cherry blossom or autumn colour season, the city itself becomes the artwork.",
+    tags: ["Japan", "temples", "autumn leaves", "cherry blossom"]
+  },
+  {
+    name: "Fukuoka", sub: "The city of ramen and yatai stalls",
+    region: "🇯🇵 Japan · Kyushu", emoji: "🍜",
+    lead: "<strong>An hour's flight from Korea.</strong> Closer than Tokyo or Osaka, and noticeably more relaxed — that is the appeal.",
+    points: [
+      { ico: "🍜", txt: "<b>Home turf for tonkotsu ramen.</b> Not just Ippudo and Ichiran — the small neighbourhood shops are all good too." },
+      { ico: "🏮", txt: "The <b>yatai (street stall) strip</b> along the Nakasu riverside — yakitori and udon eaten shoulder to shoulder." },
+      { ico: "🛍️", txt: "<b>Canal City, Daimyo and Tenjin</b> — shopping, restaurants and cafés all within walking distance, so you cover little ground." }
+    ],
+    fact: "Fukuoka's <b>mentaiko (salted pollock roe) actually came over from Korea</b>. A Japanese man who had eaten myeongnan-jeot in Korea brought it from Busan to Fukuoka in 1949 and adapted it to Japanese tastes.",
+    why: "<b>The least demanding trip abroad for a weekend.</b> Short flight, no time difference, favourable exchange rate — the perfect first city in Japan.",
+    tags: ["ramen", "yatai", "weekend trip", "shopping"]
+  },
+  {
+    name: "Osaka", sub: "Kuidaore — the city you eat yourself broke in",
+    region: "🇯🇵 Japan · Kansai", emoji: "🐙",
+    lead: "If Tokyo is a pressed suit, <strong>Osaka is the older brother next door with his shirt unbuttoned</strong> — quick with a joke and good with food.",
+    points: [
+      { ico: "🐙", txt: "<b>Dotonbori takoyaki and okonomiyaki</b> — food that started in Osaka simply tastes different on home ground." },
+      { ico: "🏯", txt: "<b>Osaka Castle</b> was built by Toyotomi Hideyoshi after he unified the country, as a symbol of that power. Go up to the keep's observation deck." },
+      { ico: "🎢", txt: "<b>Super Nintendo World at USJ</b> is harder to get into than Disneyland." }
+    ],
+    fact: "The Osaka greeting <b>'mokarimakka?' — 'making money?'</b> is peculiar to Osaka even within Japan: a surviving trace of a merchants' city.",
+    why: "<b>Eating, theme parks and city night views</b> — it works for family trips, friends' trips and solo travel alike.",
+    tags: ["food", "USJ", "shopping", "night views"]
+  },
+  {
+    name: "Tokyo", sub: "A megacity where old and new collide in one lane",
+    region: "🇯🇵 Japan · Kanto", emoji: "🗼",
+    lead: "The world's largest city, with <strong>37 million in its metropolitan area</strong>. Turn down one lane and you are in a different city.",
+    points: [
+      { ico: "🍣", txt: "<b>Tsukiji and Toyosu markets</b> — the dawn tuna auction and sushi cut from the morning's catch, the summit of Japanese food." },
+      { ico: "🏯", txt: "<b>Sensoji in Asakusa</b> is Tokyo's oldest temple. Next door, Ueno is a street with six art museums on it." },
+      { ico: "🌃", txt: "<b>The Shibuya scramble crossing</b> takes 3,000 people at a time — the scene from 'Lost in Translation'." }
+    ],
+    fact: "<b>The Tokyo subway is the most punctual transport system in the world</b>, with average delays of 18 seconds. More than a minute late and it automatically issues you a delay certificate for your employer.",
+    why: "<b>Fashion, art, food and tech all in one city.</b> Stay a week and a new neighbourhood still turns up every day.",
+    tags: ["megacity", "sushi", "shopping", "night views"]
+  },
+  {
+    name: "Da Nang", sub: "Central Vietnam's clean resort city",
+    region: "🇻🇳 Vietnam · Central", emoji: "🏖️",
+    lead: "If Ho Chi Minh City is too busy and Hanoi too heavy — <strong>Da Nang is the 'just right' somewhere in between</strong>.",
+    points: [
+      { ico: "🌉", txt: "<b>The Golden Bridge at Ba Na Hills</b> — that photograph of a giant pair of hands holding up a bridge is the city's calling card." },
+      { ico: "🏝️", txt: "<b>My Khe Beach</b> was named by Forbes among the six most attractive beaches in the world. Five minutes from the centre." },
+      { ico: "🍜", txt: "<b>Banh xeo, mi quang, banh mi</b> — home ground for central Vietnamese food, distinct again from Hanoi or Saigon." }
+    ],
+    fact: "Da Nang's old name was <b>'Han Cau', written with the same character as the 'Han' of the Korean peninsula</b> — a trace of trade between central Vietnam and Korea. A river also called the Han cuts through the middle of the city.",
+    why: "<b>A four-hour flight and five-star hotels for around ₩100,000</b> — the best value beach holiday going. Tie in Hoi An and Hue and a week fills out nicely.",
+    tags: ["resort", "value", "beach", "Golden Bridge"]
+  },
+  {
+    name: "Bangkok", sub: "Temples by day, massage by night, food always",
+    region: "🇹🇭 Thailand · Central", emoji: "🛕",
+    lead: "The starting point of Southeast Asian travel and <strong>the most visited city in the world</strong> — 22 million people came through last year alone.",
+    points: [
+      { ico: "🛕", txt: "<b>Wat Arun and Wat Pho</b> — two vast temples facing each other across the Chao Phraya, front-row seats for sunrise and sunset." },
+      { ico: "🍤", txt: "<b>Pad thai, tom yum goong, som tam</b> — a city where the street food beats the hotel restaurants." },
+      { ico: "💆", txt: "<b>Wat Pho massage</b> is the birthplace of Thai massage. Around ₩10,000 an hour with a certified master." }
+    ],
+    fact: "Bangkok's official name is <b>the longest city name in the world, at 169 characters</b>. Beginning 'Krung Thep Mahanakhon Amon Rattanakosin…', it is listed in the Guinness Book of Records.",
+    why: "<b>A six-hour flight, then food, shopping, temples and massage, with hotels from ₩50,000 a night</b> — the right answer for a first trip to Southeast Asia.",
+    tags: ["temples", "massage", "street food", "shopping"]
+  },
+  {
+    name: "Bali", sub: "Island of the gods, where the spirit rests",
+    region: "🇮🇩 Indonesia", emoji: "🌺",
+    lead: "<strong>The island that tops 'world's best resort' lists more than any other.</strong> It has many faces, from yoga villages in the hills to beach clubs on the sand.",
+    points: [
+      { ico: "🌾", txt: "<b>The Ubud rice terraces</b> — a coconut drunk above the stepped paddies clears your head." },
+      { ico: "🌊", txt: "<b>Seminyak and Canggu</b> are surf and beach clubs; <b>Nusa Dua</b> is five-star resorts. Every area has its own grain." },
+      { ico: "🛕", txt: "The kecak dance at sunset at <b>the Uluwatu cliff temple</b> is every Bali traveller's shot of a lifetime." }
+    ],
+    fact: "<b>Bali is the only Hindu island in Muslim Indonesia.</b> That is why little flower offerings to the gods — canang sari — sit on every street.",
+    why: "<b>Yoga, surfing, food, spas and culture all on one island</b>, which is why digital nomads staying a week to a month love it more than anywhere.",
+    tags: ["yoga", "surfing", "resort", "nomad"]
+  },
+  {
+    name: "Singapore", sub: "One city that is also one country",
+    region: "🇸🇬 Singapore", emoji: "🦁",
+    lead: "<strong>Smaller in area than Seoul</strong>, yet it fits in food, shopping, art, nature and theme parks. The city itself is a well-designed piece of work.",
+    points: [
+      { ico: "🏊", txt: "<b>The Marina Bay Sands infinity pool</b> — home of that photograph, swimming 57 floors above the city." },
+      { ico: "🌳", txt: "<b>The Supertrees at Gardens by the Bay</b> put on a light show every night. Free." },
+      { ico: "🍜", txt: "The only city where <b>hawker centres</b> have made it into the Michelin guide. A ₩4,000 chicken rice earned a star." }
+    ],
+    fact: "Singapore is <b>the only country to have become independent by being expelled</b> — pushed out of Malaysia in 1965. Not 'we're leaving' but 'please leave', and in sixty years it took GDP per capita to $80,000.",
+    why: "<b>A safe city-state where English works</b> — first choice for family travel. Three nights covers everything, and even a 24-hour layover gets you the essentials.",
+    tags: ["city-state", "Marina Bay", "food", "safe"]
+  },
+  {
+    name: "Taipei", sub: "The city of night markets and warm people",
+    region: "🇹🇼 Taiwan", emoji: "🥟",
+    lead: "<strong>Two and a half hours from Korea</strong>, and the city Taiwanese people describe as the foreign place closest to Korea in temperament.",
+    points: [
+      { ico: "🌃", txt: "<b>Shilin, Raohe and Ningxia</b>, the three great night markets — oyster omelette, pineapple cake and bubble tea at the source." },
+      { ico: "🏛️", txt: "<b>The National Palace Museum</b> holds <b>690,000 imperial artefacts</b> brought from the mainland. Only about 6,000 are on display at a time." },
+      { ico: "♨️", txt: "<b>The Beitou hot springs</b> are 30 minutes from the centre by metro. Open-air baths built by the Japanese during the colonial period are still running." }
+    ],
+    fact: "<b>Bubble tea was born in Taichung, Taiwan, in the 1980s.</b> After a single Japanese TV feature in 1988 it spread worldwide — Taiwan's first global hit.",
+    why: "<b>A city that pays for itself on the food alone.</b> Three nights covers the night markets and the hot springs, ideal for anyone on a tight schedule.",
+    tags: ["night market", "bubble tea", "hot springs", "weekend trip"]
+  },
+  {
+    name: "Hong Kong", sub: "East and West, stacked vertically",
+    region: "🇭🇰 Hong Kong SAR", emoji: "🌆",
+    lead: "<strong>The highest population density in the world.</strong> The energy that compression produces is the appeal of the place.",
+    points: [
+      { ico: "🚠", txt: "The night view from <b>Victoria Peak</b> is counted among the world's three greatest. The Peak Tram opened in 1888." },
+      { ico: "🦆", txt: "Home turf for <b>dim sum</b>. One-star Tim Ho Wan is the cheapest Michelin meal anywhere, at about ₩10,000 a head." },
+      { ico: "🛍️", txt: "<b>Mong Kok and Tsim Sha Tsui</b> are shopping holy ground — plus the free Symphony of Lights over Victoria Harbour every night at 8pm." }
+    ],
+    fact: "<b>Hong Kong was a British colony until 1997.</b> Hence driving on the left, British plug sockets and red old post boxes. One country, two systems runs for fifty years, to 2047.",
+    why: "<b>Dim sum, night views, Michelin stars and shopping all within walking distance.</b> Three nights lets you add Macau and get both East and West.",
+    tags: ["night views", "dim sum", "shopping", "city"]
+  },
+  {
+    name: "Paris", sub: "A film breaks out if you just go for a walk",
+    region: "🇫🇷 France", emoji: "🗼",
+    lead: "A city where <strong>twenty arrondissements</strong> spiral out like a snail shell. Turn down any lane and it photographs.",
+    points: [
+      { ico: "🏛️", txt: "<b>The Louvre, the Orsay and the Orangerie</b> — 90% of the Impressionist canon within a kilometre, and a single day pass covers them." },
+      { ico: "🥐", txt: "<b>Croissants, baguettes, macarons</b> — traditional bakeries all over the city, in a form barely changed since the early 1900s." },
+      { ico: "🌳", txt: "Sunset from <b>the hill of Montmartre</b>, sitting on the steps of Sacré-Cœur with a glass of wine." }
+    ],
+    fact: "<b>The Eiffel Tower was so widely derided as an 'ugly iron tower' that it was due for demolition twenty years on.</b> Its usefulness as a radio antenna in the First World War saved it, and it is now the symbol of France.",
+    why: "<b>The city that appears on more once-in-a-lifetime lists than any other.</b> Spring and autumn are the golden seasons, and a week lets you take the essentials slowly.",
+    tags: ["museums", "Eiffel Tower", "Europe", "walking"]
+  },
+  {
+    name: "Rome", sub: "The whole city is an open-air museum",
+    region: "🇮🇹 Italy", emoji: "🏛️",
+    lead: "Walk around and <strong>2,000-year-old ruins are simply standing by the roadside</strong>. The nickname 'the Eternal City' fits.",
+    points: [
+      { ico: "🏟️", txt: "<b>The Colosseum</b> — a gladiatorial arena that held 50,000. Evening entry has a completely different atmosphere." },
+      { ico: "🍝", txt: "<b>Carbonara, amatriciana, cacio e pepe</b> — home ground for Rome's three great pastas." },
+      { ico: "🎨", txt: "<b>Vatican City</b> — another country inside a city. Michelangelo's ceiling in the Sistine Chapel sits inside that state." }
+    ],
+    fact: "<b>Romans took stone from the Colosseum to build their houses</b>, which is why only about 60% of the original structure survives. Half of ancient Rome is embedded in the walls of later Roman homes.",
+    why: "<b>A history book laid out along the street.</b> They say a coin in the Trevi Fountain brings you back, and 14 million people a year do come back.",
+    tags: ["Colosseum", "Vatican", "pasta", "history"]
+  },
+  {
+    name: "Barcelona", sub: "A city designed by Gaudí",
+    region: "🇪🇸 Spain · Catalonia", emoji: "🏗️",
+    lead: "The only city with <strong>seven works by a single architect on the UNESCO World Heritage list</strong>. One man set the mood of the whole place.",
+    points: [
+      { ico: "⛪", txt: "<b>La Sagrada Família</b> — begun in 1882, due for completion in 2026. A 144-year building site." },
+      { ico: "🏖️", txt: "<b>Barceloneta beach</b> is one metro stop from the centre. Rare in Europe: a city that gets both the streets and the sea." },
+      { ico: "🥘", txt: "<b>Tapas, jamón, paella</b> — taste your way through the Boqueria market off La Rambla." }
+    ],
+    fact: "<b>Gaudí was hit by a tram.</b> Dressed so plainly that people mistook him for a vagrant, he was taken to hospital late, and his identity emerged only after his death. From the following day the city treated him as a hero.",
+    why: "<b>European beach holiday, food and architecture in one city</b> — longer sun and more approachable food than Paris or Rome.",
+    tags: ["Gaudí", "architecture", "beach", "tapas"]
+  },
+  {
+    name: "Interlaken", sub: "The middle of the Swiss Alps",
+    region: "🇨🇭 Switzerland", emoji: "🏔️",
+    lead: "A town set <strong>between two lakes (inter + laken)</strong>. The Jungfrau, the Eiger and the Mönch all fit into one view.",
+    points: [
+      { ico: "🚂", txt: "<b>Jungfraujoch</b>, 'the top of Europe' — a mountain railway carries you to 3,454m. Yes, that is where the famous cup ramen is." },
+      { ico: "🪂", txt: "One of the world's five great <b>paragliding</b> sites: 25 minutes gliding above Alpine peaks." },
+      { ico: "🛶", txt: "<b>Lakes Brienz and Thun</b> — boat tours on two emerald lakes, plus a walk through the lakeside villages." }
+    ],
+    fact: "<b>There is a separate Korean-language sign at the summit of the Jungfrau.</b> Korean visitors are so numerous that cup ramen is sold in Korean, and jokes about the wifi password once did the rounds.",
+    why: "<b>A single town that gathers up every Alpine icon.</b> Trekking from spring to autumn, skiing in winter — a different appeal each season.",
+    tags: ["Alps", "Jungfrau", "trekking", "paragliding"]
+  },
+  {
+    name: "Santorini", sub: "White houses above the Aegean",
+    region: "🇬🇷 Greece", emoji: "🏝️",
+    lead: "<strong>An island whose middle collapsed in a volcanic eruption 3,600 years ago.</strong> The white houses stand in rows along that cliff.",
+    points: [
+      { ico: "🌅", txt: "<b>Sunset in Oia</b> ranks first in the world. Applause breaking out at the cliff edge happens every single evening." },
+      { ico: "🍷", txt: "<b>Assyrtiko wine</b> — a grape native to Santorini, grown in volcanic soil, with a strong mineral note." },
+      { ico: "🏖️", txt: "<b>Red Beach and Black Beach</b> — being volcanic, the sand comes in different colours. The only place with red, black and yellow beaches on one island." }
+    ],
+    fact: "The leading theory is that <b>Santorini's eruption is the origin of the Atlantis legend</b>. A single day's eruption 3,600 years ago wiped out a Minoan civilisation of 30,000 people, and that memory reached Plato.",
+    why: "<b>The island most often chosen for a once-in-a-lifetime honeymoon.</b> The season runs May to October, and three nights is enough to see the main villages.",
+    tags: ["island", "sunset", "honeymoon", "Greece"]
+  },
+  {
+    name: "Prague", sub: "A city lifted straight off a storybook cover",
+    region: "🇨🇿 Czechia", emoji: "🏰",
+    lead: "<strong>Largely spared bombing in the Second World War, so the medieval streets survive intact.</strong> 'The city of a hundred spires' suits it.",
+    points: [
+      { ico: "🌉", txt: "<b>Charles Bridge</b> — built in 1357. Walk between its thirty statues and take in the city at night." },
+      { ico: "🍺", txt: "<b>Pilsner Urquell</b> — the birthplace of lager, first brewed in this city in 1842. About ₩2,000 a glass." },
+      { ico: "⏰", txt: "<b>The astronomical clock (Orloj)</b> has sent the twelve apostles round on the hour for 600 years. The square fills up every hour." }
+    ],
+    fact: "<b>The word 'robot' was coined in Prague.</b> It comes from the Czech 'robota', meaning forced labour, in a 1920 play by the Czech writer Karel Čapek.",
+    why: "<b>The best value in European travel.</b> A third of Paris or London prices for equivalent scenery and food. Tie in Budapest and Vienna for a golden route.",
+    tags: ["medieval", "beer", "night views", "value"]
+  },
+  {
+    name: "Reykjavík", sub: "Capital of auroras and glaciers",
+    region: "🇮🇸 Iceland", emoji: "❄️",
+    lead: "<strong>The world's northernmost capital, population 120,000.</strong> Thirty minutes out of the centre and volcanoes, geysers and glaciers open up.",
+    points: [
+      { ico: "🌌", txt: "<b>Aurora season runs September to March</b> — visible from the city if you are lucky, and near-certain if you head out of town." },
+      { ico: "♨️", txt: "<b>The Blue Lagoon</b> — a 40°C open-air spring among volcanic rock, with a mineral mud mask included." },
+      { ico: "🌋", txt: "<b>The Golden Circle</b> — the Geysir hot springs, Gullfoss waterfall and Þingvellir National Park, perfect as a day route." }
+    ],
+    fact: "<b>Iceland has no mosquitoes</b> — one of the very few countries in the world without them. Its freeze-thaw cycle runs too fast for them to breed.",
+    why: "<b>Top of the 'see an aurora once' bucket list.</b> Three nights if you are short of time; a week if you drive the Ring Road.",
+    tags: ["aurora", "hot springs", "volcanoes", "bucket list"]
+  },
+  {
+    name: "New York", sub: "The city that does not sleep",
+    region: "🇺🇸 USA · East Coast", emoji: "🗽",
+    lead: "<strong>More languages spoken here than anywhere else on earth — over 800.</strong> Move one block and the mood changes.",
+    points: [
+      { ico: "🎭", txt: "A show on <b>Broadway</b> — around thirty running simultaneously every day, The Lion King and Wicked and Hamilton among them." },
+      { ico: "🌳", txt: "<b>Central Park</b> is a four-kilometre rectangle of garden in the middle of Manhattan, with a different face in every season." },
+      { ico: "🍕", txt: "<b>New York pizza, bagels, cheesecake</b> — home turf for street food. Every meal is part of the city's identity." }
+    ],
+    fact: "<b>The Statue of Liberty was a gift from France for the centenary of American independence.</b> When it arrived in 1886 it was so heavy that it lay on the dock for some time, and was only raised once the pedestal was finished.",
+    why: "<b>Every template of the modern city started here.</b> A week is short and two weeks still won't cover it. Go once and 'I have to go back' comes with you.",
+    tags: ["megacity", "musicals", "Central Park", "metro"]
+  },
+  {
+    name: "Machu Picchu", sub: "An Inca city above the clouds",
+    region: "🇵🇪 Peru · Andes", emoji: "⛰️",
+    lead: "<strong>The ruins of an Inca city at 2,430m.</strong> Built in the 15th century, used for only a hundred years, then swallowed by jungle until it was rediscovered in 1911.",
+    points: [
+      { ico: "🚂", txt: "<b>Inca Rail</b> — the mountain train along the Urubamba River is half the arrival. The journey is the trip." },
+      { ico: "🥾", txt: "<b>The Inca Trail</b> — with time to spare, arrive on foot over four days. Daily entry numbers are capped." },
+      { ico: "🦙", txt: "<b>Wild llamas</b> wander among the ruins, in the same landscape as the descendants of the Incas." }
+    ],
+    fact: "<b>Machu Picchu was built from stone alone, without a grain of cement.</b> The joints are so precise a razor blade will not fit between them — a technique modern architects still cannot reproduce.",
+    why: "<b>The summit of 'go once, boast forever'.</b> Half the people who travel in South America say they went for this one place — one of the new seven wonders.",
+    tags: ["Inca", "ruins", "trekking", "bucket list"]
+  },
+  {
+    name: "Dubai", sub: "A future city raised on sand",
+    region: "🇦🇪 United Arab Emirates", emoji: "🏙️",
+    lead: "<strong>A fishing village fifty years ago, now the tallest city in the world.</strong> Oil, then a pivot to tourism and finance — the fastest urban transformation on record.",
+    points: [
+      { ico: "🏗️", txt: "<b>The Burj Khalifa</b> — 828m, the world's tallest building. From the 124th-floor deck you see the city and the desert's edge at once." },
+      { ico: "🏜️", txt: "<b>A desert safari</b> — sliding over the dunes by 4WD, then dinner at a Bedouin camp." },
+      { ico: "🛒", txt: "<b>The Dubai Mall</b> is the largest shopping mall in the world by area, with an aquarium, an ice rink and an indoor waterfall inside." }
+    ],
+    fact: "<b>Dubai's police cars are Lamborghinis, Ferraris and Bugattis.</b> The most expensive is a Bugatti Veyron worth around ₩4bn. Half the purpose is tourist photographs.",
+    why: "<b>Even a 24-hour layover on the way to Europe or Africa</b> gets you the essentials. A week makes a complete family itinerary.",
+    tags: ["desert", "skyscrapers", "shopping", "layover"]
+  },
+  {
+    name: "Marrakesh", sub: "A red-earth city, the stage of the Arabian Nights",
+    region: "🇲🇦 Morocco", emoji: "🐪",
+    lead: "<strong>Nicknamed 'the Red City'</strong>, an oasis town between the Sahara and the Atlas Mountains.",
+    points: [
+      { ico: "🕌", txt: "<b>Jemaa el-Fnaa square</b> — a market by day, and by night the whole square turns into one enormous open-air restaurant." },
+      { ico: "🧧", txt: "<b>The souks</b> for Moroccan spices, carpets and leather — you can haggle down to about a third of the first price quoted." },
+      { ico: "🌹", txt: "<b>The Majorelle Garden and the Yves Saint Laurent Museum</b> — the designer's collection is kept here in the city." }
+    ],
+    fact: "<b>Star Wars spin-offs, Indiana Jones and Mission: Impossible were all shot here.</b> Filmmakers love it as 'the most alien-looking landscape on earth'.",
+    why: "<b>A singular mix of Europe, Africa and the Middle East in one city.</b> Add Casablanca and Fez and a week loops the whole of Morocco.",
+    tags: ["desert", "souk", "exotic", "filming location"]
+  }
+];
+
+const place = document.getElementById('placeName');
+const placeSub = document.getElementById('placeSub');
+const placeEmoji = document.getElementById('placeEmoji');
+const regionTag = document.getElementById('regionTag');
+const placeLead = document.getElementById('placeLead');
+const pointsList = document.getElementById('pointsList');
+const factText = document.getElementById('factText');
+const whyText = document.getElementById('whyText');
+const tagList = document.getElementById('tagList');
+const todayDate = document.getElementById('todayDate');
+const totalCount = document.getElementById('totalCount');
+const placeNo = document.getElementById('placeNo');
+const miniGrid = document.getElementById('miniGrid');
+
+totalCount.textContent = DESTINATIONS.length;
+
+function dayOfYear(d) {
+  const start = new Date(d.getFullYear(), 0, 0);
+  const diff = d - start;
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+function todayIndex() {
+  const d = new Date();
+  return dayOfYear(d) % DESTINATIONS.length;
+}
+
+function fmtDate(d) {
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function pointClass(i) {
+  return ['', 'sun', 'leaf'][i % 3];
+}
+
+function render(idx) {
+  const p = DESTINATIONS[idx];
+  if (!p) return;
+  placeNo.textContent = String(idx + 1).padStart(2, '0');
+  regionTag.textContent = p.region;
+  placeEmoji.textContent = p.emoji;
+  place.textContent = p.name;
+  placeSub.textContent = p.sub;
+  placeLead.innerHTML = p.lead;
+
+  pointsList.innerHTML = '';
+  p.points.forEach((pt, i) => {
+    const div = document.createElement('div');
+    div.className = 'point ' + pointClass(i);
+    div.innerHTML = `<div class="ico">${pt.ico}</div><div class="txt">${pt.txt}</div>`;
+    pointsList.appendChild(div);
+  });
+
+  factText.innerHTML = p.fact;
+  whyText.innerHTML = p.why;
+
+  tagList.innerHTML = '';
+  (p.tags || []).forEach(t => {
+    const s = document.createElement('span');
+    s.className = 'tag';
+    s.textContent = '#' + t;
+    tagList.appendChild(s);
+  });
+
+  document.querySelectorAll('.mini').forEach((m, i) => {
+    m.classList.toggle('active', i === idx);
+  });
+
+  document.querySelector('.hero').style.animation = 'none';
+  void document.querySelector('.hero').offsetWidth;
+  document.querySelector('.hero').style.animation = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderMiniGrid() {
+  DESTINATIONS.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'mini';
+    btn.innerHTML = `<div class="em">${p.emoji}</div><div class="nm">${p.name}</div><div class="rg">${p.region}</div>`;
+    btn.addEventListener('click', () => render(i));
+    miniGrid.appendChild(btn);
+  });
+}
+
+document.getElementById('randomBtn').addEventListener('click', () => {
+  const current = DESTINATIONS.findIndex((_, i) => document.querySelectorAll('.mini')[i]?.classList.contains('active'));
+  let r;
+  do { r = Math.floor(Math.random() * DESTINATIONS.length); } while (r === current && DESTINATIONS.length > 1);
+  render(r);
+});
+
+document.getElementById('todayBtn').addEventListener('click', () => {
+  render(todayIndex());
+});
+
+todayDate.textContent = fmtDate(new Date());
+renderMiniGrid();
+render(todayIndex());
+</script>
+</body>
+</html>
