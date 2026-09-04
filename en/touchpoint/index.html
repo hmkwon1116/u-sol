@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A daily reflection on the people, moments and thoughts you brushed past today — one short line to meet your day once more.">
+<meta name="theme-color" content="#f6f2ec">
+<title>Today's Touchpoint · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f2ec;
+    --bg2: #efe9df;
+    --ink: #2b2822;
+    --muted: #8a8272;
+    --line: #e2dccf;
+    --card: #fffdf7;
+    --accent: #b0663a;
+    --accent-soft: #f2e2d1;
+    --shadow: 0 1px 2px rgba(60,45,25,0.03), 0 8px 24px rgba(60,45,25,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 30% -10%, #fbf6ee 0%, transparent 55%),
+      radial-gradient(ellipse at 90% 100%, #f0e5d3 0%, transparent 60%),
+      linear-gradient(180deg, var(--bg), var(--bg2));
+    color: var(--ink);
+    font-family: 'Fraunces', Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex; flex-direction: column;
+  }
+  .back {
+    position: fixed; top: 18px; left: 20px;
+    color: var(--muted); text-decoration: none;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13.5px; letter-spacing: .04em; z-index: 5;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .back:hover { color: var(--accent); }
+
+  .wrap {
+    flex: 1; max-width: 680px; margin: 0 auto; width: 100%;
+    padding: 84px 22px 64px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+
+  .date {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13px; color: var(--muted); letter-spacing: .12em; margin-bottom: 10px;
+  }
+  .eyebrow {
+    font-family: 'Fraunces', Georgia, serif; font-size: 14.5px; color: var(--accent);
+    letter-spacing: .32em; margin-bottom: 30px; position: relative;
+  }
+  .eyebrow::after {
+    content: ""; display: block; width: 34px; height: 1px;
+    background: var(--accent); margin: 14px auto 0; opacity: .55;
+  }
+
+  /* hero */
+  .hero {
+    width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    margin-bottom: 12px;
+    animation: fade .8s ease both;
+  }
+  .kind {
+    display: inline-block;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11.5px; letter-spacing: .3em; color: var(--accent);
+    background: var(--accent-soft);
+    padding: 5px 14px; border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  .quote {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(22px, 5.2vw, 32px);
+    line-height: 1.75; font-weight: 400; letter-spacing: -0.01em;
+    word-break: keep-all; min-height: 90px;
+    margin-bottom: 22px;
+  }
+  .quote::before,
+  .quote::after {
+    content: '"';
+    color: var(--accent); opacity: .35;
+    font-family: 'Fraunces', serif;
+    font-size: 1.1em;
+    margin: 0 4px;
+  }
+  .note {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 15px; color: var(--muted);
+    line-height: 1.75; max-width: 520px;
+    margin-bottom: 30px; word-break: keep-all;
+  }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .hero.swap { animation: fadeOut .3s ease forwards; }
+  @keyframes fadeOut { to { opacity: 0; transform: translateY(-6px); } }
+
+  .actions {
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 8px;
+  }
+  button {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13.5px; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 20px; cursor: pointer; letter-spacing: .04em;
+    transition: border-color .15s, color .15s, transform .15s, background .15s;
+    box-shadow: 0 2px 10px rgba(120,100,60,0.05);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  button.primary {
+    background: var(--ink); color: #fff; border-color: var(--ink);
+  }
+  button.primary:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* divider */
+  .divider {
+    width: 100%; display: flex; align-items: center; gap: 14px;
+    color: var(--muted); margin: 48px 0 22px;
+    font-family: 'Fraunces', Georgia, serif; font-size: 13.5px; letter-spacing: .22em;
+  }
+  .divider::before, .divider::after {
+    content: ""; flex: 1; height: 1px; background: var(--line);
+  }
+
+  /* journal — user-entered touchpoints saved to localStorage */
+  .journal {
+    width: 100%; background: var(--card); border: 1px solid var(--line);
+    border-radius: 20px; padding: 24px 22px 20px;
+    box-shadow: var(--shadow);
+    text-align: left;
+  }
+  .journal h2 {
+    font-family: 'Fraunces', Georgia, serif; font-size: 17px; font-weight: 700;
+    color: var(--ink); margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .journal .sub {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 13px; color: var(--muted); margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .form {
+    display: flex; gap: 8px; margin-bottom: 14px; align-items: stretch;
+  }
+  .form input {
+    flex: 1;
+    font-family: 'Fraunces', Georgia, serif; font-size: 14.5px; color: var(--ink);
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 11px 14px; outline: none;
+    transition: border-color .15s;
+  }
+  .form input:focus { border-color: var(--accent); }
+  .form input::placeholder { color: var(--muted); opacity: .7; }
+  .form button {
+    padding: 10px 16px; font-size: 13px;
+  }
+
+  .entries { list-style: none; padding: 0; margin: 0; }
+  .entries li {
+    padding: 12px 0; border-bottom: 1px dashed var(--line);
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  }
+  .entries li:last-child { border-bottom: none; }
+  .entries .txt {
+    font-family: 'Fraunces', Georgia, serif; font-size: 14.5px; color: var(--ink);
+    line-height: 1.6; word-break: keep-all; flex: 1;
+  }
+  .entries .meta {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11px; color: var(--muted); letter-spacing: .04em;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .entries .del {
+    background: none; border: none; padding: 0 0 0 6px;
+    color: var(--muted); opacity: .6; cursor: pointer;
+    font-size: 13px; transition: color .15s, opacity .15s;
+    box-shadow: none;
+  }
+  .entries .del:hover { color: var(--accent); opacity: 1; transform: none; }
+  .empty {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 13.5px; color: var(--muted); text-align: center;
+    padding: 18px 0 8px; opacity: .8; font-style: italic;
+  }
+
+  footer {
+    margin-top: 40px; padding: 16px 22px; text-align: center;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    border-top: 1px solid var(--line);
+  }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<a class="back" href="/en/">← U-SOL</a>
+
+<div class="wrap">
+  <div class="date" id="dateNow">…</div>
+  <div class="eyebrow">TOUCHPOINT</div>
+
+  <div class="hero" id="hero">
+    <span class="kind" id="kind">PEOPLE</span>
+    <div class="quote" id="quote">Even the nameless face you passed today held a moment where your eyes met.</div>
+    <div class="note" id="note">A single passing touchpoint carries the whole of today. Lower your gaze a little and look again.</div>
+  </div>
+
+  <div class="actions">
+    <button type="button" id="nextBtn" class="primary">
+      <span>🎲</span><span>Another touchpoint</span>
+    </button>
+    <button type="button" id="copyBtn">
+      <span>📋</span><span>Copy the line</span>
+    </button>
+  </div>
+
+  <div class="divider">MY TOUCHPOINTS</div>
+
+  <div class="journal">
+    <h2>One line for today</h2>
+    <div class="sub">Who, what, or which thought did you brush past? Leave a line and you’ll meet it again later. (Saved in your browser only.)</div>
+    <div class="form">
+      <input id="entryInput" type="text" placeholder="e.g. the clerk’s smile, a sentence read on the train…" maxlength="120">
+      <button type="button" id="addBtn" class="primary">Save</button>
+    </div>
+    <ul class="entries" id="entries"></ul>
+    <div class="empty" id="empty">Nothing here yet. Care to leave one touchpoint from today?</div>
+  </div>
+</div>
+
+<footer>
+  <span>© 2026 U-SOL · A sliver of what you passed today</span>
+</footer>
+
+<script>
+  (function setDate() {
+    const now = new Date();
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    document.getElementById('dateNow').textContent =
+      `${days[now.getDay()]}, ${now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
+  })();
+
+  const items = [
+    { kind: 'PEOPLE',  quote: 'Even the nameless face you passed today held a moment where your eyes met.', note: 'A single passing touchpoint carries the whole of today. Lower your gaze a little and look again.' },
+    { kind: 'MOMENT',  quote: 'A stranger’s quick greeting, right as the elevator doors were closing.', note: 'A small hello lifts the temperature of a day by half a degree — and that half degree lasts until evening.' },
+    { kind: 'THOUGHT', quote: 'Some resolutions begin again in an old sentence you had forgotten.', note: 'If a long-folded page happened to open today, perhaps it was not chance at all.' },
+    { kind: 'PLACE',   quote: 'On the wall of the alley you always walk, there was a shadow you had never seen.', note: 'The same road becomes a different story depending on the season and the angle.' },
+    { kind: 'WORDS',   quote: '“It’s all right” — four words that can turn a whole day around.', note: 'A scrap of comfort tossed off lightly can hold someone up for the rest of the day.' },
+    { kind: 'FOOD',    quote: 'One spoonful of warm broth summons a kitchen you had forgotten.', note: 'Taste is a map of memory. Today’s meal leads somewhere too.' },
+    { kind: 'MUSIC',   quote: 'A line that drifted by today stayed behind you for hours.', note: 'Some melodies the body remembers first. Today you meet that memory again.' },
+    { kind: 'BOOKS',   quote: 'One sentence alone gave you a reason to have met this book today.', note: 'A short line inside a thick book can become the compass for your day.' },
+    { kind: 'SCENERY', quote: 'The sunset outside the window asked you to put the screen down a while.', note: 'Nature signals quietly. Lift your head once before the moment passes.' },
+    { kind: 'SILENCE', quote: 'The hour in which nothing was said spoke the most today.', note: 'Touchpoints do not arrive only as sound. Sitting together is already a conversation.' },
+    { kind: 'MEMORY',  quote: 'One old photograph spoke again to the person you are today.', note: 'Even you and your former self need a point of contact.' },
+    { kind: 'FAILURE', quote: 'Tomorrow’s sentence begins where today came apart.', note: 'Failure is not a break in contact but a curve. The direction only bends a little.' },
+    { kind: 'FEELING', quote: 'In that moment you welled up for no reason — the reason arrives later.', note: 'It is fine to feel first. Time brings the interpretation along on its own.' },
+    { kind: 'OBJECTS', quote: 'Something you had not taken out in years handed your own taste back to you.', note: 'Touchpoints are not only between people. Objects remember you quietly too.' },
+    { kind: 'QUESTION',quote: 'Someone’s short question can change the direction of a day.', note: 'A good question makes you fold the map and open it again.' },
+    { kind: 'ANIMALS', quote: 'A cat on the road brought you to a stop for a moment today.', note: 'A pause without a reason is part of a day too. Touchpoints are often wordless.' },
+    { kind: 'SEASON',  quote: 'The grain of the wind changed. The season arrived at your fingertips first.', note: 'There are things the body knows before the calendar does.' },
+    { kind: 'IDEA',    quote: 'A sentence that surfaced in the shower refused to leave all day.', note: 'We know it disappears if we don’t write it down, and still we keep losing it.' },
+    { kind: 'MERCY',   quote: 'The moment you gave yourself a little more room, the day softened.', note: 'The touchpoint that takes longest is the one between you and yourself.' },
+    { kind: 'GRATITUDE',quote: 'Something you took for granted felt unusually kind today.', note: 'Another name for a touchpoint might simply be gratitude.' }
+  ];
+
+  const kindEl = document.getElementById('kind');
+  const quoteEl = document.getElementById('quote');
+  const noteEl = document.getElementById('note');
+  const hero = document.getElementById('hero');
+  const nextBtn = document.getElementById('nextBtn');
+  const copyBtn = document.getElementById('copyBtn');
+
+  function daySeedIndex() {
+    const d = new Date();
+    const seed = d.getFullYear() * 1000 + (d.getMonth() + 1) * 40 + d.getDate();
+    return seed % items.length;
+  }
+  let idx = daySeedIndex();
+
+  function render() {
+    const it = items[idx];
+    kindEl.textContent = it.kind;
+    quoteEl.textContent = it.quote;
+    noteEl.textContent = it.note;
+  }
+  render();
+
+  function swapTo(nextIdx) {
+    hero.classList.add('swap');
+    setTimeout(() => {
+      idx = nextIdx;
+      render();
+      hero.classList.remove('swap');
+      hero.style.animation = 'none';
+      void hero.offsetWidth;
+      hero.style.animation = '';
+    }, 280);
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (items.length < 2) return;
+    let nxt;
+    do { nxt = Math.floor(Math.random() * items.length); } while (nxt === idx);
+    swapTo(nxt);
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    const text = `"${quoteEl.textContent}" — Today's Touchpoint · U-SOL`;
+    try {
+      await navigator.clipboard.writeText(text);
+      const original = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<span>✅</span><span>Copied</span>';
+      setTimeout(() => { copyBtn.innerHTML = original; }, 1400);
+    } catch (_) {}
+  });
+
+  // journal
+  const KEY = 'usol.touchpoints';
+  const entriesEl = document.getElementById('entries');
+  const emptyEl = document.getElementById('empty');
+  const input = document.getElementById('entryInput');
+  const addBtn = document.getElementById('addBtn');
+
+  function readAll() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+    catch (_) { return []; }
+  }
+  function writeAll(list) {
+    try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (_) {}
+  }
+  function fmtWhen(ts) {
+    const d = new Date(ts);
+    const today = new Date();
+    const sameDay = d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
+    if (sameDay) {
+      const hh = String(d.getHours()).padStart(2,'0');
+      const mm = String(d.getMinutes()).padStart(2,'0');
+      return `Today ${hh}:${mm}`;
+    }
+    return `${d.getMonth()+1}/${d.getDate()}`;
+  }
+  function renderList() {
+    const list = readAll().sort((a, b) => b.ts - a.ts);
+    entriesEl.innerHTML = '';
+    if (!list.length) { emptyEl.style.display = ''; return; }
+    emptyEl.style.display = 'none';
+    for (const item of list) {
+      const li = document.createElement('li');
+      const txt = document.createElement('div');
+      txt.className = 'txt';
+      txt.textContent = item.text;
+      const meta = document.createElement('span');
+      meta.className = 'meta';
+      meta.textContent = fmtWhen(item.ts);
+      const del = document.createElement('button');
+      del.className = 'del';
+      del.type = 'button';
+      del.textContent = '×';
+      del.setAttribute('aria-label', 'Delete');
+      del.addEventListener('click', () => {
+        const filtered = readAll().filter(x => x.ts !== item.ts);
+        writeAll(filtered);
+        renderList();
+      });
+      const right = document.createElement('span');
+      right.style.display = 'inline-flex';
+      right.style.alignItems = 'center';
+      right.style.gap = '6px';
+      right.style.flexShrink = '0';
+      right.appendChild(meta);
+      right.appendChild(del);
+      li.appendChild(txt);
+      li.appendChild(right);
+      entriesEl.appendChild(li);
+    }
+  }
+  function addEntry() {
+    const v = input.value.trim();
+    if (!v) return;
+    const list = readAll();
+    list.push({ text: v.slice(0, 120), ts: Date.now() });
+    writeAll(list);
+    input.value = '';
+    renderList();
+  }
+  addBtn.addEventListener('click', addEntry);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') addEntry(); });
+  renderList();
+</script>
+</body>
+</html>
