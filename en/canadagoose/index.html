@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A Canada Goose buying guide — Expedition, Langford, Chilliwack and Kensington compared on TEI warmth rating, fill power, price and sizing, all on one page.">
+<meta name="theme-color" content="#fbfdff">
+<title>Canada Goose Picks · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1916;
+    --muted: #8a8780;
+    --line: #ecf0f6;
+    --card: #ffffff;
+    --accent: #d6452a;
+    --accent-soft: #fce7e0;
+    --ice: #3d7ea6;
+    --ice-soft: #eaf3f9;
+    --shadow: 0 1px 2px rgba(26,25,22,0.025), 0 4px 12px rgba(26,25,22,0.04);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #fbfdff 0%, #ffffff 60%, #ffffff 100%);
+    color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .back {
+    position: fixed; top: 14px; left: 16px; z-index: 5;
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 12px;
+    color: var(--muted); text-decoration: none; font-size: 12.5px;
+    box-shadow: var(--shadow);
+  }
+  .back:hover { color: var(--accent); border-color: var(--accent); }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 62px 16px 40px; }
+
+  .eyebrow {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+    color: var(--accent); margin-bottom: 10px; text-align: center;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(28px, 6vw, 44px); line-height: 1.1;
+    letter-spacing: -0.02em; text-align: center; margin-bottom: 12px;
+  }
+  h1 .dot { color: var(--accent); }
+  .lede {
+    text-align: center; color: var(--muted); font-size: 14px;
+    max-width: 560px; margin: 0 auto 24px; line-height: 1.8;
+    word-break: keep-all;
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 24px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 11px; font-size: 11.5px;
+    color: var(--ink); box-shadow: var(--shadow);
+  }
+  .chip .k { color: var(--muted); }
+  .chip .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* TEI guide */
+  .tei-guide {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 18px; margin-bottom: 24px; box-shadow: var(--shadow);
+  }
+  .tei-guide h2 {
+    font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600;
+    margin-bottom: 12px; letter-spacing: -0.01em;
+  }
+  .tei-rows { display: grid; gap: 7px; }
+  .tei-row { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--muted); word-break: keep-all; }
+  .tei-badge {
+    flex-shrink: 0; width: 48px; text-align: center;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em;
+    padding: 3px 0; border-radius: 5px;
+  }
+  .t2 { background: var(--ice-soft); color: var(--ice); }
+  .t3 { background: #dceaf4; color: #2f6a8d; }
+  .t4 { background: #fdece7; color: #b8391f; }
+  .t5 { background: var(--accent); color: #fff; }
+  .tei-row b { color: var(--ink); font-weight: 600; }
+
+  .tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 600;
+    background: var(--card); border: 1px solid var(--line);
+    color: var(--muted); padding: 8px 16px; border-radius: 999px;
+    cursor: pointer; transition: all .15s; box-shadow: var(--shadow);
+  }
+  .tab:hover { color: var(--ink); border-color: var(--accent); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px 18px; display: flex; flex-direction: column;
+    box-shadow: var(--shadow);
+    transition: transform .18s, border-color .18s;
+    border-top: 3px solid var(--ice);
+    animation: fade .45s ease both;
+  }
+  .card:hover { transform: translateY(-2px); border-color: var(--ice); }
+  .card.hero { border-top-color: var(--accent); }
+  .card.hero:hover { border-color: var(--accent); }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .brand-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+  .cat-tag {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em;
+    padding: 4px 9px; border-radius: 5px;
+    background: var(--ice-soft); color: var(--ice);
+  }
+  .card.hero .cat-tag { background: var(--accent-soft); color: var(--accent); }
+  .tei-tag { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .tei-tag b { color: var(--ink); font-weight: 600; }
+
+  .item-emoji { font-size: 42px; line-height: 1; margin-bottom: 10px; }
+  .item-name {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 19px; letter-spacing: -0.01em; margin-bottom: 3px; line-height: 1.25;
+  }
+  .item-kor { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
+
+  .specs {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    padding: 11px 0; border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line);
+    margin-bottom: 12px;
+  }
+  .spec { display: flex; flex-direction: column; gap: 1px; min-width: 76px; }
+  .spec .sk { font-size: 10px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .spec .sv { font-size: 13px; font-weight: 600; }
+  .spec .sv.price { color: var(--ice); font-variant-numeric: tabular-nums; }
+  .card.hero .spec .sv.price { color: var(--accent); }
+
+  .desc { font-size: 13.5px; line-height: 1.75; margin-bottom: 12px; word-break: keep-all; }
+  .desc strong { color: var(--accent); font-weight: 600; }
+
+  .style-title {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 5px;
+  }
+  .style-tip {
+    font-size: 12.5px; color: var(--muted); line-height: 1.75;
+    padding: 10px 12px; border-radius: 8px; background: var(--ice-soft);
+    word-break: keep-all; margin-bottom: 14px;
+  }
+  .card.hero .style-tip { background: var(--accent-soft); }
+
+  .buy-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: auto; }
+  .buy-btn {
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-size: 12px; font-weight: 600;
+    padding: 10px 8px; border-radius: 8px; text-decoration: none;
+    transition: transform .15s, opacity .15s;
+    border: 1px solid var(--line); color: var(--ink);
+  }
+  .buy-btn:hover { transform: translateY(-1px); opacity: .92; }
+  .buy-btn.primary { background: var(--ice); border-color: var(--ice); color: #fff; }
+  .card.hero .buy-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .buy-btn.secondary { background: #fafbfd; color: var(--ink); }
+
+  .divider { display: flex; align-items: center; gap: 12px; margin: 38px 2px 18px; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .divider .label {
+    font-family: 'Fraunces', serif; font-size: 13px; font-weight: 600;
+    color: var(--accent); white-space: nowrap; letter-spacing: -0.01em;
+  }
+
+  .combo {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px 18px; margin-bottom: 14px; box-shadow: var(--shadow);
+  }
+  .combo-title {
+    font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;
+    letter-spacing: -0.01em; margin-bottom: 7px;
+  }
+  .combo-desc { font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 11px; word-break: keep-all; }
+  .combo-list { display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 13px; }
+  .combo-list li { list-style: none; padding-left: 15px; position: relative; color: var(--muted); line-height: 1.75; word-break: keep-all; }
+  .combo-list li::before {
+    content: ""; position: absolute; left: 0; top: 9px;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+  }
+  .combo-list b { color: var(--ink); font-weight: 600; margin-right: 3px; }
+  .combo-list a { color: var(--accent); text-decoration: underline; }
+
+  .tip { margin-top: 26px; font-size: 12px; color: var(--muted); line-height: 1.85; word-break: keep-all; text-align: center; }
+  .tip b { color: var(--ink); font-weight: 600; }
+  footer { text-align: center; padding: 22px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 24px; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/en/">← U-SOL</a>
+  <div class="wrap">
+    <div class="eyebrow">Canada Goose · Winter Picks</div>
+    <h1>Canada Goose picks<span class="dot">.</span></h1>
+    <p class="lede">A guide to picking the <strong>one jacket you actually need</strong> for a Korean winter. Compare every model on <strong>TEI warmth rating</strong>, down fill power, price and sizing in one place.</p>
+
+    <div class="meta">
+      <span class="chip"><span class="k">📅</span><span class="v" id="dateTag">—</span></span>
+      <span class="chip"><span class="k">🧊</span><span class="v">8 models</span></span>
+      <span class="chip"><span class="k">🌡️</span><span class="v">TEI 2 – 5</span></span>
+    </div>
+
+    <div class="tei-guide">
+      <h2>🌡️ TEI (warmth rating) — which level should you buy?</h2>
+      <div class="tei-rows">
+        <div class="tei-row"><span class="tei-badge t2">TEI 2</span><span><b>0 to -5°C</b> · early winter and shoulder-season daily wear, for city days in and out of buildings</span></div>
+        <div class="tei-row"><span class="tei-badge t3">TEI 3</span><span><b>-5 to -15°C</b> · the best-balanced band for an average Seoul winter</span></div>
+        <div class="tei-row"><span class="tei-badge t4">TEI 4</span><span><b>-15 to -25°C</b> · cold-wave warnings, the Gangwon region, long stretches outdoors</span></div>
+        <div class="tei-row"><span class="tei-badge t5">TEI 5</span><span><b>Below -25°C</b> · polar spec. Overkill for most Korean cities</span></div>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="men">Men's</button>
+      <button class="tab" data-filter="women">Women's</button>
+      <button class="tab" data-filter="light">Lightweight</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="divider"><span class="label">How to choose</span></div>
+
+    <div class="combo">
+      <div class="combo-title">🏙️ One jacket for a Seoul commute</div>
+      <p class="combo-desc">If you are moving between the subway and heated buildings, TEI 4 and up is actually too warm. A length that covers the hips is the most versatile.</p>
+      <ul class="combo-list">
+        <li><b>First choice —</b> Chilliwack Bomber (short cut, easy in a car)</li>
+        <li><b>Second —</b> Langford Parka (thigh length, fine over a suit)</li>
+        <li><b>Layering —</b> one knit underneath is enough; a thick hoodie collapses the silhouette.</li>
+      </ul>
+    </div>
+
+    <div class="combo">
+      <div class="combo-title">🏔️ One jacket for cold snaps and the outdoors</div>
+      <p class="combo-desc">If you have to stand around below -15°C, length and a hood ruff (fur trim) change how cold it feels more than anything else.</p>
+      <ul class="combo-list">
+        <li><b>First choice —</b> Expedition Parka (TEI 5, the original, built for Antarctic station crew)</li>
+        <li><b>Second —</b> Kensington Parka (women's long cut, covers to above the knee)</li>
+        <li><b>Careful —</b> if you are mostly indoors it makes you sweat, which ends up feeling colder.</li>
+      </ul>
+    </div>
+
+    <div class="combo">
+      <div class="combo-title">📏 Sizing and care</div>
+      <ul class="combo-list">
+        <li><b>Sizing —</b> true to size on the whole. It is not an Asian fit, though, so the shoulders run generous — slimmer builds look cleaner one size down.</li>
+        <li><b>Washing —</b> no dry cleaning. Hand-wash alone in lukewarm water or use a down cycle, then dry it completely.</li>
+        <li><b>Storage —</b> never store it compressed. Left crushed, the down dies and the warmth does not come back.</li>
+        <li><b>Authenticity —</b> the hologram label inside the left-arm badge carries a unique serial you can look up on the official site.</li>
+      </ul>
+    </div>
+
+    <div class="divider"><span class="label">Where to buy</span></div>
+    <div class="combo">
+      <div class="combo-title">🛒 Official, department stores, parallel imports</div>
+      <p class="combo-desc">Full price sits with the official store and the department stores; last season stock is cheaper at outlets and through parallel importers. With parallel imports, always check the serial can be looked up.</p>
+      <ul class="combo-list">
+        <li><b>Official —</b> <a href="https://www.canadagoose.com/" target="_blank" rel="noopener noreferrer">canadagoose.com</a> (pick country and language, then the Korean store)</li>
+        <li><b>Authorised in Korea —</b> counters in the main Shinsegae, Lotte and Hyundai department stores, plus their official online channels</li>
+        <li><b>Price comparison —</b> <a href="https://search.shopping.naver.com/search/all?query=%EC%BA%90%EB%82%98%EB%8B%A4%EA%B5%AC%EC%8A%A4" target="_blank" rel="noopener noreferrer">Naver Shopping</a> · <a href="https://www.google.com/search?q=%EC%BA%90%EB%82%98%EB%8B%A4%EA%B5%AC%EC%8A%A4+%ED%8C%8C%EC%B9%B4+%EA%B0%80%EA%B2%A9&amp;tbm=shop" target="_blank" rel="noopener noreferrer">Google Shopping</a></li>
+        <li><b>When to buy —</b> the end-of-season sales in late January and February cut last season models the hardest.</li>
+      </ul>
+    </div>
+
+    <p class="tip">Prices are <b>rough reference figures</b> that move with the season, the colour and the exchange rate. Check the actual price with the seller.<br>This page is an unofficial guide put together by U-SOL, with no affiliation to Canada Goose.</p>
+  </div>
+  <footer>© 2026 U-SOL · <a href="/en/">Back to home</a></footer>
+<script>
+  const ITEMS = [
+    {
+      cat: "men", hero: true, emoji: "🧊",
+      label: "Men's parka", tei: "TEI 5",
+      name: "Expedition Parka",
+      kor: "The Expedition — the brand's original",
+      price: "approx. ₩1.8M", fill: "625 fill power duck down", fit: "Thigh length",
+      desc: "Developed for crew at the McMurdo research station in Antarctica and now <strong>the Canada Goose signature</strong>. A coyote-ruff hood and a multi-pocket build, designed around genuinely extreme cold.",
+      tip: "Overkill for most Korean cities. It earns its price only if you work outdoors, live up in Gangwon, or have to stand out in a cold snap for hours.",
+      q: "Canada Goose Expedition Parka"
+    },
+    {
+      cat: "men", emoji: "🏙️",
+      label: "Men's parka", tei: "TEI 4",
+      name: "Langford Parka",
+      kor: "The Langford — a slim city silhouette",
+      price: "approx. ₩1.4M", fill: "625 fill power duck down", fit: "Thigh length · slim",
+      desc: "<strong>The Expedition with the bulk stripped out</strong>, built for the city. The shoulder and waist lines are cleaned up, so it holds its shape even over a suit or a coat.",
+      tip: "If you're buying one jacket that also has to work for the commute, this is the safest pick. A thick hoodie underneath kills the slim line, so stop at one knit layer.",
+      q: "Canada Goose Langford Parka"
+    },
+    {
+      cat: "men", emoji: "✈️",
+      label: "Men's bomber", tei: "TEI 4",
+      name: "Chilliwack Bomber",
+      kor: "The Chilliwack — a short flight jacket",
+      price: "approx. ₩1.3M", fill: "625 fill power duck down", fit: "Waist length",
+      desc: "A <strong>short bomber</strong> descended from bush pilot jackets. It stops at the waist, which makes a real difference if you drive, cycle, or take a lot of stairs.",
+      tip: "The short cut leaves your thighs cold, so pair it with heavy or fleece-lined trousers. In exchange it works with far more casual outfits than a parka does.",
+      q: "Canada Goose Chilliwack Bomber"
+    },
+    {
+      cat: "women", emoji: "🤍",
+      label: "Women's parka", tei: "TEI 4",
+      name: "Kensington Parka",
+      kor: "The Kensington — the flagship women's model",
+      price: "approx. ₩1.4M", fill: "625 fill power duck down", fit: "Above-knee long",
+      desc: "<strong>The steady best-seller</strong> of the women's line. The point of it is the adjustable waist strap, which gives a roomy parka an actual silhouette.",
+      tip: "The long cut sits well over skirts and dresses. The fur ruff detaches, so you can change the mood of the coat easily.",
+      q: "Canada Goose Kensington Parka"
+    },
+    {
+      cat: "women", emoji: "🌂",
+      label: "Women's parka", tei: "TEI 3",
+      name: "Victoria Parka",
+      kor: "The Victoria — a slim everyday coat",
+      price: "approx. ₩1.3M", fill: "625 fill power duck down", fit: "Thigh length · slim",
+      desc: "<strong>Lighter and less puffy than the Kensington.</strong> Its TEI 3 rating lands right on an average Seoul winter, so you don't overheat moving in and out of buildings.",
+      tip: "A good first Canada Goose for commuting or the school run. Black and navy are the safe choices; lighter colours take more looking after than you'd think.",
+      q: "Canada Goose Victoria Parka"
+    },
+    {
+      cat: "light", emoji: "🪶",
+      label: "Lightweight down", tei: "TEI 2",
+      name: "HyBridge Lite Hoody",
+      kor: "The HyBridge Lite — ultralight",
+      price: "approx. ₩900K", fill: "800 fill power goose down", fit: "Regular fit",
+      desc: "<strong>An ultralight down that folds small enough for a pocket.</strong> At 800 fill power the warmth-to-weight ratio is excellent, and in deep winter it doubles as a mid-layer under a parka.",
+      tip: "Worn alone in the shoulder seasons and as a layer in midwinter, it covers two seasons — so it gets the most wear of anything here. Especially handy for cutting down travel luggage.",
+      q: "Canada Goose HyBridge Lite Hoody"
+    },
+    {
+      cat: "light", emoji: "🧥",
+      label: "Lightweight down", tei: "TEI 2",
+      name: "Crofton Hoody",
+      kor: "The Crofton — city lightweight down",
+      price: "approx. ₩800K", fill: "750 fill power down", fit: "Regular fit",
+      desc: "The fine quilting makes this <strong>the lightweight down that blends most naturally into everyday clothes</strong>. The logo reads quietly, so it passes in office casual too.",
+      tip: "A good entry point if parka money is a stretch. It is clearly not enough for a cold snap on its own, so layering underneath is mandatory.",
+      q: "Canada Goose Crofton Hoody"
+    },
+    {
+      cat: "men", emoji: "🥇",
+      label: "Extreme cold", tei: "TEI 5",
+      name: "Snow Mantra Parka",
+      kor: "The Snow Mantra — the warmest they make",
+      price: "approx. ₩2M and up", fill: "625 fill power duck down", fit: "Knee length",
+      desc: "<strong>The warmest model in the Canada Goose line-up.</strong> Built to polar workwear spec, which means there is almost no everyday situation in Korea that calls for it.",
+      tip: "It is the literal answer to \"give me the warmest one you have\", and nine times out of ten you'll regret it in the city. Unless you work in extreme conditions, go TEI 3–4.",
+      q: "Canada Goose Snow Mantra"
+    }
+  ];
+
+  function render(filter) {
+    const grid = document.getElementById('grid');
+    const items = filter === 'all' ? ITEMS : ITEMS.filter(i => i.cat === filter);
+    grid.innerHTML = items.map((it, idx) => `
+      <article class="card ${it.hero ? 'hero' : ''}" style="animation-delay:${idx * 0.04}s">
+        <div class="brand-row">
+          <span class="cat-tag">${it.label}</span>
+          <span class="tei-tag">Warmth <b>${it.tei}</b></span>
+        </div>
+        <div class="item-emoji">${it.emoji}</div>
+        <div class="item-name">${it.name}</div>
+        <div class="item-kor">${it.kor}</div>
+        <div class="specs">
+          <div class="spec"><span class="sk">Approx.</span><span class="sv price">${it.price}</span></div>
+          <div class="spec"><span class="sk">Down</span><span class="sv">${it.fill}</span></div>
+          <div class="spec"><span class="sk">Fit</span><span class="sv">${it.fit}</span></div>
+        </div>
+        <div class="desc">${it.desc}</div>
+        <div class="style-title">Buying Tip</div>
+        <div class="style-tip">${it.tip}</div>
+        <div class="buy-row">
+          <a class="buy-btn primary" href="https://search.shopping.naver.com/search/all?query=${encodeURIComponent(it.q)}" target="_blank" rel="noopener noreferrer">🛒 Compare prices</a>
+          <a class="buy-btn secondary" href="https://www.google.com/search?q=${encodeURIComponent(it.q)}" target="_blank" rel="noopener noreferrer">🔎 Search reviews</a>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render(btn.dataset.filter);
+    });
+  });
+
+  const d = new Date();
+  document.getElementById('dateTag').textContent = d.toLocaleDateString('en-US', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+
+  render('all');
+</script>
+</body>
+</html>

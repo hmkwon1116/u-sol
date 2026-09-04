@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="One core AI concept a day, plus a vetted collection of free AI learning material in one place.">
+<meta name="theme-color" content="#fbfaf7">
+<title>AI Knowledge · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.55;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 22px 20px 80px; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+  .today { font-size: 13px; color: var(--muted); }
+  header { margin-bottom: 22px; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+  h1 .dot { color: var(--accent); }
+  .subtitle { font-family: 'Fraunces', serif; font-style: italic; color: var(--muted); margin-top: 6px; font-size: 16px; }
+
+  .tabs {
+    display: inline-flex; gap: 4px; padding: 4px;
+    background: #efece4; border-radius: 999px; margin-bottom: 18px;
+  }
+  .tab {
+    border: none; background: transparent; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    padding: 8px 18px; border-radius: 999px; color: var(--muted);
+    transition: background .15s, color .15s;
+  }
+  .tab.active { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 28px 24px; box-shadow: var(--shadow); margin-bottom: 18px;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .card.swap { opacity: 0; transform: translateY(6px); }
+
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 14px; }
+  .term { font-family: 'Fraunces', serif; font-size: clamp(28px, 5.5vw, 38px); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; }
+  .ko-term { color: var(--muted); font-style: italic; margin-top: 8px; font-size: 16px; font-family: 'Fraunces', serif; }
+  .tag-c { display: inline-block; margin-top: 12px; padding: 4px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; }
+
+  .summary {
+    margin-top: 22px; padding-top: 20px; border-top: 1px dashed var(--line);
+    font-size: 17px; font-weight: 500; line-height: 1.6;
+  }
+  .summary .sec-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; display: block; margin-bottom: 8px; }
+
+  .example {
+    margin-top: 20px; padding: 16px 18px; background: #f7f4ec;
+    border-radius: 12px; border-left: 3px solid var(--accent);
+  }
+  .example .ex-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+  .example .ex-body { font-size: 14.5px; line-height: 1.6; }
+
+  .why {
+    margin-top: 16px; padding: 14px 18px; background: #fbeae5;
+    border-radius: 12px;
+  }
+  .why .why-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .why .why-body { font-size: 14px; line-height: 1.55; color: var(--ink); }
+
+  .actions { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .btn {
+    flex: 1; min-width: 140px;
+    padding: 13px 18px; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink); font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: transform .1s, border-color .15s, background .15s;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn:active { transform: scale(0.98); }
+  .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn.primary:hover { background: #c03d24; }
+
+  .progress { margin-top: 8px; font-size: 12px; color: var(--muted); text-align: center; }
+
+  .section { margin-bottom: 26px; }
+  .section-head {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .section-head .emoji { font-size: 20px; }
+  .section-head h2 {
+    font-family: 'Fraunces', serif; font-size: 19px;
+    font-weight: 600; letter-spacing: -0.01em;
+  }
+  .section-head .hint { font-size: 12px; color: var(--muted); }
+
+  .items { display: grid; gap: 10px; }
+  @media (min-width: 560px) { .items { grid-template-columns: 1fr 1fr; } }
+
+  .item {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; text-decoration: none; color: inherit;
+    box-shadow: var(--shadow); display: flex; flex-direction: column;
+    transition: transform .15s ease, border-color .15s, box-shadow .15s;
+    position: relative;
+  }
+  .item:hover {
+    transform: translateY(-2px); border-color: var(--accent);
+    box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 10px 22px rgba(26,25,22,0.08);
+  }
+  .item-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+  .item .nm {
+    font-family: 'Fraunces', serif; font-size: 15.5px; font-weight: 600; line-height: 1.25;
+  }
+  .item .tag {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+    background: var(--accent-soft); color: var(--accent);
+    padding: 2px 7px; border-radius: 999px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .item .tag.ko { background: #eef4ec; color: #4a7c3a; }
+  .item .desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .item .host {
+    font-size: 11px; color: var(--muted); margin-top: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .item .arrow {
+    position: absolute; top: 14px; right: 14px;
+    font-size: 14px; color: var(--muted); opacity: 0; transition: opacity .15s;
+  }
+  .item:hover .arrow { opacity: 1; }
+
+  .note {
+    margin-top: 16px; padding: 14px 16px; background: #f7f4ec;
+    border-radius: 12px; border-left: 3px solid var(--accent);
+    font-size: 13px; color: var(--ink); line-height: 1.55;
+  }
+  .note b { color: var(--accent); }
+
+  footer { margin-top: 40px; font-size: 12px; color: var(--muted); text-align: center; padding-top: 20px; border-top: 1px solid var(--line); }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top reveal">
+    <a class="back" href="/">← U-SOL</a>
+    <span class="today" id="today">—</span>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <h1>AI knowledge<span class="dot">.</span></h1>
+    <p class="subtitle">A fresh concept each day, plus free learning material worth your time</p>
+  </header>
+
+  <div class="tabs reveal" role="tablist" style="animation-delay:.08s">
+    <button class="tab active" data-mode="concept" role="tab">Today's concept</button>
+    <button class="tab" data-mode="resources" role="tab">Free material</button>
+    <a class="tab" href="/ai/terms/" role="tab" style="text-decoration:none;display:inline-flex;align-items:center;">Key terms →</a>
+  </div>
+
+  <div class="pane active" data-pane="concept">
+    <div class="card reveal" id="card" style="animation-delay:.1s">
+      <div class="label" id="modeLabel">Today's concept</div>
+      <div class="term" id="term">—</div>
+      <div class="ko-term" id="koTerm">—</div>
+      <span class="tag-c" id="tag">—</span>
+
+      <div class="summary">
+        <span class="sec-label">In short</span>
+        <span id="summary">—</span>
+      </div>
+
+      <div class="example">
+        <div class="ex-label">Put simply</div>
+        <div class="ex-body" id="exBody">—</div>
+      </div>
+
+      <div class="why">
+        <div class="why-label">Why it matters</div>
+        <div class="why-body" id="whyBody">—</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="todayBtn" type="button">Today's concept</button>
+        <button class="btn primary" id="nextBtn" type="button">Another concept →</button>
+      </div>
+      <div class="progress" id="progress">1 / 27</div>
+    </div>
+  </div>
+
+  <div class="pane" data-pane="resources">
+    <section class="section reveal" style="animation-delay:.1s">
+      <div class="section-head">
+        <span class="emoji">🎓</span>
+        <h2>The standout free courses</h2>
+        <span class="hint">If you are just starting, start here</span>
+      </div>
+      <div class="items">
+        <a class="item" href="https://www.elementsofai.com/kr" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Elements of AI</span><span class="tag ko">Korean</span></div>
+          <div class="desc">The gentlest introduction to AI for non-specialists, made by the University of Helsinki</div>
+          <span class="host">elementsofai.com</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://www.coursera.org/specializations/machine-learning-introduction" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Andrew Ng · Machine Learning</span><span class="tag">Free to audit</span></div>
+          <div class="desc">The canonical machine-learning introduction. Lectures and assignments are free in audit mode</div>
+          <span class="host">coursera.org</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://course.fast.ai/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">fast.ai · Practical Deep Learning</span><span class="tag">Fully free</span></div>
+          <div class="desc">A hands-on deep learning course that has you build with code first</div>
+          <span class="host">course.fast.ai</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://developers.google.com/machine-learning/crash-course" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Google ML Crash Course</span><span class="tag ko">Korean</span></div>
+          <div class="desc">A 15-hour crash course in machine learning, written by Google engineers</div>
+          <span class="host">developers.google.com</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://huggingface.co/learn" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Hugging Face Courses</span><span class="tag">Fully free</span></div>
+          <div class="desc">Official, practice-first courses covering NLP, RL, audio, vision and LLMs</div>
+          <span class="host">huggingface.co</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://introtodeeplearning.com/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">MIT 6.S191 Deep Learning</span><span class="tag">Fully free</span></div>
+          <div class="desc">MIT's popular deep learning bootcamp — videos and slides published in full every year</div>
+          <span class="host">introtodeeplearning.com</span><span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section reveal" style="animation-delay:.15s">
+      <div class="section-head">
+        <span class="emoji">📺</span>
+        <h2>YouTube channels</h2>
+        <span class="hint">For people who learn faster by watching</span>
+      </div>
+      <div class="items">
+        <a class="item" href="https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">3Blue1Brown · Neural Networks</span></div>
+          <div class="desc">Superb visual explanations of neural networks, backpropagation and transformers</div>
+          <span class="host">youtube.com</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Karpathy · Zero to Hero</span></div>
+          <div class="desc">An OpenAI co-founder building GPT line by line and teaching as he goes</div>
+          <span class="host">youtube.com</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://www.youtube.com/@StatQuest" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">StatQuest</span></div>
+          <div class="desc">Statistics and machine learning concepts, complete with jingles. "Bam!"</div>
+          <span class="host">youtube.com</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://www.youtube.com/@TwoMinutePapers" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Two Minute Papers</span></div>
+          <div class="desc">New AI papers explained in two to five minutes. "What a time to be alive!"</div>
+          <span class="host">youtube.com</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://www.youtube.com/@SungKim-yo7zg/playlists" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Deep Learning for Everyone (모두를 위한 딥러닝)</span><span class="tag ko">Korean</span></div>
+          <div class="desc">A Korean-language introduction to deep learning by Prof. Sung Kim of HKUST</div>
+          <span class="host">youtube.com</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://www.youtube.com/@TeddyNote" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">TeddyNote (테디노트)</span><span class="tag ko">Korean</span></div>
+          <div class="desc">Patient, practical Korean-language walkthroughs of LangChain, RAG and LLM work</div>
+          <span class="host">youtube.com</span><span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section reveal" style="animation-delay:.2s">
+      <div class="section-head">
+        <span class="emoji">🛠️</span>
+        <h2>Hands-on practice</h2>
+        <span class="hint">Reading sticks less than running it yourself</span>
+      </div>
+      <div class="items">
+        <a class="item" href="https://www.kaggle.com/learn" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Kaggle Learn</span></div>
+          <div class="desc">Around thirty micro-courses of four to five hours, practised straight in a notebook</div>
+          <span class="host">kaggle.com</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://microsoft.github.io/AI-For-Beginners/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Microsoft · AI for Beginners</span></div>
+          <div class="desc">A 12-week curriculum from Microsoft, with every resource published on GitHub</div>
+          <span class="host">microsoft.github.io</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://github.com/microsoft/generative-ai-for-beginners" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Generative AI for Beginners</span></div>
+          <div class="desc">Generative AI in 21 lessons, with both Python and JavaScript tracks</div>
+          <span class="host">github.com</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://www.deeplearning.ai/short-courses/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">DeepLearning.AI Short Courses</span></div>
+          <div class="desc">Short one- to two-hour courses on LLMs, RAG and agents, all free</div>
+          <span class="host">deeplearning.ai</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://www.boostcourse.org/opencourse" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Naver boostcourse</span><span class="tag ko">Korean</span></div>
+          <div class="desc">Free Korean-language AI and coding courses from the Naver Connect Foundation</div>
+          <span class="host">boostcourse.org</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://colab.research.google.com/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Google Colab</span></div>
+          <div class="desc">Python and deep learning practice on a free GPU in the browser, nothing to install</div>
+          <span class="host">colab.research.google.com</span><span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section reveal" style="animation-delay:.25s">
+      <div class="section-head">
+        <span class="emoji">📚</span>
+        <h2>Books and long reads</h2>
+        <span class="hint">Classics you can read free on the web</span>
+      </div>
+      <div class="items">
+        <a class="item" href="https://www.deeplearningbook.org/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Deep Learning Book</span></div>
+          <div class="desc">Ian Goodfellow's canonical deep learning textbook, published free in full as HTML</div>
+          <span class="host">deeplearningbook.org</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://d2l.ai/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Dive into Deep Learning</span></div>
+          <div class="desc">An interactive book where code, maths and explanation sit on one screen together</div>
+          <span class="host">d2l.ai</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://transformer-circuits.pub/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Anthropic · Transformer Circuits</span></div>
+          <div class="desc">A research series digging into how the inside of a transformer actually works</div>
+          <span class="host">transformer-circuits.pub</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://distill.pub/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Distill.pub</span></div>
+          <div class="desc">Machine learning papers retold through visualisation. Each one is a small work of art</div>
+          <span class="host">distill.pub</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://jalammar.github.io/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Jay Alammar's Blog</span></div>
+          <div class="desc">"The Illustrated Transformer" and the rest of the illustrated LLM series</div>
+          <span class="host">jalammar.github.io</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://lilianweng.github.io/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Lil'Log (Lilian Weng)</span></div>
+          <div class="desc">Long, deep write-ups from a former OpenAI researcher: RLHF, agents, probabilistic models</div>
+          <span class="host">lilianweng.github.io</span><span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section reveal" style="animation-delay:.3s">
+      <div class="section-head">
+        <span class="emoji">🏫</span>
+        <h2>Full Stanford and MIT courses</h2>
+        <span class="hint">If you want to go deeper</span>
+      </div>
+      <div class="items">
+        <a class="item" href="https://cs229.stanford.edu/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Stanford CS229</span></div>
+          <div class="desc">Andrew Ng's original machine learning course. Notes and videos all public</div>
+          <span class="host">cs229.stanford.edu</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://cs231n.stanford.edu/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Stanford CS231n</span></div>
+          <div class="desc">The bible of computer vision and CNNs — the course Karpathy built</div>
+          <span class="host">cs231n.stanford.edu</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://web.stanford.edu/class/cs224n/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Stanford CS224n</span></div>
+          <div class="desc">NLP with deep learning. The standard treatment of transformers and LLMs</div>
+          <span class="host">web.stanford.edu</span><span class="arrow">→</span>
+        </a>
+        <a class="item" href="https://stanford-cs324.github.io/winter2022/" target="_blank" rel="noopener">
+          <div class="item-head"><span class="nm">Stanford CS324 · LLMs</span></div>
+          <div class="desc">A course devoted to large language models: theory, data, evaluation and social impact</div>
+          <span class="host">stanford-cs324.github.io</span><span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="note reveal" style="animation-delay:.35s">
+      <b>👉 A suggested route:</b> new to AI, go <b>Elements of AI</b> → <b>Google ML Crash Course</b> → <b>fast.ai</b>.
+      Already comfortable with code? The fastest path is <b>Karpathy's Zero to Hero</b> straight through, building GPT yourself.
+    </div>
+  </div>
+
+  <footer class="reveal" style="animation-delay:.2s">
+    © 2026 U-SOL · a place for making and testing ideas
+  </footer>
+</div>
+
+<script>
+  const TOPICS = [
+    {
+      term: "Machine Learning",
+      sub: "learning patterns from data",
+      tag: "Fundamentals",
+      summary: "Instead of a person writing out every rule, the system finds patterns in data and learns from them. This is the main trunk of AI and where everything starts.",
+      ex: "To sort spam, you don't write a rule saying 'if it contains this word it's spam'. You show it 100,000 spam messages and 100,000 normal ones and tell it to work out the difference itself.",
+      why: "Deep learning, LLMs and recommender systems are all branches of machine learning. You need the idea of 'learning from data' before anything built on top of it makes sense."
+    },
+    {
+      term: "Deep Learning",
+      sub: "many layers, stacked",
+      tag: "Fundamentals",
+      summary: "A branch of machine learning that stacks many layers of a structure modelled loosely on the brain's neural networks. It produced explosive gains in images, speech and language.",
+      ex: "Recognising a photo of a cat, the first layer catches lines and edges, the middle layers catch ears and eyes, and the last layer catches 'a whole cat' — understanding gets more abstract as it goes.",
+      why: "The lead actor in the AI revival since the 2010s. Transformers, LLMs and image generators all stand on deep learning."
+    },
+    {
+      term: "Recommendation System",
+      sub: "picking what you'll like",
+      tag: "Applications",
+      summary: "An AI system that analyses your taste and behaviour and picks out things you are likely to enjoy. YouTube, Netflix and Coupang all run on this.",
+      ex: "Netflix saying 'people who watched this also watched that', or a shopping app filling your home screen with things you might buy — all recommendation systems.",
+      why: "The field where AI revenue is made most directly. It is the core engine of advertising, commerce and content, so the concept turns up everywhere."
+    },
+    {
+      term: "LLM (Large Language Model)",
+      sub: "predicting the next word, at scale",
+      tag: "Fundamentals",
+      summary: "A huge model trained on vast amounts of text that produces sentences by predicting, probabilistically, which word comes next. ChatGPT, Claude and Gemini are all LLMs.",
+      ex: "It is a little like someone who has read tens of millions of books guessing, every single time, 'what word would come naturally after this sentence?'",
+      why: "Almost everything we now meet as 'AI' runs on an LLM. Even a rough feel for how it works shows you what to ask it for and what not to."
+    },
+    {
+      term: "Prompt Engineering",
+      sub: "asking the question well",
+      tag: "Practical skill",
+      summary: "The craft of designing your question so the AI gives you what you actually want. With the same model, how you ask changes the quality of the answer enormously.",
+      ex: "'Summarise this' gets you far less than 'summarise this in three sentences, just the essentials, so a ten-year-old could follow it'.",
+      why: "The most practical way to get good at AI without writing code. Roughly 80% of the gap between colleagues using AI at work comes down to this."
+    },
+    {
+      term: "RAG (Retrieval-Augmented Generation)",
+      sub: "look it up, then answer",
+      tag: "Applied technique",
+      summary: "Before answering, the LLM searches external documents, pulls in the relevant passages and answers with those in front of it. This cuts down on 'hallucinating' things it doesn't know.",
+      ex: "It is like sitting an open-book exam. Rather than answering from memory, you are told to open the book and find the evidence first.",
+      why: "Nearly every chatbot grounded in internal documents, policies or manuals is a RAG setup. It comes up the moment you want to put company data to work with AI."
+    },
+    {
+      term: "Token",
+      sub: "the unit AI is billed in",
+      tag: "Fundamentals",
+      summary: "The smallest unit an LLM processes text in. It might be a whole word, a single character or part of one. Both the price of AI and its speed are counted in tokens.",
+      ex: "'Hello' is one token in English, while the Korean '안녕하세요' is usually three or four. Korean simply eats more tokens than English does.",
+      why: "API cost, response speed and context limits are all measured per token. If you want to estimate what a deployment will cost, you need a feel for tokens."
+    },
+    {
+      term: "Context Window",
+      sub: "how much it can hold at once",
+      tag: "Fundamentals",
+      summary: "The maximum amount of text the AI can 'remember' in one go. Go past that window and it forgets the beginning, or refuses the input outright.",
+      ex: "It resembles the limits of short-term memory — whether or not you can lay an entire thick book open in front of you at once.",
+      why: "Whether you can hand over a long document, a codebase or a full meeting transcript is decided here. It is why new models boast numbers like 'one million tokens'."
+    },
+    {
+      term: "Hallucination",
+      sub: "confidently made up",
+      tag: "Limits & risks",
+      summary: "When the AI invents something untrue and presents it plausibly. It is more dangerous precisely because it gets things wrong with confidence.",
+      ex: "Citing book titles that do not exist, or fabricating court cases and research papers — both have genuinely happened.",
+      why: "The single biggest reason not to take AI output at face value. Checking sources and cross-verifying is basic literacy in the AI era."
+    },
+    {
+      term: "Fine-tuning",
+      sub: "specialising a trained model",
+      tag: "Applied technique",
+      summary: "Taking an already-trained large model and training it further on data from one field, so it becomes more specialised in that field.",
+      ex: "Like teaching someone who already speaks a language fluently a glossary of medical terms so they can interpret in a hospital.",
+      why: "Almost the only straight road to matching a general model to your company's tone, your specialism or your customer-service style. It costs money and time, though, so it is often weighed against RAG."
+    },
+    {
+      term: "Multimodal AI",
+      sub: "eyes and ears, not just text",
+      tag: "Current trends",
+      summary: "AI that understands and handles images, audio, video and documents alongside text. You can show it a photo and ask 'what looks wrong here?'",
+      ex: "Photograph the inside of your fridge and it suggests what you could cook with those ingredients. The input no longer has to be writing.",
+      why: "The mainstream of AI use as of 2026. 'AI' is no longer a chatbot so much as an assistant with eyes and ears."
+    },
+    {
+      term: "Agent (AI Agent)",
+      sub: "it plans and acts, not just answers",
+      tag: "Current trends",
+      summary: "AI that doesn't merely answer but makes its own plan and uses tools — search, email, running code — to carry a task through to the end.",
+      ex: "Say 'sort out my Busan trip next week' and it searches flights and hotels and puts the result on your calendar, all by itself.",
+      why: "The next step, from AI as an answering tool to AI as a doing tool. This is where office automation, coding and customer service get rewritten."
+    },
+    {
+      term: "Embedding",
+      sub: "meaning as coordinates",
+      tag: "Fundamentals",
+      summary: "Turning words, sentences or images into numeric vectors — coordinates — so a computer can compare them. Things that mean similar things sit close together.",
+      ex: "'Puppy' and 'dog' land near each other in vector space, while 'puppy' and 'refrigerator' sit far apart.",
+      why: "The core part in similar-document search, recommendation and RAG. It is exactly why 'searching by meaning' is possible at all."
+    },
+    {
+      term: "Vector Database",
+      sub: "finding the nearest meaning fast",
+      tag: "Applied technique",
+      summary: "A database built specifically to store embeddings (numeric vectors) and find the most similar ones very quickly.",
+      ex: "A librarian who recommends five similar books in a tenth of a second — the tool RAG reaches for when it goes looking through internal documents.",
+      why: "Standard infrastructure for AI search, recommendation and memory systems. Names like Pinecone, Weaviate and pgvector come up constantly."
+    },
+    {
+      term: "Chain of Thought (CoT)",
+      sub: "think it through step by step",
+      tag: "Practical skill",
+      summary: "The technique of telling the AI 'don't answer straight away, think through it in steps'. Accuracy on complex reasoning problems jumps noticeably.",
+      ex: "Same as with a maths problem: 'write out your working step by step' gets far more right answers than 'just give me the answer'.",
+      why: "The core principle behind the strength of recent reasoning models. On a hard problem, that one line — 'think it through step by step' — genuinely works."
+    },
+    {
+      term: "Few-shot / Zero-shot Learning",
+      sub: "a couple of examples, or none",
+      tag: "Practical skill",
+      summary: "Giving the model a handful of examples (few-shot) or none at all (zero-shot) for a brand-new task. No retraining required.",
+      ex: "Show three examples of 'classify them like this' and it will classify the next hundred following that pattern.",
+      why: "The reason you no longer have to retrain a model for every task. Slotting good examples into the prompt is a skill in itself."
+    },
+    {
+      term: "Transformer",
+      sub: "the architecture underneath",
+      tag: "Fundamentals",
+      summary: "The neural network architecture nearly every current LLM is built on. It began with Google's 2017 paper 'Attention is All You Need'.",
+      ex: "In building terms, it is the reinforced concrete frame. The 'T' in ChatGPT's GPT is Transformer.",
+      why: "The real starting point of the AI explosion. Thanks to transformers, a model can work out for itself which parts of a sentence matter."
+    },
+    {
+      term: "Attention",
+      sub: "what relates to what",
+      tag: "Fundamentals",
+      summary: "The mechanism that weights how strongly each word relates to each other word while processing a sentence. It is the heart of the transformer.",
+      ex: "Much like a person reading a long sentence and underlining the key words as they go.",
+      why: "The trick that let AI understand long context. The name sounds hard, but the idea — focus on what matters — is simple."
+    },
+    {
+      term: "RLHF",
+      sub: "trained on human preference",
+      tag: "Applied technique",
+      summary: "Refining the AI using data in which people judged that 'answer A is better than B', so it gives more helpful and safer answers.",
+      ex: "Close to the process of having a new hire write reports and giving feedback each time — 'this one is better' — until they match the house style.",
+      why: "The reason ChatGPT suddenly became an AI that does what you ask. The key technique that turned cleverness into usefulness."
+    },
+    {
+      term: "Open Source vs Closed Model",
+      sub: "weights you can hold vs an API",
+      tag: "Current trends",
+      summary: "The split between models whose weights are published — Llama, Mistral, DeepSeek — and models you can only reach through an API, like GPT, Claude and Gemini.",
+      ex: "Open source is the model you install on your own machine; closed is more like a cloud service you sign up for.",
+      why: "The first fork in the road when weighing security, cost and customisation. For an in-house deployment, which side you pick is the central decision."
+    },
+    {
+      term: "Quantization",
+      sub: "smaller numbers, smaller model",
+      tag: "Applied technique",
+      summary: "Lowering the numeric precision of a model to cut its size and memory use sharply. It lets the same model run on a much smaller computer.",
+      ex: "Like compressing a high-definition video down to a quarter of the size by dropping the quality slightly — minimal loss, large gain in efficiency.",
+      why: "The trick that gets an LLM running on a laptop or a phone. The quiet lead in opening up the on-device AI era."
+    },
+    {
+      term: "MoE (Mixture of Experts)",
+      sub: "call in only the specialists you need",
+      tag: "Current trends",
+      summary: "An architecture holding several 'expert' sub-models that routes each input to only some of them. Total size is large, but the actual computation is partial and so efficient.",
+      ex: "Similar to a hospital where only one or two specialists come into the consulting room, depending on the patient's symptoms.",
+      why: "A shared trait of recent models like GPT-4 and Mixtral. It is the industry's answer to 'how do we run a giant model cheaply?'"
+    },
+    {
+      term: "Function Calling / Tool Use",
+      sub: "the AI reaches for a tool",
+      tag: "Applied technique",
+      summary: "The ability for the AI to call an external function or API mid-answer — a calculator, a search, a database, email — and take the result back.",
+      ex: "Asked 'what's the exchange rate?', it doesn't answer from memory; it calls a real exchange-rate API and shows you the current figure.",
+      why: "The hands and feet of an AI agent. Without it, a chatbot cannot grow into an assistant that actually does the work."
+    },
+    {
+      term: "Diffusion Model",
+      sub: "clearing away the noise",
+      tag: "Fundamentals",
+      summary: "Building a picture by progressively removing noise from an image that starts out as pure noise. It is the principle behind Midjourney, Stable Diffusion and DALL·E.",
+      ex: "Picture a screen of television static gradually sharpening until a landscape photograph emerges. That is roughly it.",
+      why: "All but the standard for image and video generation. It is why AI can produce pictures that look photographic."
+    },
+    {
+      term: "Inference vs Training",
+      sub: "learning it vs using it",
+      tag: "Fundamentals",
+      summary: "Training is the stage where the model learns; inference is the stage where the finished model produces answers. Their cost structures are completely different.",
+      ex: "A student studying from a book is training; sitting in the exam hall solving problems is inference.",
+      why: "The first question when costing an AI deployment. Once you see that training cost is one-off while inference cost recurs daily, the ROI maths gets much easier."
+    },
+    {
+      term: "AI Safety / Alignment",
+      sub: "keeping it pointed the right way",
+      tag: "Limits & risks",
+      summary: "The field of keeping AI in line with human intent and values. It goes well beyond blocking abuse — in the long run it deals with how an AI's goals are set at all.",
+      ex: "Like designing the guardrails on a powerful tool before you hand it to anyone, so that it cannot injure them under any circumstances.",
+      why: "The smarter AI gets, the larger the consequences of it misfiring. This concept sits at the centre of regulation, trust and whether deployment is viable at all."
+    },
+    {
+      term: "AGI (Artificial General Intelligence)",
+      sub: "good at everything, not one thing",
+      tag: "Current trends",
+      summary: "AI that handles nearly any intellectual task a human can, rather than one specific task. It does not exist yet, and it is the industry's largest stated goal.",
+      ex: "If today's AI is a student who is strong in one subject, AGI is the prodigy who is strong in all of them and picks up new fields fast.",
+      why: "The reason AI companies are pouring tens of billions into this. The argument over whether and when it arrives will shape the industry for the next decade."
+    }
+  ];
+
+  const card = document.getElementById('card');
+  const modeLabel = document.getElementById('modeLabel');
+  const termEl = document.getElementById('term');
+  const koTermEl = document.getElementById('koTerm');
+  const tagEl = document.getElementById('tag');
+  const summaryEl = document.getElementById('summary');
+  const exBodyEl = document.getElementById('exBody');
+  const whyBodyEl = document.getElementById('whyBody');
+  const progressEl = document.getElementById('progress');
+  const todayBtn = document.getElementById('todayBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const todayEl = document.getElementById('today');
+
+  const now = new Date();
+  todayEl.textContent = now.toLocaleDateString('en-US', { weekday:'short', month:'long', day:'numeric' });
+
+  function todayIndex() {
+    const d = Math.floor(Date.now() / 86400000);
+    return ((d % TOPICS.length) + TOPICS.length) % TOPICS.length;
+  }
+
+  let currentIdx = todayIndex();
+
+  function render(idx, today) {
+    card.classList.add('swap');
+    setTimeout(() => {
+      const t = TOPICS[idx];
+      modeLabel.textContent = today ? "Today's concept" : 'Another concept';
+      termEl.textContent = t.term;
+      koTermEl.textContent = t.sub;
+      tagEl.textContent = t.tag;
+      summaryEl.textContent = t.summary;
+      exBodyEl.textContent = t.ex;
+      whyBodyEl.textContent = t.why;
+      progressEl.textContent = `${idx + 1} / ${TOPICS.length}`;
+      card.classList.remove('swap');
+    }, 180);
+  }
+
+  render(currentIdx, true);
+
+  todayBtn.addEventListener('click', () => {
+    currentIdx = todayIndex();
+    render(currentIdx, true);
+  });
+
+  nextBtn.addEventListener('click', () => {
+    let next;
+    do { next = Math.floor(Math.random() * TOPICS.length); }
+    while (next === currentIdx && TOPICS.length > 1);
+    currentIdx = next;
+    render(currentIdx, currentIdx === todayIndex());
+  });
+
+  const tabs = document.querySelectorAll('.tab[data-mode]');
+  const panes = document.querySelectorAll('.pane');
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      const mode = t.dataset.mode;
+      tabs.forEach(x => x.classList.toggle('active', x === t));
+      panes.forEach(p => p.classList.toggle('active', p.dataset.pane === mode));
+    });
+  });
+</script>
+</body>
+</html>
