@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Things to do nearby — places worth visiting and ways to spend the day, searched on Google Maps from where you are.">
+<meta name="theme-color" content="#fbfaf7">
+<title>Things To Do Nearby · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1a1916; --muted: #7c776c; --line: #e8e4db;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fbeae5;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  .back { position: fixed; top: 16px; left: 18px; color: var(--muted); text-decoration: none; font-size: 13px; letter-spacing: .04em; }
+  .back:hover { color: var(--accent); }
+  .wrap { max-width: 620px; margin: 0 auto; padding: 64px 22px 70px; }
+  .crumb { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .crumb a { color: var(--accent); text-decoration: none; }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px); font-weight: 900; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+  .desc { color: var(--muted); margin-top: 8px; font-size: 15px; padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+  .loc-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .loc-status { font-size: 14px; color: var(--muted); margin-bottom: 12px; }
+  .loc-status strong { color: var(--ink); font-weight: 600; }
+  .loc-status.ok strong { color: var(--accent); }
+  .locBtn {
+    font-family: 'Spline Sans', sans-serif; font-size: 15px; font-weight: 600;
+    color: #fff; background: var(--accent); border: none; border-radius: 12px;
+    padding: 13px 20px; cursor: pointer; width: 100%; transition: all .15s;
+  }
+  .locBtn:hover { filter: brightness(1.05); }
+  .locBtn:active { transform: scale(0.98); }
+  .label { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin: 18px 0 12px 2px; }
+  .cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (min-width: 520px) { .cats { grid-template-columns: repeat(3, 1fr); } }
+  .play {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px 14px; text-align: center; cursor: pointer; box-shadow: var(--shadow);
+    transition: transform .15s, box-shadow .15s, border-color .15s; user-select: none;
+  }
+  .play:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 14px 30px rgba(26,25,22,0.1); border-color: #d8d2c6; }
+  .play:active { transform: scale(0.97); }
+  .play .emoji { font-size: 30px; display: block; margin-bottom: 8px; }
+  .play .nm { font-size: 15px; font-weight: 600; }
+  .play .sub { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.3; }
+  .pick-card {
+    background: linear-gradient(135deg, #2a2723 0%, #1f1d18 100%);
+    color: #fff; border-radius: 16px; padding: 18px 18px 16px;
+    box-shadow: var(--shadow); margin-bottom: 6px;
+  }
+  .pick-card .pick-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(214,69,42,0.18); color: #ffd6c8;
+    border: 1px solid rgba(214,69,42,0.35);
+    padding: 5px 11px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
+  }
+  .pick-card .pick-name {
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;
+    margin-top: 10px; line-height: 1.2;
+  }
+  .pick-card .pick-desc {
+    font-size: 13px; color: #d4cfc4; margin-top: 6px; line-height: 1.5;
+  }
+  .pick-card .pick-actions {
+    display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;
+  }
+  .pick-card .pick-btn {
+    flex: 1; min-width: 0;
+    font-family: 'Spline Sans', sans-serif; font-size: 13.5px; font-weight: 600;
+    background: rgba(255,255,255,0.08); color: #fff;
+    border: 1px solid rgba(255,214,200,0.35);
+    padding: 10px 12px; border-radius: 999px;
+    cursor: pointer; text-decoration: none; text-align: center;
+    transition: background .15s, border-color .15s, transform .15s;
+  }
+  .pick-card .pick-btn:hover {
+    background: rgba(214,69,42,0.35); border-color: #ffd6c8; transform: translateY(-1px);
+  }
+  .pick-card .pick-btn.primary {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .pick-card .pick-btn.primary:hover {
+    background: #c63d22; border-color: #c63d22;
+  }
+  .manual { margin-top: 22px; }
+  .manual input {
+    width: 100%; font-family: 'Spline Sans', sans-serif; font-size: 15px;
+    padding: 13px 16px; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--card); color: var(--ink); margin-bottom: 10px;
+  }
+  .manual input:focus { outline: none; border-color: var(--accent); }
+  .note { margin-top: 26px; font-size: 12.5px; color: var(--muted); line-height: 1.8; }
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 30px; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+  <a class="back" href="/en/">← U-SOL</a>
+  <div class="wrap">
+    <div class="crumb"><a href="/en/">U-SOL</a> · Things to do</div>
+    <h1>🗺️ Things to do nearby</h1>
+    <p class="desc">Places worth visiting and ways to fill an afternoon, all from where you are. Tap a category and it searches Google Maps around you.</p>
+
+    <div class="loc-card">
+      <div class="loc-status" id="locStatus">📍 No location yet. Tap the button below to find where you are.</div>
+      <button class="locBtn" id="locBtn">Find my location</button>
+    </div>
+
+    <p class="label">Today’s pick</p>
+    <div class="pick-card">
+      <span class="pick-tag" id="pickTag">🎲 What should I do</span>
+      <div class="pick-name" id="pickName">—</div>
+      <div class="pick-desc" id="pickDesc">—</div>
+      <div class="pick-actions">
+        <button type="button" class="pick-btn primary" id="pickMapBtn">🗺️ Show on map</button>
+        <button type="button" class="pick-btn" id="pickRollBtn">🎲 Roll again</button>
+      </div>
+    </div>
+
+    <p class="label">Categories</p>
+    <div class="cats" id="cats">
+      <div class="play" data-q="tourist attraction"><span class="emoji">📍</span><span class="nm">Worth a visit</span><span class="sub">Sights & hotspots</span></div>
+      <div class="play" data-q="park"><span class="emoji">🌳</span><span class="nm">Parks & walks</span><span class="sub">Green & quiet</span></div>
+      <div class="play" data-q="art exhibition"><span class="emoji">🖼️</span><span class="nm">Exhibitions</span><span class="sub">Galleries & museums</span></div>
+      <div class="play" data-q="movie theater"><span class="emoji">🎬</span><span class="nm">Cinema</span><span class="sub">Catch a screening</span></div>
+      <div class="play" data-q="karaoke"><span class="emoji">🎤</span><span class="nm">Karaoke</span><span class="sub">Coin & private rooms</span></div>
+      <div class="play" data-q="board game cafe"><span class="emoji">🎲</span><span class="nm">Board games</span><span class="sub">Friends & dates</span></div>
+      <div class="play" data-q="escape room"><span class="emoji">🔐</span><span class="nm">Escape rooms</span><span class="sub">Puzzles & thrills</span></div>
+      <div class="play" data-q="bowling alley"><span class="emoji">🎳</span><span class="nm">Bowling & pool</span><span class="sub">Go for the strike</span></div>
+      <div class="play" data-q="internet cafe PC bang"><span class="emoji">🖥️</span><span class="nm">PC bang</span><span class="sub">One more round</span></div>
+      <div class="play" data-q="amusement park"><span class="emoji">🎢</span><span class="nm">Amusement park</span><span class="sub">Theme parks</span></div>
+      <div class="play" data-q="shopping mall"><span class="emoji">🛍️</span><span class="nm">Shopping</span><span class="sub">Malls & outlets</span></div>
+      <div class="play" data-q="jjimjilbang sauna spa"><span class="emoji">♨️</span><span class="nm">Sauna & spa</span><span class="sub">Reset and unwind</span></div>
+    </div>
+
+    <div class="manual">
+      <p class="label">Search yourself</p>
+      <input type="text" id="manualInput" placeholder="e.g. riverside park, ballpark, climbing gym, kids café…">
+      <button class="locBtn" id="manualBtn">Search nearby for this</button>
+    </div>
+
+    <p class="note">Categories still search Google Maps even without your location — allowing it just makes “near me” more accurate. Your location stays on this device and is never stored anywhere.</p>
+  </div>
+  <footer>© 2026 U-SOL · <a href="/en/">Back to home</a></footer>
+
+<script>
+  let coords = null;
+  const statusEl = document.getElementById('locStatus');
+
+  document.getElementById('locBtn').addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      statusEl.textContent = 'This browser doesn\u2019t support location. Try searching manually instead.';
+      return;
+    }
+    statusEl.innerHTML = '📡 Finding your location\u2026';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        statusEl.className = 'loc-status ok';
+        statusEl.innerHTML = '✅ <strong>Got your location!</strong> Tap a category and it will search around you.';
+      },
+      (err) => {
+        statusEl.textContent = 'Couldn\u2019t get your location. Check that permission is allowed, or search manually.';
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  });
+
+  function search(query) {
+    let url;
+    if (coords) {
+      url = `https://www.google.com/maps/search/${encodeURIComponent(query)}/@${coords.lat},${coords.lng},15z`;
+    } else {
+      url = `https://www.google.com/maps/search/${encodeURIComponent(query)}`;
+    }
+    window.open(url, '_blank');
+  }
+
+  document.getElementById('cats').addEventListener('click', (e) => {
+    const card = e.target.closest('.play');
+    if (!card) return;
+    search(card.getAttribute('data-q'));
+  });
+  document.getElementById('manualBtn').addEventListener('click', () => {
+    const v = document.getElementById('manualInput').value.trim();
+    if (v) search(v);
+  });
+  document.getElementById('manualInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { const v = e.target.value.trim(); if (v) search(v); }
+  });
+
+  const picks = [
+    { tag: '\u{1F333} A sip of nature', name: 'Walk the local park', desc: 'Twenty minutes under trees clears your head. Stay for the sunset on a bench.', q: 'park' },
+    { tag: '\u{1F5BC}\uFE0F Sensory top-up', name: 'One gallery, one hour', desc: 'A nearby gallery or museum, one photo per room. Weekday afternoons are emptiest.', q: 'art museum' },
+    { tag: '\u{1F3AC} Two hours in the dark', name: 'The cinema down the road', desc: 'First or last showing is the best value. One tub of popcorn is plenty.', q: 'movie theater' },
+    { tag: '\u{1F3A4} Warm up your voice', name: '30 minutes of karaoke', desc: 'Coin karaoke runs about 500 won a song \u2014 short, loud, and no shame in going alone.', q: 'coin karaoke' },
+    { tag: '\u{1F3B2} Switch your brain off', name: 'Board game caf\u00e9', desc: 'Pick something two people can learn in five minutes and play for two hours.', q: 'board game cafe' },
+    { tag: '\u{1F510} An hour of thrills', name: 'One escape room', desc: 'Aim for difficulty 3\u20134. With four people you get teamwork, deduction and a twist.', q: 'escape room' },
+    { tag: '\u{1F3B3} A classic', name: 'One game of bowling', desc: 'Around 6,000 won a game. Forget the score \u2014 one strike makes the day.', q: 'bowling alley' },
+    { tag: '\u2668\uFE0F Recovery time', name: 'Jjimjilbang or spa', desc: 'An hour lying still and tomorrow feels lighter. A cold sikhye is mandatory.', q: 'jjimjilbang sauna' },
+    { tag: '\u{1F6CD}\uFE0F Window shopping', name: 'Mall or outlet', desc: 'Buying nothing is fine. Browse the new arrivals, then sit with a coffee \u2014 that\u2019s the real event.', q: 'shopping mall' },
+    { tag: '\u{1F3A2} A whole day out', name: 'Amusement park', desc: 'Easy as a full-day trip. Evening tickets are cheaper and far less crowded.', q: 'amusement park' },
+    { tag: '\u{1F5FA}\uFE0F Hotspot hunting', name: 'Somewhere worth visiting', desc: 'Landmarks, viewpoints and local sights near you, all on one map.', q: 'tourist attraction' },
+    { tag: '\u{1F305} A loop by the river', name: 'Riverside park', desc: 'Chicken and beer or a bike ride \u2014 either way, the water looks best at dusk.', q: 'riverside park' },
+    { tag: '\u{1F6B6} Around the block', name: 'A good street to walk', desc: 'An hour down unfamiliar alleys and you\u2019ve gained a new neighbourhood.', q: 'walking trail' },
+    { tag: '\u2615 A caf\u00e9 with a view', name: 'Sit somewhere nice', desc: 'Rooftop, big windows, good dessert \u2014 and permission to stay a long time.', q: 'rooftop cafe' },
+    { tag: '\u{1F3AE} One for old times', name: 'Arcade', desc: 'A handful of coins buys punch machines, claw games and rhythm games. You will get competitive.', q: 'arcade' },
+  ];
+
+  let pickIdx = 0;
+  function rollPick() {
+    let next;
+    do { next = Math.floor(Math.random() * picks.length); } while (next === pickIdx && picks.length > 1);
+    pickIdx = next;
+    const p = picks[pickIdx];
+    document.getElementById('pickTag').textContent = p.tag;
+    document.getElementById('pickName').textContent = p.name;
+    document.getElementById('pickDesc').textContent = p.desc;
+    document.getElementById('pickMapBtn').onclick = () => search(p.q);
+  }
+  rollPick();
+  document.getElementById('pickRollBtn').addEventListener('click', rollPick);
+</script>
+</body>
+</html>

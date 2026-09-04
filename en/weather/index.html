@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Weather where you are — the temperature right now, today’s high and low, and the next seven days at a glance.">
+<meta name="theme-color" content="#eef4fc">
+<title>Weather Near You · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef4fc; --ink: #1a1916; --muted: #7a7770; --line: #d8e2f0;
+    --card: #ffffff; --accent: #d6452a; --accent-soft: #fce7e0;
+    --cold: #2c6fc9; --warm: #d6452a;
+    --shadow: 0 1px 2px rgba(26,25,22,0.04), 0 8px 24px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: linear-gradient(180deg, #eef4fc 0%, #f6f9fd 60%, #ffffff 100%);
+    color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    line-height: 1.55; -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 22px 20px 80px; }
+
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back:hover { color: var(--accent); }
+  .today { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  header { margin-bottom: 22px; }
+  h1 {
+    font-family: 'Fraunces', serif; font-size: clamp(28px, 6vw, 40px);
+    font-weight: 900; letter-spacing: -0.02em; line-height: 1.1;
+  }
+  h1 .dot { color: var(--accent); }
+  .subtitle {
+    font-family: 'Fraunces', serif; font-style: italic;
+    color: var(--muted); margin-top: 6px; font-size: 15px;
+  }
+
+  .hero {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 26px 24px; box-shadow: var(--shadow); margin-bottom: 18px;
+  }
+  .hero .place {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--accent); font-weight: 700; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hero .place .pin { font-size: 12px; }
+  .hero .now {
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .hero .icon { font-size: 44px; line-height: 1; }
+  .hero .temp {
+    font-family: 'Fraunces', serif; font-size: clamp(48px, 11vw, 72px);
+    font-weight: 600; line-height: 1; letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero .desc { font-size: 15px; color: var(--muted); margin-left: 2px; }
+
+  .range {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    padding-top: 16px; border-top: 1px dashed var(--line);
+  }
+  .range .item {
+    flex: 1; min-width: 90px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px; background: #f7faff;
+    border-radius: 12px; border: 1px solid var(--line);
+  }
+  .range .item .lbl {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted); font-weight: 600;
+  }
+  .range .item .val {
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .range .item.hi .val { color: var(--warm); }
+  .range .item.lo .val { color: var(--cold); }
+  .range .item.rn .val { color: #2c6fc9; }
+  .range .item .ic { font-size: 18px; }
+
+  .note {
+    margin: 10px 2px 0; font-size: 12px; color: var(--muted);
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .note .retry {
+    background: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: 3px 10px; font-size: 12px; color: var(--ink); cursor: pointer;
+    font-family: inherit;
+  }
+  .note .retry:hover { border-color: var(--accent); color: var(--accent); }
+
+  .forecast { margin-top: 18px; }
+  .forecast-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 18px; box-shadow: var(--shadow);
+  }
+  .forecast-title {
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600;
+    margin-bottom: 14px; padding: 0 4px;
+  }
+  .day-row {
+    display: grid;
+    grid-template-columns: 56px 32px 1fr 64px 64px;
+    align-items: center; gap: 10px;
+    padding: 12px 6px; border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .day-row:first-of-type { border-top: none; }
+  .day-row .d-day { font-weight: 600; }
+  .day-row .d-day .sub { display: block; font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+  .day-row .d-icon { font-size: 20px; text-align: center; }
+  .day-row .d-rain {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; color: #2c6fc9; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .day-row .d-rain.dry { color: var(--muted); }
+  .day-row .d-lo, .day-row .d-hi {
+    font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;
+    text-align: right; font-variant-numeric: tabular-nums;
+  }
+  .day-row .d-lo { color: var(--cold); }
+  .day-row .d-hi { color: var(--warm); }
+
+  .status {
+    text-align: center; padding: 30px 16px;
+    color: var(--muted); font-size: 14px;
+  }
+  .status.error { color: var(--accent); }
+
+  footer { margin-top: 36px; font-size: 12px; color: var(--muted); text-align: center; padding-top: 18px; border-top: 1px solid var(--line); }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise .5s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  @media (max-width: 420px) {
+    .day-row { grid-template-columns: 50px 26px 1fr 54px 54px; gap: 8px; font-size: 13px; }
+    .day-row .d-icon { font-size: 18px; }
+    .day-row .d-lo, .day-row .d-hi { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top reveal">
+    <a class="back" href="/en/">← U-SOL</a>
+    <span class="today" id="today">—</span>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <h1>Weather near you<span class="dot">.</span></h1>
+    <p class="subtitle">The temperature at your location, today’s high and low, and the week ahead</p>
+  </header>
+
+  <section class="hero reveal" style="animation-delay:.1s" id="hero">
+    <div class="place"><span class="pin">📍</span><span id="placeName">Locating…</span></div>
+    <div class="now">
+      <span class="icon" id="nowIcon">⛅</span>
+      <span class="temp" id="nowTemp">—</span>
+      <span class="desc" id="nowDesc">Loading…</span>
+    </div>
+    <div class="range">
+      <div class="item hi">
+        <span class="ic">🔺</span>
+        <div>
+          <div class="lbl">High</div>
+          <div class="val" id="todayHi">—</div>
+        </div>
+      </div>
+      <div class="item lo">
+        <span class="ic">🔻</span>
+        <div>
+          <div class="lbl">Low</div>
+          <div class="val" id="todayLo">—</div>
+        </div>
+      </div>
+      <div class="item rn">
+        <span class="ic">☔</span>
+        <div>
+          <div class="lbl">Rain</div>
+          <div class="val" id="todayRain">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="note" id="note" hidden>
+      <span id="noteText"></span>
+      <button type="button" class="retry" id="retryBtn" hidden>Try again</button>
+    </div>
+  </section>
+
+  <section class="forecast reveal" style="animation-delay:.15s" id="forecast">
+    <div class="forecast-card">
+      <div class="forecast-title">7-day forecast</div>
+      <div id="forecastBody">
+        <div class="status">Loading…</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2026 U-SOL · Data by open-meteo.com</footer>
+</div>
+
+<script>
+  const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const FALLBACK = { lat: 37.5665, lon: 126.9780, name: 'Seoul' };
+
+  function setToday() {
+    const now = new Date();
+    const t = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} (${DAYS[now.getDay()]})`;
+    document.getElementById('today').textContent = t;
+  }
+  setToday();
+
+  function wxInfo(code) {
+    if (code === 0) return { icon: '☀️', desc: 'Clear' };
+    if (code === 1) return { icon: '🌤️', desc: 'Mainly clear' };
+    if (code === 2) return { icon: '⛅', desc: 'Partly cloudy' };
+    if (code === 3) return { icon: '☁️', desc: 'Overcast' };
+    if (code === 45 || code === 48) return { icon: '🌫️', desc: 'Fog' };
+    if (code >= 51 && code <= 57) return { icon: '🌦️', desc: 'Drizzle' };
+    if (code >= 61 && code <= 65) return { icon: '🌧️', desc: 'Rain' };
+    if (code === 66 || code === 67) return { icon: '🌧️', desc: 'Freezing rain' };
+    if (code >= 71 && code <= 77) return { icon: '❄️', desc: 'Snow' };
+    if (code >= 80 && code <= 82) return { icon: '🌦️', desc: 'Showers' };
+    if (code === 85 || code === 86) return { icon: '🌨️', desc: 'Snow showers' };
+    if (code === 95) return { icon: '⛈️', desc: 'Thunderstorm' };
+    if (code === 96 || code === 99) return { icon: '⛈️', desc: 'Storm with hail' };
+    return { icon: '🌡️', desc: '—' };
+  }
+
+  function dayLabel(dateStr, idx) {
+    const d = new Date(dateStr + 'T00:00:00');
+    if (idx === 0) return { main: 'Today', sub: `${d.getMonth()+1}/${d.getDate()}` };
+    if (idx === 1) return { main: 'Tomorrow', sub: `${d.getMonth()+1}/${d.getDate()}` };
+    return { main: DAYS[d.getDay()], sub: `${d.getMonth()+1}/${d.getDate()}` };
+  }
+
+  function showNote(text, withRetry) {
+    const n = document.getElementById('note');
+    document.getElementById('noteText').textContent = text;
+    document.getElementById('retryBtn').hidden = !withRetry;
+    n.hidden = false;
+  }
+  function hideNote() { document.getElementById('note').hidden = true; }
+
+  function getPosition() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) { reject(new Error('unsupported')); return; }
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        err => reject(err),
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 5 * 60 * 1000 }
+      );
+    });
+  }
+
+  async function reverseGeocode(lat, lon) {
+    try {
+      const url = `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en&count=1`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('geocode');
+      const data = await res.json();
+      const r = data.results && data.results[0];
+      if (!r) return null;
+      const parts = [r.admin1, r.admin2, r.name].filter(Boolean);
+      const uniq = [];
+      for (const p of parts) if (!uniq.includes(p)) uniq.push(p);
+      return uniq.join(' ');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function loadWeather(lat, lon) {
+    const url = 'https://api.open-meteo.com/v1/forecast'
+      + `?latitude=${lat}&longitude=${lon}`
+      + '&current=temperature_2m,weather_code'
+      + '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code'
+      + '&timezone=auto&forecast_days=7';
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('weather');
+    return res.json();
+  }
+
+  function renderCurrent(data) {
+    const c = data.current;
+    const d = data.daily;
+    const info = wxInfo(c.weather_code);
+    document.getElementById('nowIcon').textContent = info.icon;
+    document.getElementById('nowTemp').textContent = `${Math.round(c.temperature_2m)}°`;
+    document.getElementById('nowDesc').textContent = info.desc;
+    document.getElementById('todayHi').textContent = `${Math.round(d.temperature_2m_max[0])}°`;
+    document.getElementById('todayLo').textContent = `${Math.round(d.temperature_2m_min[0])}°`;
+    const rain = d.precipitation_probability_max[0];
+    document.getElementById('todayRain').textContent = (rain != null ? `${rain}%` : '—');
+  }
+
+  function renderForecast(data) {
+    const d = data.daily;
+    const rows = d.time.map((dateStr, i) => {
+      const info = wxInfo(d.weather_code[i]);
+      const lbl = dayLabel(dateStr, i);
+      const hi = Math.round(d.temperature_2m_max[i]);
+      const lo = Math.round(d.temperature_2m_min[i]);
+      const rain = d.precipitation_probability_max[i];
+      const rainClass = (rain == null || rain < 20) ? 'dry' : '';
+      const rainTxt = rain == null ? '—' : `${rain}%`;
+      return `
+        <div class="day-row">
+          <div class="d-day">${lbl.main}<span class="sub">${lbl.sub}</span></div>
+          <div class="d-icon" title="${info.desc}">${info.icon}</div>
+          <div class="d-rain ${rainClass}"><span>☔</span><span>${rainTxt}</span></div>
+          <div class="d-lo">${lo}°</div>
+          <div class="d-hi">${hi}°</div>
+        </div>
+      `;
+    }).join('');
+    document.getElementById('forecastBody').innerHTML = rows;
+  }
+
+  function renderError() {
+    document.getElementById('nowTemp').textContent = '—';
+    document.getElementById('nowDesc').textContent = 'Couldn\u2019t load the weather';
+    document.getElementById('forecastBody').innerHTML =
+      '<div class="status error">Couldn\u2019t load the forecast. Please try again in a moment.</div>';
+  }
+
+  async function run() {
+    hideNote();
+    document.getElementById('placeName').textContent = 'Locating\u2026';
+    let lat, lon, name = null, usedFallback = false, geoMsg = '';
+    try {
+      const pos = await getPosition();
+      lat = pos.lat; lon = pos.lon;
+    } catch (e) {
+      usedFallback = true;
+      lat = FALLBACK.lat; lon = FALLBACK.lon; name = FALLBACK.name;
+      if (e && e.code === 1) geoMsg = 'Location access is blocked, so this shows Seoul instead.';
+      else if (e && e.code === 3) geoMsg = 'Locating took too long, so this shows Seoul instead.';
+      else geoMsg = 'Location isn\u2019t available, so this shows Seoul instead.';
+    }
+
+    if (!name) {
+      const place = await reverseGeocode(lat, lon);
+      name = place || `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+    }
+    document.getElementById('placeName').textContent = name;
+
+    try {
+      const data = await loadWeather(lat, lon);
+      renderCurrent(data);
+      renderForecast(data);
+      if (usedFallback) showNote(geoMsg, true);
+    } catch (e) {
+      renderError();
+    }
+  }
+
+  document.getElementById('retryBtn').addEventListener('click', run);
+  run();
+</script>
+</body>
+</html>
