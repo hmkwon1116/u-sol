@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A place to build and experiment with all kinds of ideas. Weather, exchange rates and a daily verse at a glance — plus hand-built tools and games.">
+<meta name="theme-color" content="#fbfdff">
+<title>U-SOL · A place to build and experiment with ideas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1916;
+    --muted: #8a8780;
+    --line: #ecf0f6;
+    --card: #ffffff;
+    --accent: #d6452a;
+    --accent-soft: #fce7e0;
+    --shadow: 0 1px 2px rgba(26,25,22,0.025), 0 4px 12px rgba(26,25,22,0.04);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: linear-gradient(180deg, #fbfdff 0%, #ffffff 60%, #ffffff 100%);
+    color: var(--ink);
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 10px 14px 22px; }
+
+  .backlink {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    text-decoration: none; margin-bottom: 8px;
+    transition: color .15s;
+  }
+  .backlink:hover { color: var(--accent); }
+
+  /* widget stripe — wraps to two lines instead of scrolling */
+  .stripe {
+    display: flex; gap: 5px 5px; align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 5px 9px; font-size: 11.5px;
+    text-decoration: none; color: var(--ink); white-space: nowrap;
+    box-shadow: var(--shadow); flex-shrink: 0;
+    transition: border-color .15s, transform .15s;
+  }
+  a.pill:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .pill .ic { font-size: 12px; }
+  .pill .k { color: var(--muted); font-weight: 500; font-size: 10.5px; }
+  .pill .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* header — compact, single row */
+  header {
+    margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+  }
+  .brand { display: flex; align-items: baseline; gap: 8px; min-width: 0; flex-wrap: wrap; }
+  .logo {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(22px, 4.4vw, 30px); letter-spacing: -0.02em; line-height: 1;
+  }
+  .logo .dot { color: var(--accent); }
+  .tagline {
+    font-family: 'Fraunces', serif; font-size: clamp(11px, 2vw, 12.5px);
+    font-style: italic; color: var(--muted); font-weight: 400;
+  }
+  .visit {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--ink); color: #fff;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 12px; font-weight: 600; padding: 7px 12px;
+    border-radius: 999px; flex-shrink: 0;
+    box-shadow: var(--shadow);
+  }
+  .visit .vk { font-weight: 500; opacity: 0.85; font-size: 11px; }
+  .visit .vv { font-variant-numeric: tabular-nums; }
+
+  /* top spotlight banner — rotates through previews of every service */
+  .term-banner {
+    display: block; text-decoration: none; color: var(--ink);
+    background: linear-gradient(135deg, #1f1d18 0%, #2a2723 100%);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    transition: transform .15s;
+    overflow: hidden;
+  }
+  .term-banner:hover { transform: translateY(-1px); }
+  .term-banner .tb-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; margin-bottom: 8px;
+  }
+  .term-banner .tb-tag {
+    font-size: 13.5px; font-weight: 700; letter-spacing: 0.04em;
+    color: #ffd6c8;
+    background: rgba(214,69,42,0.18);
+    padding: 8px 16px; border-radius: 999px;
+    border: 1px solid rgba(214,69,42,0.35);
+    display: inline-flex; align-items: center;
+  }
+  .term-banner .tb-actions {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .term-banner .tb-next {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 13.5px; font-weight: 700; letter-spacing: 0.04em;
+    color: #fff; background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,214,200,0.35);
+    padding: 8px 16px; border-radius: 999px;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    transition: background .15s, transform .15s, border-color .15s;
+  }
+  .term-banner .tb-next:hover {
+    background: rgba(214,69,42,0.35); border-color: #ffd6c8; transform: translateY(-1px);
+  }
+  .term-banner .tb-next:active { transform: translateY(0); }
+  .term-banner .tb-next .tb-next-ic {
+    display: inline-block; transition: transform .4s ease;
+    font-size: 15px;
+  }
+  .term-banner .tb-next.spin .tb-next-ic { transform: rotate(360deg); }
+  .term-banner .tb-body {
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  .term-banner .tb-body.swap { opacity: 0; transform: translateY(-4px); }
+  .term-banner .tb-term {
+    font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600;
+    color: #fff; line-height: 1.2;
+  }
+  .term-banner .tb-ko {
+    font-size: 11.5px; color: #c9c4ba; margin-left: 6px;
+    font-family: 'Fraunces', serif; font-style: italic;
+  }
+  .term-banner .tb-def {
+    font-size: 12.5px; color: #c9c4ba; line-height: 1.5;
+    margin-top: 4px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* tabs */
+  .tabs {
+    display: flex; gap: 2px; overflow-x: auto;
+    margin-bottom: 12px; border-bottom: 1px solid var(--line);
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0; background: none; border: none;
+    padding: 8px 14px 10px;
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    font-size: 15px; font-weight: 600; color: var(--muted);
+    cursor: pointer; position: relative;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: color .15s;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+  /* tab panels */
+  .panel { display: none; }
+  .panel.active { display: block; animation: rise .22s ease; }
+
+  /* category cards */
+  .cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
+  @media (min-width: 560px) { .cats { grid-template-columns: repeat(3, 1fr); } }
+  .cat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 13px;
+    padding: 12px 13px; text-decoration: none; color: inherit;
+    box-shadow: var(--shadow);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s;
+    position: relative; display: block;
+  }
+  .cat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(26,25,22,0.05), 0 10px 22px rgba(26,25,22,0.07);
+    border-color: #dde3ec;
+  }
+  .cat .emoji { font-size: 22px; display: block; margin-bottom: 4px; line-height: 1.1; }
+  .cat .nm { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; line-height: 1.2; }
+  .cat .desc { font-size: 11.5px; color: var(--muted); margin-top: 3px; line-height: 1.35; }
+  .cat .count { font-size: 10.5px; color: var(--accent); margin-top: 5px; font-weight: 600; }
+  .cat .ko-flag {
+    position: absolute; top: 9px; right: 9px;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--muted); background: #f6f7f9;
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 1px 6px;
+  }
+
+  .notice {
+    font-size: 11.5px; color: var(--muted);
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 8px 11px; margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+  .notice b { color: var(--ink); font-weight: 600; }
+
+  footer {
+    margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--line);
+    font-size: 10.5px; color: var(--muted);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;
+  }
+  footer a { color: var(--muted); }
+  .reveal { opacity: 0; transform: translateY(6px); animation: rise .3s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="/">← U-SOL</a>
+
+  <div class="stripe reveal">
+    <span class="pill">
+      <span class="ic">📅</span><span class="v" id="dateNow">…</span>
+    </span>
+    <span class="pill">
+      <span class="ic">⏰</span><span class="v" id="clock">--:--</span>
+    </span>
+    <a class="pill" id="wxPill" href="/weather/">
+      <span class="ic">🌡️</span><span class="v" id="wxTemp">…</span>
+    </a>
+    <a class="pill" id="rainPill" href="/weather/">
+      <span class="ic">☔</span><span class="v" id="wxRain">…</span>
+    </a>
+    <a class="pill" id="fxPill" href="/fx/">
+      <span class="ic">🇨🇦</span><span class="v" id="fxCad">…</span>
+    </a>
+    <a class="pill" href="/verse/">
+      <span class="ic">🕊️</span><span class="k">Verse</span>
+    </a>
+    <a class="pill" href="/">
+      <span class="ic">🌐</span><span class="k">한국어</span>
+    </a>
+  </div>
+
+  <header class="reveal" style="animation-delay:.05s">
+    <div class="brand">
+      <div class="logo">U-SOL<span class="dot">.</span></div>
+      <div class="tagline">A place to build and experiment with ideas</div>
+    </div>
+    <span class="visit" id="visitBox" aria-label="Visits today">
+      <span class="vk">📊 Today</span>
+      <span class="vv" id="visitCount">…</span>
+    </span>
+  </header>
+
+  <a class="term-banner reveal" id="termBanner" href="/ai/terms/" style="animation-delay:.07s">
+    <div class="tb-head">
+      <span class="tb-tag" id="tbTag">📘 AI Term of the Day</span>
+      <span class="tb-actions">
+        <button type="button" class="tb-next" id="tbNextBtn" aria-label="Show next">
+          <span class="tb-next-ic">🎲</span><span>Next</span>
+        </button>
+      </span>
+    </div>
+    <div class="tb-body" id="tbBody">
+      <div>
+        <span class="tb-term" id="tbTerm">—</span>
+        <span class="tb-ko" id="tbKo"></span>
+      </div>
+      <div class="tb-def" id="tbDef">—</div>
+    </div>
+  </a>
+
+  <div class="notice reveal" style="animation-delay:.075s">
+    <b>Heads up —</b> this is the English edition of the U-SOL hub. Pages marked <b>KO</b> are still written in Korean; the hub itself is fully translated.
+  </div>
+
+  <div class="tabs reveal" style="animation-delay:.08s" role="tablist">
+    <button class="tab active" data-tab="daily" role="tab">Daily Bite</button>
+    <button class="tab" data-tab="life" role="tab">Life</button>
+    <button class="tab" data-tab="news" role="tab">News</button>
+    <button class="tab" data-tab="game" role="tab">Games</button>
+    <button class="tab" data-tab="content" role="tab">Stories</button>
+  </div>
+
+  <div class="panel active" data-panel="daily">
+    <div class="cats">
+      <a class="cat" href="/verse/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🕊️</span>
+        <div class="nm">Verse of the Day</div>
+        <div class="desc">Today's verse, verses for the moment you're in, and a six-verse collection on one page</div>
+        <div class="count">New every day →</div>
+      </a>
+      <a class="cat" href="/english/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🗣️</span>
+        <div class="nm">A Word of English</div>
+        <div class="desc">Everyday English phrases, with pronunciation and example sentences</div>
+        <div class="count">A new phrase daily →</div>
+      </a>
+      <a class="cat" href="/ai/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🤖</span>
+        <div class="nm">AI Knowledge</div>
+        <div class="desc">A fresh core concept each day, plus vetted free learning resources in one place</div>
+        <div class="count">Concepts + free material →</div>
+      </a>
+      <a class="cat" href="/travel/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">✈️</span>
+        <div class="nm">Destination of the Day</div>
+        <div class="desc">A new place every day, and what makes it worth the trip</div>
+        <div class="count">A new spot daily →</div>
+      </a>
+      <a class="cat" href="/research/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">📄</span>
+        <div class="nm">Paper of the Day</div>
+        <div class="desc">30 landmark AI and machine-learning papers, with titles, summaries and links</div>
+        <div class="count">A new paper daily →</div>
+      </a>
+      <a class="cat" href="/touchpoint/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🫧</span>
+        <div class="nm">Touchpoint of the Day</div>
+        <div class="desc">A short reflection on the people, moments and thoughts you brushed past today</div>
+        <div class="count">One piece of today →</div>
+      </a>
+      <a class="cat" href="/canadagoose/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🧊</span>
+        <div class="nm">Canada Goose Picks</div>
+        <div class="desc">A model guide comparing TEI warmth ratings, fill power and price</div>
+        <div class="count">So which one? →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="life">
+    <div class="cats">
+      <a class="cat" href="/weather/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🌡️</span>
+        <div class="nm">Weather Here</div>
+        <div class="desc">Temperature, rain and a 7-day forecast for where you are</div>
+        <div class="count">Right now →</div>
+      </a>
+      <a class="cat" href="/fx/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🇨🇦</span>
+        <div class="nm">Canadian Dollar</div>
+        <div class="desc">The current CAD→KRW rate and how it moved over the past month</div>
+        <div class="count">Today's rate →</div>
+      </a>
+      <a class="cat" href="/food/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🍜</span>
+        <div class="nm">Food Nearby</div>
+        <div class="desc">Search restaurants and cafés around your current location in one tap</div>
+        <div class="count">Around me now →</div>
+      </a>
+      <a class="cat" href="/play/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🗺️</span>
+        <div class="nm">Things to Do Nearby</div>
+        <div class="desc">Places worth visiting and things to do, all on one map</div>
+        <div class="count">Where to today? →</div>
+      </a>
+      <a class="cat" href="/table/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🍱</span>
+        <div class="nm">Today's Table</div>
+        <div class="desc">A balanced spread, plus a weather-matched healthy vs. indulgent pick</div>
+        <div class="count">What's for dinner →</div>
+      </a>
+      <a class="cat" href="/streetwear/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">👕</span>
+        <div class="nm">New Drops</div>
+        <div class="desc">Key pieces from the Supreme and BAPE season drops, and how to style them</div>
+        <div class="count">This week's drops →</div>
+      </a>
+      <a class="cat" href="/lotto/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🎰</span>
+        <div class="nm">Lottery Number Picker</div>
+        <div class="desc">Analyses recent jackpot draws and suggests five sets of six numbers</div>
+        <div class="count">This week's numbers →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="news">
+    <div class="cats">
+      <a class="cat" href="/news/ai/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🤖</span>
+        <div class="nm">AI</div>
+        <div class="desc">The latest on generative AI, LLMs, chips and policy</div>
+        <div class="count">Topic news →</div>
+      </a>
+      <a class="cat" href="/news/bank/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🏦</span>
+        <div class="nm">Internet Banking</div>
+        <div class="desc">What's happening at K bank, KakaoBank and Toss Bank</div>
+        <div class="count">Topic news →</div>
+      </a>
+      <a class="cat" href="/news/entertainment/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🎬</span>
+        <div class="nm">Entertainment</div>
+        <div class="desc">K-pop, drama, film, variety and streaming news</div>
+        <div class="count">Topic news →</div>
+      </a>
+      <a class="cat" href="/news/travel/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">✈️</span>
+        <div class="nm">Travel</div>
+        <div class="desc">Travel trends at home and abroad, plus flights and stays</div>
+        <div class="count">Topic news →</div>
+      </a>
+      <a class="cat" href="/news/invest/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">📈</span>
+        <div class="nm">Investing</div>
+        <div class="desc">Equities, property, interest rates and crypto</div>
+        <div class="count">Topic news →</div>
+      </a>
+      <a class="cat" href="/news/economy/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">💰</span>
+        <div class="nm">Economy</div>
+        <div class="desc">FX, prices, jobs and economic news at home and abroad</div>
+        <div class="count">Topic news →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="game">
+    <div class="cats">
+      <a class="cat" href="/game/tetris/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🟦</span>
+        <div class="nm">Neon Tetris</div>
+        <div class="desc">Classic Tetris, playable by keyboard or touch</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/galaga/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🚀</span>
+        <div class="nm">Neon Galaga</div>
+        <div class="desc">A classic shooter — take down the formation</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/racing/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🏎️</span>
+        <div class="nm">Neon Racer</div>
+        <div class="desc">Switch lanes and dodge obstacles at speed</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/fortress/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">💥</span>
+        <div class="nm">Neon Fortress</div>
+        <div class="desc">Artillery duel — dial in the angle and power to hit the enemy tank</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/dressup/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">👗</span>
+        <div class="nm">Neon Dress-Up</div>
+        <div class="desc">Pick hair, outfits and accessories to style your doll</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/snake/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🐍</span>
+        <div class="nm">Neon Snake</div>
+        <div class="desc">Classic snake — eat, grow longer, don't bite yourself</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/memory/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🃏</span>
+        <div class="nm">Neon Card Match</div>
+        <div class="desc">A memory game — take a peek, then find the pairs</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/clawmachine/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🎯</span>
+        <div class="nm">Neon Claw Machine</div>
+        <div class="desc">Work the claw and grab yourself a plush</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/blockshooter/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">⛏️</span>
+        <div class="nm">Block Shooter FPS</div>
+        <div class="desc">First-person shooting in a Minecraft-style block world</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/ladder/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🪜</span>
+        <div class="nm">Neon Ladder</div>
+        <div class="desc">Set the players and the prizes, then let the ladder decide your luck</div>
+        <div class="count">Start a round →</div>
+      </a>
+      <a class="cat" href="/game/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🎮</span>
+        <div class="nm">See All</div>
+        <div class="desc">The whole mini-game collection on one page</div>
+        <div class="count">Games home →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="content">
+    <div class="cats">
+      <a class="cat" href="/novel/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">📖</span>
+        <div class="nm">Web Novel</div>
+        <div class="desc">A workplace coming-of-age story about the job and the people in it</div>
+        <div class="count">The Day I Became a Manager →</div>
+      </a>
+      <a class="cat" href="/novel/harin/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🎤</span>
+        <div class="nm">Web Novel II</div>
+        <div class="desc">A country girl's climb to becoming the world's biggest idol</div>
+        <div class="count">Jeon Harin, Star on Stage →</div>
+      </a>
+      <a class="cat" href="/essay/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">✒️</span>
+        <div class="nm">Short Essays</div>
+        <div class="desc">Fragments that hold on to work, people and the seasons passing through</div>
+        <div class="count">Eight fragments →</div>
+      </a>
+      <a class="cat" href="/poem/">
+        <span class="ko-flag">KO</span>
+        <span class="emoji">🌙</span>
+        <div class="nm">Short Poems</div>
+        <div class="desc">Brief poems catching the pieces of feeling that drift through a day</div>
+        <div class="count">Eight poems →</div>
+      </a>
+    </div>
+  </div>
+
+  <footer class="reveal" style="animation-delay:.18s">
+    <span>© 2026 U-SOL · A place to build and experiment with ideas</span>
+    <span>made on a Mac mini</span>
+  </footer>
+</div>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const dateStr = `${now.getMonth()+1}/${now.getDate()} (${days[now.getDay()]})`;
+    document.getElementById('dateNow').textContent = dateStr;
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('clock').textContent = `${hh}:${mm}`;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  function getQuickPosition() {
+    return new Promise(resolve => {
+      if (!navigator.geolocation) { resolve(null); return; }
+      let done = false;
+      const finish = v => { if (!done) { done = true; resolve(v); } };
+      navigator.geolocation.getCurrentPosition(
+        p => finish({ lat: p.coords.latitude, lon: p.coords.longitude }),
+        () => finish(null),
+        { enableHighAccuracy: false, timeout: 4000, maximumAge: 10 * 60 * 1000 }
+      );
+      setTimeout(() => finish(null), 4500);
+    });
+  }
+
+  async function loadWeather() {
+    let lat = 37.5665, lon = 126.9780, tz = 'Asia%2FSeoul';
+    const pos = await getQuickPosition();
+    if (pos) { lat = pos.lat; lon = pos.lon; tz = 'auto'; }
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=precipitation_probability_max&timezone=${tz}&forecast_days=1`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const c = data.current;
+      const d = data.daily;
+      document.getElementById('wxTemp').textContent = `${Math.round(c.temperature_2m)}℃`;
+      const rain = d.precipitation_probability_max[0];
+      document.getElementById('wxRain').textContent = (rain != null ? `${rain}%` : '—');
+    } catch (e) {
+      document.getElementById('wxTemp').textContent = '—';
+      document.getElementById('wxRain').textContent = '—';
+    }
+  }
+  loadWeather();
+
+  function fmtWon(v) { return v.toLocaleString('en-US', { maximumFractionDigits: 1 }); }
+  async function loadFx() {
+    try {
+      const res = await fetch('https://api.frankfurter.dev/v1/latest?base=KRW&symbols=CAD');
+      const data = await res.json();
+      const krwPerCad = 1 / data.rates.CAD;
+      document.getElementById('fxCad').textContent = `₩${fmtWon(krwPerCad)}`;
+    } catch (e) {
+      document.getElementById('fxCad').textContent = '—';
+    }
+  }
+  loadFx();
+
+  function activateTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === name));
+  }
+
+  (function setupTabs() {
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => activateTab(tab.dataset.tab));
+    });
+  })();
+
+  (function setupVisitCount() {
+    const el = document.getElementById('visitCount');
+    if (!el) return;
+    const today = new Date().toISOString().slice(0, 10);
+    let data;
+    try { data = JSON.parse(localStorage.getItem('usol.visits') || 'null'); } catch (_) { data = null; }
+    if (!data || data.date !== today) data = { date: today, count: 0 };
+    data.count += 1;
+    try { localStorage.setItem('usol.visits', JSON.stringify(data)); } catch (_) {}
+    el.textContent = data.count.toLocaleString('en-US');
+  })();
+
+  (function setupSpotlightBanner() {
+    const AI = { tag: '📘 AI Term of the Day', href: '/ai/terms/' };
+    const items = [
+      { ...AI, term: 'Transformer', ko: 'attention-based', def: 'A neural network that looks at every word in a sentence at once and weighs how they relate, using attention, to predict what comes next.' },
+      { ...AI, term: 'RAG', ko: 'retrieval-augmented generation', def: 'Search external sources first, then answer grounded in what you found. The standard pattern for cutting hallucination.' },
+      { ...AI, term: 'LoRA', ko: 'low-rank adaptation', def: 'Fine-tuning that slots in small extra matrices instead of retraining the whole model, slashing the cost of training.' },
+      { ...AI, term: 'Embedding', ko: 'meaning as vectors', def: 'Turning words, sentences or images into number vectors that carry meaning. The starting point for semantic search and recommendations.' },
+      { ...AI, term: 'Token', ko: 'the unit of text', def: 'The smallest chunk of text an LLM processes. API pricing, response speed and context limits are all counted in tokens.' },
+      { ...AI, term: 'Hallucination', ko: 'confident fiction', def: 'When a model confidently produces something plausible but untrue. The single biggest weakness of LLMs.' },
+      { ...AI, term: 'Attention', ko: 'weighted focus', def: 'A mechanism that scores how relevant each part of the input is to the part being processed, so the model knows where to focus.' },
+      { ...AI, term: 'Fine-tuning', ko: 'specialising a model', def: 'Training an already-trained model further so it fits a specific domain, voice or task.' },
+      { ...AI, term: 'Quantization', ko: 'fewer bits per weight', def: 'Representing model weights with fewer bits to shrink size and speed things up. The trick that put LLMs on laptops.' },
+      { ...AI, term: 'Agent', ko: 'tools plus reasoning', def: 'An LLM-based system that loops between calling tools and reasoning to carry out multi-step work on its own.' },
+
+      { tag: '💬 English Phrase of the Day', href: '/english/', term: 'It is what it is.', ko: '', def: 'Nothing to be done about it — that is simply the reality.' },
+      { tag: '💬 English Phrase of the Day', href: '/english/', term: 'Hang in there.', ko: '', def: 'Hold on a little longer. You have got this.' },
+      { tag: '📖 English Word of the Day', href: '/english/', term: 'serendipity', ko: 'happy accident', def: 'Unexpected good fortune; a discovery made by chance.' },
+
+      { tag: '🕊️ Verse of the Day', href: '/verse/', term: 'Psalm 23:1', ko: '', def: 'The Lord is my shepherd; I shall not want.' },
+      { tag: '🕊️ Verse of the Day', href: '/verse/', term: 'Matthew 11:28', ko: '', def: 'Come to me, all you who are weary and burdened, and I will give you rest.' },
+      { tag: '🕊️ Verse of the Day', href: '/verse/', term: 'Isaiah 41:10', ko: '', def: 'Do not fear, for I am with you.' },
+
+      { tag: '✈️ Destination of the Day', href: '/travel/', term: 'Seongsan Ilchulbong, Jeju', ko: '', def: 'A UNESCO World Heritage site — sunrise climbing over the crater rim.' },
+      { tag: '✈️ Destination of the Day', href: '/travel/', term: 'Fushimi Inari, Kyoto', ko: '', def: 'A thousand vermilion torii gates, one after another without end.' },
+
+      { tag: '📄 Paper of the Day', href: '/research/', term: 'Attention Is All You Need', ko: 'the Transformer', def: 'A network built from attention alone, no RNN — the foundation under GPT, BERT and Llama.' },
+      { tag: '📄 Paper of the Day', href: '/research/', term: 'Chain-of-Thought Prompting', ko: 'step-by-step reasoning', def: 'One line — "let us think step by step" — sends maths accuracy through the roof.' },
+      { tag: '📄 Paper of the Day', href: '/research/', term: 'LoRA: Low-Rank Adaptation', ko: 'low-rank adaptation', def: 'Train 0.01% of the parameters and still match full fine-tuning.' },
+      { tag: '📄 Paper of the Day', href: '/research/', term: 'RAG: Retrieval-Augmented Generation', ko: '', def: 'Retrieve documents and answer from them — the standard fix for LLM hallucination.' },
+      { tag: '📄 Paper of the Day', href: '/research/', term: 'AlphaFold 2', ko: 'protein structure prediction', def: 'A 50-year problem solved — the model behind the 2024 Nobel Prize in Chemistry.' },
+
+      { tag: '🍲 Today’s Table', href: '/table/', term: 'Doenjang stew spread', ko: '', def: 'Savoury and filling — protein and fermented food on the same table.' },
+      { tag: '🥗 Today’s Table', href: '/table/', term: 'Bibimbap spread', ko: '', def: 'Vegetables across the board — a bowl of many-coloured namul.' },
+      { tag: '🐟 Today’s Table', href: '/table/', term: 'Grilled fish spread', ko: '', def: 'Full of omega-3 — grilled mackerel with a bowl of multigrain rice.' },
+
+      { tag: '🧊 Canada Goose', href: '/canadagoose/', term: 'Expedition Parka', ko: 'the original', def: 'TEI 5 — built for Antarctic research stations, and the template for the whole brand.' },
+      { tag: '🧥 Canada Goose', href: '/canadagoose/', term: 'Langford Parka', ko: 'city cut', def: 'A slim urban silhouette — the pick if you want one coat for the commute too.' },
+      { tag: '✈️ Canada Goose', href: '/canadagoose/', term: 'Chilliwack Bomber', ko: 'waist length', def: 'A waist-length bomber — better if you are driving or moving around a lot.' },
+
+      { tag: '👕 New Drops', href: '/streetwear/', term: 'Supreme Box Logo Hoodie', ko: 'Supreme', def: 'The signature box logo — the centrepiece of the SS26 season.' },
+      { tag: '🦈 New Drops', href: '/streetwear/', term: 'BAPE Shark Full Zip Hoodie', ko: 'BAPE', def: '1st Camo — zip the hood up and it becomes a full-face mask.' },
+      { tag: '👟 New Drops', href: '/streetwear/', term: 'BAPE STA Low', ko: 'BAPE', def: 'The Bapesta low — that signature star logo down the side.' },
+
+      { tag: '📚 Novel of the Day', href: '/novel/', term: 'The Day I Became a Manager', ko: '', def: 'A ten-part workplace novel — starting with Chapter 1, "The Empty Chair".' },
+      { tag: '📖 Novel of the Day', href: '/novel/', term: 'Chapter 3, "Listening"', ko: '', def: 'On the size of a leader, resilience, and holding on to people.' },
+
+      { tag: '🎮 A Quick Round', href: '/game/', term: 'Neon Tetris', ko: '', def: 'Classic Tetris, playable by keyboard or touch.' },
+      { tag: '🚀 A Quick Round', href: '/game/', term: 'Neon Galaga', ko: '', def: 'A classic shooter — take down the formation.' },
+
+      { tag: '🍜 Food Near Me', href: '/food/', term: 'Everything around you, in one tap', ko: '', def: 'Restaurants, cafés, barbecue and Japanese — searched straight on Google Maps.' },
+
+      { tag: '📰 News Today', href: '/news/', term: 'AI · internet banking', ko: '', def: 'Tap a topic and go straight to the latest coverage.' },
+      { tag: '📈 News Today', href: '/news/', term: 'Investing · economy', ko: '', def: 'Top stories by topic, pulled from Google and Naver at once.' },
+
+      { tag: '🫧 Touchpoint of the Day', href: '/touchpoint/', term: 'A nameless face you passed today', ko: '', def: 'Even a touchpoint you only brushed past holds a piece of today.' },
+      { tag: '🫧 Touchpoint of the Day', href: '/touchpoint/', term: 'A quiet "it is alright"', ko: '', def: 'A small comfort tossed off lightly can hold up a whole day.' },
+      { tag: '🫧 Touchpoint of the Day', href: '/touchpoint/', term: 'The sunset outside the window', ko: '', def: 'Nature signals quietly — look up once before it slips by.' }
+    ];
+
+    const banner = document.getElementById('termBanner');
+    const body = document.getElementById('tbBody');
+    const tagEl = document.getElementById('tbTag');
+    const termEl = document.getElementById('tbTerm');
+    const koEl = document.getElementById('tbKo');
+    const defEl = document.getElementById('tbDef');
+    const nextBtn = document.getElementById('tbNextBtn');
+    if (!banner || !body) return;
+
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    let idx = 0;
+    function render(i) {
+      const it = items[i];
+      tagEl.textContent = it.tag;
+      banner.setAttribute('href', it.href);
+      termEl.textContent = it.term;
+      koEl.textContent = it.ko ? `· ${it.ko}` : '';
+      defEl.textContent = it.def;
+    }
+    function swapTo(i) {
+      body.classList.add('swap');
+      setTimeout(() => { render(i); body.classList.remove('swap'); }, 350);
+    }
+    render(0);
+
+    let timer = null;
+    function scheduleAuto() {
+      if (timer) clearInterval(timer);
+      timer = setInterval(() => {
+        idx = (idx + 1) % items.length;
+        swapTo(idx);
+      }, 4500);
+    }
+    scheduleAuto();
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (items.length < 2) return;
+        let nxt;
+        do { nxt = Math.floor(Math.random() * items.length); } while (nxt === idx);
+        idx = nxt;
+        swapTo(idx);
+        nextBtn.classList.add('spin');
+        setTimeout(() => nextBtn.classList.remove('spin'), 400);
+        scheduleAuto();
+      });
+    }
+  })();
+</script>
+</body>
+</html>
