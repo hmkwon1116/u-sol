@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="헬스장 스트릭 — 위치 기반으로 체크인해서 연속 운동 일수를 쌓는 개인용 트래커. 기록은 내 브라우저에만 저장됩니다.">
+<meta name="theme-color" content="#fbfaf7">
+<title>헬스장 스트릭 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --bg2: #fff6f2;
+    --ink: #1a1916; --muted: #8a8780;
+    --line: #eceae4; --card: #ffffff;
+    --accent: #d6452a; --accent-soft: #fce7e0; --accent-dark: #b03721;
+    --sun: #f4a13a; --sun-soft: #ffe8c8;
+    --leaf: #4aa376; --leaf-soft: #d8efe1;
+    --shadow: 0 1px 2px rgba(26,25,22,0.025), 0 4px 12px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 0% 0%, #fff1ea 0%, transparent 48%),
+      radial-gradient(ellipse at 100% 0%, #fdf0e0 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg) 0%, #ffffff 65%, var(--bg2) 100%);
+    color: var(--ink);
+    font-family: 'Spline Sans', 'Noto Sans KR', system-ui, sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .back {
+    position: fixed; top: 16px; left: 18px;
+    color: var(--muted); text-decoration: none; font-size: 13.5px;
+    letter-spacing: .02em; z-index: 20;
+    background: rgba(255,255,255,0.78); backdrop-filter: blur(6px);
+    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
+  }
+  .back:hover { color: var(--accent); border-color: var(--accent); }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 72px 20px 64px; }
+
+  .eyebrow {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+    font-size: 14px; letter-spacing: .04em;
+    color: var(--accent); text-align: center; margin-bottom: 6px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(30px, 6.2vw, 42px); line-height: 1.06;
+    letter-spacing: -0.02em; text-align: center;
+  }
+  .lede {
+    text-align: center; color: var(--muted); font-size: 13.5px;
+    max-width: 420px; margin: 10px auto 24px; line-height: 1.75;
+    word-break: keep-all;
+  }
+
+  /* ── streak hero ── */
+  .hero {
+    position: relative; overflow: hidden;
+    background: var(--card); border: 1px solid var(--line); border-radius: 26px;
+    box-shadow: var(--shadow); padding: 30px 22px 24px; text-align: center;
+    animation: fade .5s ease both;
+  }
+  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .hero::before {
+    content: ""; position: absolute; inset: 0 0 auto; height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--sun));
+  }
+  .flame { font-size: 40px; line-height: 1; display: block; margin-bottom: 2px; filter: grayscale(1) opacity(.45); transition: filter .4s; }
+  .flame.lit { filter: none; animation: flicker 2.4s ease-in-out infinite; }
+  @keyframes flicker {
+    0%, 100% { transform: scale(1) rotate(-1deg); }
+    50% { transform: scale(1.08) rotate(2deg); }
+  }
+  .streak-num {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(64px, 20vw, 104px); line-height: 1;
+    letter-spacing: -0.04em; color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .streak-num.zero { color: #d5d2cb; }
+  .streak-num.pop { animation: pop .6s cubic-bezier(.2,1.4,.4,1) both; }
+  @keyframes pop {
+    0% { transform: scale(.7); opacity: .3; }
+    60% { transform: scale(1.14); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  .streak-label { font-size: 13.5px; color: var(--muted); margin-top: 4px; letter-spacing: .02em; }
+  .stat-row {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 18px;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #fcfbf9; border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 13px; font-size: 12.5px;
+  }
+  .chip .k { color: var(--muted); }
+  .chip .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .chip.on { background: var(--leaf-soft); border-color: #bfe3ce; }
+  .chip.on .k, .chip.on .v { color: #2f7a55; }
+  .chip.off { background: #fff; }
+
+  /* ── check-in ── */
+  .cta { margin: 18px 0 0; }
+  .btn {
+    width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Spline Sans', 'Noto Sans KR', sans-serif;
+    font-size: 16px; font-weight: 700; letter-spacing: .01em;
+    color: #fff; background: var(--accent); border: 1px solid var(--accent);
+    border-radius: 16px; padding: 15px 20px; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(214,69,42,0.22);
+    transition: transform .12s ease, box-shadow .2s, background .2s, opacity .2s;
+  }
+  .btn:hover:not(:disabled) { background: var(--accent-dark); }
+  .btn:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 3px 10px rgba(214,69,42,0.2); }
+  .btn:disabled { cursor: default; opacity: 1; background: #f1efe9; color: #a7a49c; border-color: var(--line); box-shadow: none; }
+  .btn.done { background: var(--leaf); border-color: var(--leaf); color: #fff; box-shadow: 0 6px 18px rgba(74,163,118,0.2); }
+  .btn.ghost {
+    background: var(--card); color: var(--ink); border-color: var(--line);
+    box-shadow: var(--shadow); font-size: 14px; font-weight: 600; padding: 12px 16px;
+  }
+  .btn.ghost:hover:not(:disabled) { background: #fcfbf9; color: var(--accent); border-color: var(--accent); }
+  .btn.busy { opacity: .75; cursor: progress; }
+
+  .msg {
+    margin-top: 12px; font-size: 13.5px; line-height: 1.7; text-align: center;
+    padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line);
+    background: var(--card); word-break: keep-all; display: none;
+  }
+  .msg.show { display: block; animation: fade .3s ease both; }
+  .msg.ok { background: var(--leaf-soft); border-color: #bfe3ce; color: #2f7a55; }
+  .msg.warn { background: var(--sun-soft); border-color: #f7dcb4; color: #96601a; }
+  .msg.err { background: var(--accent-soft); border-color: #f6cfc4; color: var(--accent-dark); }
+  .msg .sub { display: block; font-size: 12px; opacity: .8; margin-top: 4px; }
+
+  /* ── cards ── */
+  .card {
+    margin-top: 16px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 22px; padding: 20px 18px; box-shadow: var(--shadow);
+  }
+  .card h2 {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px;
+    letter-spacing: -0.01em; margin-bottom: 2px;
+  }
+  .card .hint { font-size: 12.5px; color: var(--muted); line-height: 1.7; word-break: keep-all; }
+
+  /* ── calendar ── */
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .cal-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; }
+  .cal-nav { display: flex; gap: 6px; }
+  .navbtn {
+    width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line);
+    background: #fff; color: var(--muted); cursor: pointer; font-size: 13px; line-height: 1;
+  }
+  .navbtn:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+  .navbtn:disabled { opacity: .35; cursor: default; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .dow { text-align: center; font-size: 11px; color: var(--muted); padding-bottom: 4px; letter-spacing: .04em; }
+  .dow.sun { color: #cf6a58; }
+  .day {
+    aspect-ratio: 1 / 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+    border-radius: 12px; font-size: 12.5px; color: #b8b5ad;
+    font-variant-numeric: tabular-nums; position: relative;
+  }
+  .day.in { color: var(--ink); }
+  .day.hit { background: var(--accent); color: #fff; font-weight: 700; box-shadow: 0 2px 8px rgba(214,69,42,0.22); }
+  .day.today { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .day.today.hit { outline-color: var(--accent-dark); }
+  .day.future { opacity: .45; }
+  .cal-foot {
+    display: flex; align-items: center; gap: 14px; justify-content: center;
+    margin-top: 14px; font-size: 12px; color: var(--muted); flex-wrap: wrap;
+  }
+  .lg { display: inline-flex; align-items: center; gap: 5px; }
+  .lg i { width: 11px; height: 11px; border-radius: 4px; display: inline-block; }
+  .lg i.a { background: var(--accent); }
+  .lg i.b { background: #fff; border: 2px solid var(--accent); }
+
+  /* ── gym settings ── */
+  .gym-state {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: #fcfbf9; border: 1px solid var(--line); border-radius: 14px;
+    padding: 12px 14px; margin: 12px 0; font-size: 13px; line-height: 1.7;
+  }
+  .gym-state .ico { font-size: 16px; line-height: 1.5; }
+  .gym-state .coord { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; word-break: break-all; }
+  .radius-row { display: flex; align-items: center; gap: 10px; margin: 14px 0 4px; flex-wrap: wrap; }
+  .radius-row label { font-size: 13px; color: var(--muted); }
+  select {
+    font-family: inherit; font-size: 13.5px; color: var(--ink);
+    background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 8px 12px; cursor: pointer;
+  }
+  select:focus { outline: none; border-color: var(--accent); }
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .btn-row .btn { flex: 1 1 140px; width: auto; }
+  .danger { color: var(--muted); font-size: 12px; background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; font-family: inherit; }
+  .danger:hover { color: var(--accent); }
+  .foot { text-align: center; color: var(--muted); font-size: 11.5px; margin-top: 26px; line-height: 1.8; word-break: keep-all; }
+
+  /* ── confetti ── */
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; overflow: hidden; }
+  .conf {
+    position: absolute; width: 9px; height: 14px; border-radius: 2px;
+    animation: fall 1.5s cubic-bezier(.25,.6,.5,1) forwards;
+  }
+  @keyframes fall {
+    0% { opacity: 1; transform: translate3d(0,0,0) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translate3d(var(--dx), 78vh, 0) rotate(var(--rot)) scale(.7); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<a class="back" href="/">← U-SOL</a>
+<div id="confetti"></div>
+
+<div class="wrap">
+  <div class="eyebrow">daily streak</div>
+  <h1>헬스장 스트릭</h1>
+  <p class="lede">헬스장에 도착해서 체크인하면 연속 일수가 쌓여요. 하루라도 건너뛰면 D1부터 다시.</p>
+
+  <section class="hero">
+    <span class="flame" id="flame">🔥</span>
+    <div class="streak-num zero" id="streakNum">D0</div>
+    <div class="streak-label" id="streakLabel">아직 시작 전이에요</div>
+    <div class="stat-row">
+      <span class="chip"><span class="k">최장 기록</span><span class="v" id="bestVal">D0</span></span>
+      <span class="chip"><span class="k">이번 달</span><span class="v" id="monthVal">0일</span></span>
+      <span class="chip off" id="todayChip"><span class="k">오늘</span><span class="v" id="todayVal">미체크인</span></span>
+    </div>
+
+    <div class="cta">
+      <button class="btn" id="checkBtn">📍 오늘 체크인</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </section>
+
+  <section class="card">
+    <div class="cal-head">
+      <div class="cal-title" id="calTitle">—</div>
+      <div class="cal-nav">
+        <button class="navbtn" id="prevBtn" aria-label="이전 달">‹</button>
+        <button class="navbtn" id="nextBtn" aria-label="다음 달">›</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-foot">
+      <span class="lg"><i class="a"></i> 체크인한 날</span>
+      <span class="lg"><i class="b"></i> 오늘</span>
+      <span id="calCount"></span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>내 헬스장</h2>
+    <p class="hint">등록한 위치 반경 안에 있을 때만 체크인이 인정돼요. 헬스장 안(또는 입구)에서 등록하는 게 가장 정확합니다.</p>
+    <div class="gym-state" id="gymState">
+      <span class="ico">📍</span>
+      <div>
+        <div id="gymText">아직 등록된 헬스장이 없어요.</div>
+        <div class="coord" id="gymCoord"></div>
+      </div>
+    </div>
+    <div class="radius-row">
+      <label for="radiusSel">허용 반경</label>
+      <select id="radiusSel">
+        <option value="100">100m</option>
+        <option value="150" selected>150m (기본)</option>
+        <option value="300">300m</option>
+        <option value="500">500m</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="setGymBtn">여기를 내 헬스장으로 등록</button>
+    </div>
+    <div class="msg" id="gymMsg"></div>
+    <p class="hint" style="margin-top:14px">
+      기록은 이 브라우저에만 저장돼요(localStorage). 서버로 전송되거나 다른 기기와 동기화되지 않습니다.
+      <button class="danger" id="resetBtn">모든 기록 삭제</button>
+    </p>
+  </section>
+
+  <p class="foot">위치 확인은 체크인 버튼을 누른 순간에만 이루어지고, 좌표는 기기 밖으로 나가지 않아요.<br>하루 경계는 내 기기의 자정 기준입니다.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var KEY = 'usol-gym-streak-v1';
+  var DEFAULT_RADIUS = 150;
+
+  /* ── 저장소 ── */
+  function load() {
+    var base = { gym: null, radius: DEFAULT_RADIUS, checkins: [], best: 0 };
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return base;
+      var d = JSON.parse(raw);
+      if (!d || typeof d !== 'object') return base;
+      base.gym = (d.gym && typeof d.gym.lat === 'number' && typeof d.gym.lon === 'number') ? d.gym : null;
+      base.radius = typeof d.radius === 'number' && d.radius > 0 ? d.radius : DEFAULT_RADIUS;
+      base.checkins = Array.isArray(d.checkins) ? d.checkins.filter(isDayKey) : [];
+      base.best = typeof d.best === 'number' && d.best > 0 ? d.best : 0;
+      base.checkins = dedupeSort(base.checkins);
+      return base;
+    } catch (e) { return base; }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { show(msgEl, 'err', '기록을 저장하지 못했어요.', '브라우저의 시크릿 모드이거나 저장 공간이 가득 찼을 수 있어요.'); }
+  }
+  var state = load();
+
+  /* ── 날짜 유틸 (로컬 시간, 자정 경계) ── */
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function dayKey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function isDayKey(s) { return typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s); }
+  function keyToDate(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function diffDays(a, b) { return Math.round((keyToDate(a) - keyToDate(b)) / 86400000); }
+  function dedupeSort(list) {
+    var seen = {}, out = [];
+    for (var i = 0; i < list.length; i++) { if (!seen[list[i]]) { seen[list[i]] = 1; out.push(list[i]); } }
+    return out.sort();
+  }
+  function todayKey() { return dayKey(new Date()); }
+
+  /* ── 스트릭 계산 ── */
+  function currentStreak(list) {
+    if (!list.length) return 0;
+    var last = list[list.length - 1];
+    var gap = diffDays(todayKey(), last);
+    if (gap > 1 || gap < 0) return 0;          // 하루 이상 건너뛰면 리셋
+    var streak = 1;
+    for (var i = list.length - 1; i > 0; i--) {
+      if (diffDays(list[i], list[i - 1]) === 1) streak++; else break;
+    }
+    return streak;
+  }
+  function bestStreak(list) {
+    var best = 0, run = 0;
+    for (var i = 0; i < list.length; i++) {
+      run = (i > 0 && diffDays(list[i], list[i - 1]) === 1) ? run + 1 : 1;
+      if (run > best) best = run;
+    }
+    return best;
+  }
+
+  /* ── Haversine (m) ── */
+  function haversine(lat1, lon1, lat2, lon2) {
+    var R = 6371000, rad = Math.PI / 180;
+    var dLat = (lat2 - lat1) * rad, dLon = (lon2 - lon1) * rad;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+  }
+  function fmtDist(m) { return m < 1000 ? Math.round(m) + 'm' : (m / 1000).toFixed(1) + 'km'; }
+
+  /* ── DOM ── */
+  var $ = function (id) { return document.getElementById(id); };
+  var streakNum = $('streakNum'), streakLabel = $('streakLabel'), flame = $('flame');
+  var bestVal = $('bestVal'), monthVal = $('monthVal'), todayChip = $('todayChip'), todayVal = $('todayVal');
+  var checkBtn = $('checkBtn'), msgEl = $('msg'), gymMsg = $('gymMsg');
+  var gymText = $('gymText'), gymCoord = $('gymCoord'), radiusSel = $('radiusSel');
+  var setGymBtn = $('setGymBtn'), resetBtn = $('resetBtn');
+  var calGrid = $('calGrid'), calTitle = $('calTitle'), calCount = $('calCount');
+  var prevBtn = $('prevBtn'), nextBtn = $('nextBtn');
+
+  function show(el, kind, text, sub) {
+    el.className = 'msg show ' + kind;
+    el.innerHTML = '';
+    el.appendChild(document.createTextNode(text));
+    if (sub) {
+      var s = document.createElement('span');
+      s.className = 'sub'; s.textContent = sub;
+      el.appendChild(s);
+    }
+  }
+  function hide(el) { el.className = 'msg'; }
+
+  /* ── 렌더 ── */
+  var viewDate = new Date();
+  viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
+
+  function render(opts) {
+    opts = opts || {};
+    var list = state.checkins;
+    var cur = currentStreak(list);
+    var best = Math.max(bestStreak(list), state.best || 0);
+    if (best !== state.best) { state.best = best; save(); }
+
+    streakNum.textContent = 'D' + cur;
+    streakNum.className = 'streak-num' + (cur === 0 ? ' zero' : '') + (opts.pop ? ' pop' : '');
+    if (opts.pop) { void streakNum.offsetWidth; }
+    flame.className = 'flame' + (cur > 0 ? ' lit' : '');
+
+    var done = list.indexOf(todayKey()) !== -1;
+    if (done) streakLabel.textContent = cur + '일 연속 — 오늘도 해냈어요!';
+    else if (cur > 0) streakLabel.textContent = '어제까지 ' + cur + '일 연속 — 오늘 체크인하면 D' + (cur + 1);
+    else if (list.length) streakLabel.textContent = '스트릭이 끊겼어요. 오늘 다시 D1부터!';
+    else streakLabel.textContent = '아직 시작 전이에요';
+
+    bestVal.textContent = 'D' + best;
+
+    var now = new Date(), mk = now.getFullYear() + '-' + pad(now.getMonth() + 1);
+    var mcount = 0;
+    for (var i = 0; i < list.length; i++) if (list[i].slice(0, 7) === mk) mcount++;
+    monthVal.textContent = mcount + '일';
+
+    todayVal.textContent = done ? '완료 ✓' : '미체크인';
+    todayChip.className = 'chip ' + (done ? 'on' : 'off');
+
+    checkBtn.disabled = done;
+    checkBtn.className = 'btn' + (done ? ' done' : '');
+    checkBtn.textContent = done ? '✓ 오늘은 완료!' : '📍 오늘 체크인';
+
+    radiusSel.value = String(state.radius);
+    if (state.gym) {
+      gymText.textContent = '헬스장이 등록돼 있어요.' + (state.gym.savedAt ? ' (' + new Date(state.gym.savedAt).toLocaleDateString('ko-KR') + ' 등록)' : '');
+      gymCoord.textContent = state.gym.lat.toFixed(5) + ', ' + state.gym.lon.toFixed(5) +
+        (state.gym.acc ? ' · 정확도 ±' + Math.round(state.gym.acc) + 'm' : '');
+      setGymBtn.textContent = '지금 위치로 다시 등록';
+    } else {
+      gymText.textContent = '아직 등록된 헬스장이 없어요.';
+      gymCoord.textContent = '먼저 헬스장에서 아래 버튼을 눌러 위치를 등록해 주세요.';
+      setGymBtn.textContent = '여기를 내 헬스장으로 등록';
+    }
+
+    renderCalendar();
+  }
+
+  var DOW = ['일', '월', '화', '수', '목', '금', '토'];
+  function renderCalendar() {
+    var y = viewDate.getFullYear(), m = viewDate.getMonth();
+    calTitle.textContent = y + '년 ' + (m + 1) + '월';
+    calGrid.innerHTML = '';
+    for (var d = 0; d < 7; d++) {
+      var h = document.createElement('div');
+      h.className = 'dow' + (d === 0 ? ' sun' : '');
+      h.textContent = DOW[d];
+      calGrid.appendChild(h);
+    }
+    var first = new Date(y, m, 1).getDay();
+    var days = new Date(y, m + 1, 0).getDate();
+    for (var i = 0; i < first; i++) calGrid.appendChild(document.createElement('div'));
+    var tk = todayKey(), hits = 0;
+    for (var day = 1; day <= days; day++) {
+      var k = y + '-' + pad(m + 1) + '-' + pad(day);
+      var cell = document.createElement('div');
+      var cls = 'day in';
+      if (state.checkins.indexOf(k) !== -1) { cls += ' hit'; hits++; }
+      if (k === tk) cls += ' today';
+      if (diffDays(k, tk) > 0) cls += ' future';
+      cell.className = cls;
+      cell.textContent = day;
+      cell.title = k + (state.checkins.indexOf(k) !== -1 ? ' · 체크인 완료' : '');
+      calGrid.appendChild(cell);
+    }
+    calCount.textContent = '· 이 달 ' + hits + '일';
+    var now = new Date();
+    nextBtn.disabled = (y > now.getFullYear()) || (y === now.getFullYear() && m >= now.getMonth());
+  }
+
+  prevBtn.onclick = function () { viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1); renderCalendar(); };
+  nextBtn.onclick = function () { viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1); renderCalendar(); };
+
+  /* ── 축하 애니메이션 ── */
+  function celebrate() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var box = $('confetti');
+    var colors = ['#d6452a', '#f4a13a', '#4aa376', '#ffd166', '#b03721'];
+    for (var i = 0; i < 36; i++) {
+      var p = document.createElement('div');
+      p.className = 'conf';
+      p.style.left = (12 + Math.random() * 76) + 'vw';
+      p.style.top = (14 + Math.random() * 14) + 'vh';
+      p.style.background = colors[i % colors.length];
+      p.style.setProperty('--dx', (Math.random() * 200 - 100) + 'px');
+      p.style.setProperty('--rot', (Math.random() * 900 - 450) + 'deg');
+      p.style.animationDelay = (Math.random() * 0.25) + 's';
+      box.appendChild(p);
+      (function (node) { setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 2200); })(p);
+    }
+  }
+
+  /* ── 위치 가져오기 ── */
+  function geoErrorText(err) {
+    if (!err) return ['위치를 가져오지 못했어요.', '잠시 후 다시 시도해 주세요.'];
+    switch (err.code) {
+      case 1: return ['위치 권한이 거부됐어요.', '브라우저 주소창의 자물쇠 아이콘 → 위치 권한을 "허용"으로 바꾼 뒤 다시 시도해 주세요. (iOS는 설정 > 개인정보 보호 > 위치 서비스도 확인)'];
+      case 2: return ['현재 위치를 확인할 수 없어요.', '실내에서는 GPS 신호가 약할 수 있어요. Wi-Fi를 켜거나 창가/입구 쪽에서 다시 시도해 보세요.'];
+      case 3: return ['위치 확인 시간이 초과됐어요.', '신호를 잡는 데 시간이 걸리고 있어요. 다시 한 번 눌러 주세요.'];
+      default: return ['위치를 가져오지 못했어요.', '잠시 후 다시 시도해 주세요.'];
+    }
+  }
+  function getPosition(cb) {
+    if (!navigator.geolocation) {
+      cb({ code: 0, unsupported: true });
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      function (pos) { cb(null, pos); },
+      function (err) { cb(err); },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  }
+  function unsupportedText() {
+    var insecure = location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1';
+    return insecure
+      ? ['이 브라우저에서 위치 기능을 쓸 수 없어요.', 'HTTPS로 접속해야 위치 확인이 가능합니다.']
+      : ['이 브라우저는 위치 기능을 지원하지 않아요.', '다른 브라우저에서 열어 보세요.'];
+  }
+  function busy(btn, on, text) {
+    btn.disabled = on;
+    btn.classList.toggle('busy', on);
+    if (on) { btn.dataset.prev = btn.textContent; btn.textContent = text; }
+    else if (btn.dataset.prev) { btn.textContent = btn.dataset.prev; delete btn.dataset.prev; }
+  }
+
+  /* ── 체크인 ── */
+  checkBtn.onclick = function () {
+    hide(msgEl);
+    if (state.checkins.indexOf(todayKey()) !== -1) { render(); return; }
+    if (!state.gym) {
+      show(msgEl, 'warn', '먼저 헬스장 위치를 등록해 주세요.', '아래 "내 헬스장" 카드에서 현재 위치를 헬스장으로 등록할 수 있어요.');
+      return;
+    }
+    busy(checkBtn, true, '위치 확인 중…');
+    getPosition(function (err, pos) {
+      busy(checkBtn, false);
+      if (err) {
+        var t = err.unsupported ? unsupportedText() : geoErrorText(err);
+        show(msgEl, 'err', t[0], t[1]);
+        render();
+        return;
+      }
+      var lat = pos.coords.latitude, lon = pos.coords.longitude, acc = pos.coords.accuracy || 0;
+      var dist = haversine(state.gym.lat, state.gym.lon, lat, lon);
+      if (dist > state.radius) {
+        var sub = '등록한 헬스장에서 약 ' + fmtDist(dist) + ' 떨어져 있어요 (허용 반경 ' + state.radius + 'm, 위치 정확도 ±' + Math.round(acc) + 'm).';
+        if (dist - acc <= state.radius) sub += ' 실내라 위치 오차가 클 수 있어요 — 반경을 늘리거나 잠시 후 다시 시도해 보세요.';
+        show(msgEl, 'warn', '헬스장 근처가 아니에요.', sub);
+        render();
+        return;
+      }
+      var tk = todayKey();
+      var prev = currentStreak(state.checkins);
+      state.checkins = dedupeSort(state.checkins.concat([tk]));
+      var cur = currentStreak(state.checkins);
+      if (cur > state.best) state.best = cur;
+      save();
+      viewDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      render({ pop: true });
+      celebrate();
+      var headline = 'D' + cur + ' 체크인 완료! 💪';
+      var sub2 = '헬스장까지 ' + fmtDist(dist) + ' — 확인됐어요.';
+      if (cur === 1 && prev === 0) sub2 += ' 오늘부터 다시 시작이에요.';
+      else if (cur === state.best && cur > 1) sub2 += ' 최장 기록 경신!';
+      show(msgEl, 'ok', headline, sub2);
+    });
+  };
+
+  /* ── 헬스장 등록 ── */
+  setGymBtn.onclick = function () {
+    hide(gymMsg);
+    if (state.gym && !confirm('등록된 헬스장 위치를 지금 위치로 바꿀까요?\n(체크인 기록과 스트릭은 그대로 유지됩니다)')) return;
+    busy(setGymBtn, true, '위치 확인 중…');
+    getPosition(function (err, pos) {
+      busy(setGymBtn, false);
+      if (err) {
+        var t = err.unsupported ? unsupportedText() : geoErrorText(err);
+        show(gymMsg, 'err', t[0], t[1]);
+        return;
+      }
+      state.gym = {
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude,
+        acc: pos.coords.accuracy || 0,
+        savedAt: Date.now()
+      };
+      save();
+      render();
+      show(gymMsg, 'ok', '이 위치를 내 헬스장으로 등록했어요.',
+        '앞으로 반경 ' + state.radius + 'm 안에서만 체크인이 인정됩니다.' +
+        (state.gym.acc > 60 ? ' 지금 위치 정확도가 ±' + Math.round(state.gym.acc) + 'm로 낮은 편이라, 신호가 좋은 곳에서 다시 등록하면 더 정확해요.' : ''));
+    });
+  };
+
+  radiusSel.onchange = function () {
+    state.radius = parseInt(radiusSel.value, 10) || DEFAULT_RADIUS;
+    save();
+    show(gymMsg, 'ok', '허용 반경을 ' + state.radius + 'm로 바꿨어요.', '');
+  };
+
+  resetBtn.onclick = function () {
+    if (!confirm('헬스장 위치와 모든 체크인 기록을 삭제할까요?\n되돌릴 수 없습니다.')) return;
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    state = { gym: null, radius: DEFAULT_RADIUS, checkins: [], best: 0 };
+    viewDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    hide(msgEl);
+    render();
+    show(gymMsg, 'ok', '모든 기록을 삭제했어요.', '');
+  };
+
+  // 자정을 넘겨 탭이 다시 활성화되면 날짜 기준을 새로 계산
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) render(); });
+
+  render();
+})();
+</script>
+</body>
+</html>
