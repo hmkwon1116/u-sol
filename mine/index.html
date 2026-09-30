@@ -117,6 +117,44 @@
     border-radius: 6px; padding: 1px 6px; margin: 0 1px;
   }
 
+  /* ── key targets ── */
+  .keys {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    margin-top: 10px; min-height: 76px;
+  }
+  .keys.off { opacity: .3; }
+  .keys .cap {
+    width: 64px; height: 64px; border-radius: 15px;
+    background: #fff; border: 1px solid var(--line); border-bottom-width: 4px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-weight: 900; font-size: 28px; line-height: 1;
+    letter-spacing: -.02em; box-shadow: var(--shadow);
+    transition: transform .1s, background .12s, border-color .12s, color .12s;
+  }
+  .keys .cap em {
+    font-family: 'Spline Sans', sans-serif; font-style: normal; font-weight: 600;
+    font-size: 9.5px; letter-spacing: .04em; color: var(--muted); margin-top: 3px;
+  }
+  .keys .cap.down {
+    background: var(--accent-soft); border-color: var(--accent); color: var(--accent);
+    transform: translateY(3px); border-bottom-width: 1px;
+  }
+  .keys .cap.down em { color: var(--accent); }
+  .keys .plus { font-size: 19px; color: var(--muted); font-weight: 600; }
+  .keys.hit .cap { background: #e9f7ed; border-color: #59b371; color: #2f8f4c; }
+  .keys.hit .cap em { color: #4f9c66; }
+  .keys.miss { animation: missShake .3s ease; }
+  .keys.miss .cap { background: #fdecea; border-color: var(--accent); color: var(--accent); }
+  @keyframes missShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+  @media (max-width: 480px) {
+    .keys { gap: 11px; min-height: 66px; }
+    .keys .cap { width: 56px; height: 56px; font-size: 24px; }
+  }
+
   /* ── progress ── */
   .prog-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
   .prog {
@@ -270,7 +308,7 @@
 <div class="wrap">
   <div class="eyebrow">Diamond Mine</div>
   <h1>다이아 채굴</h1>
-  <p class="lede">게임머니로 흙 한 포대를 사고, 양손 검지로 채를 털어 광물을 걸러냅니다. 2000원짜리 다이아몬드는 0.3%.</p>
+  <p class="lede">게임머니로 흙 한 포대를 사고, 화면에 뜬 두 글자를 양손 검지로 동시에 눌러 채를 텁니다. 2000원짜리 다이아몬드는 0.3%.</p>
 
   <div class="wallet">
     <div class="w-money">
@@ -305,6 +343,12 @@
           <ellipse cx="100" cy="40" rx="66" ry="15" fill="none" stroke="#8d6440" stroke-width="2.5"/>
         </svg>
       </div>
+    </div>
+
+    <div class="keys off" id="keys">
+      <div class="cap" id="capL">·<em>왼손 검지</em></div>
+      <div class="plus">+</div>
+      <div class="cap" id="capR">·<em>오른손 검지</em></div>
     </div>
 
     <div class="prog-row">
@@ -425,6 +469,7 @@
   var elMoney = $('money'), elCharge = $('charge'), elChargeT = $('chargeT');
   var elStage = $('stage'), elSieve = $('sieve'), elMud = document.getElementById('mud');
   var elBar = $('progBar'), elNum = $('progNum'), elHint = $('hint');
+  var elKeys = $('keys'), elCapL = $('capL'), elCapR = $('capR');
   var elMain = $('mainBtn'), elTap = $('tapBtn');
   var elVeil = $('veil'), elRes = $('res'), elFlash = $('flash');
   var elMole = $('mole'), elMoleBox = $('moleBox'), elMoleCount = $('moleCount'),
@@ -508,6 +553,7 @@
   /* ───────── game state ───────── */
   var state = 'idle'; // idle | playing | mole | result
   var count = 0, moleAt = -1, moleDone = false;
+  var target = { l: null, r: null }; // 이번 털기에 지정된 양손 검지 키
 
   function renderProg() {
     elBar.style.width = (count / SHAKES * 100) + '%';
@@ -535,7 +581,7 @@
   function setHint(h) { elHint.innerHTML = h; }
 
   var IDLE_HINT = '흙을 사면 시작합니다. 시작 후 <kbd>Enter</kbd>로도 구매돼요.';
-  var PLAY_HINT = '왼손 <kbd>R T F G V B C D E</kbd> 중 하나와<br>오른손 <kbd>Y U H J N M K I O</kbd> 중 하나를 <b>동시에</b> 눌러 채를 터세요.';
+  var PLAY_HINT = '지정된 <b>두 글자만</b> 통합니다. 왼손·오른손 검지로 <b>동시에</b> 누르세요.<br>다른 키를 누르면 헛손질이 됩니다.';
 
   /* ───────── dirt particles ───────── */
   function spray() {
@@ -563,6 +609,7 @@
     count = 0; moleDone = false;
     moleAt = Math.random() < MOLE_CHANCE ? 4 + ((Math.random() * (SHAKES - 7)) | 0) : -1;
     state = 'playing';
+    newTarget();
     renderProg(); renderWallet(); setHint(PLAY_HINT);
     beep(300, 0.1, 'square', 0.04);
   }
@@ -578,9 +625,10 @@
     beep(180 + Math.random() * 90, 0.06, 'square', 0.035);
     renderProg(); syncBtn();
 
-    if (count >= SHAKES) { state = 'result'; save(); setTimeout(function () { finish(false); }, 320); return; }
-    if (!moleDone && moleAt === count) { save(); setTimeout(startMole, 220); return; }
+    if (count >= SHAKES) { state = 'result'; clearTarget(); save(); setTimeout(function () { finish(false); }, 320); return; }
+    if (!moleDone && moleAt === count) { clearTarget(); save(); setTimeout(startMole, 220); return; }
     if (S.shakes % 5 === 0) save();
+    newTarget();
   }
 
   function draw() {
@@ -663,6 +711,7 @@
   function closeRes() {
     elVeil.classList.remove('on');
     state = 'idle'; count = 0;
+    clearTarget();
     renderProg(); setHint(IDLE_HINT); renderWallet();
   }
 
@@ -701,6 +750,7 @@
     elMole.classList.remove('on');
     if (ok) {
       state = 'playing';
+      newTarget();
       setHint('두더지를 쫓아냈습니다! 계속 터세요.<br>' + PLAY_HINT);
       beep(880, 0.2, 'sine', 0.06);
       syncBtn();
@@ -713,29 +763,77 @@
   }
 
   /* ───────── keyboard ───────── */
-  var LEFT = { r:1, t:1, f:1, g:1, v:1, b:1, c:1, d:1, e:1 };
-  var RIGHT = { y:1, u:1, h:1, j:1, n:1, m:1, k:1, i:1, o:1 };
-  var downL = {}, downR = {}, lastShakeAt = 0;
+  var LEFT = ['r', 't', 'f', 'g', 'v', 'b', 'c', 'd', 'e'];
+  var RIGHT = ['y', 'u', 'h', 'j', 'n', 'm', 'k', 'i', 'o'];
+  var downL = 0, downR = 0, lastShakeAt = 0, lastMissAt = 0;
 
-  function latest(map) {
-    var t = 0;
-    for (var k in map) if (map[k] > t) t = map[k];
-    return t;
+  /* 한글 입력 상태에서도 물리 키를 읽는다 */
+  function physKey(e) {
+    var c = e.code || '';
+    if (/^Key[A-Z]$/.test(c)) return c.charAt(3).toLowerCase();
+    return (e.key || '').toLowerCase();
+  }
+
+  function pick(list, not) {
+    var k;
+    do { k = list[(Math.random() * list.length) | 0]; } while (k === not);
+    return k;
+  }
+
+  function newTarget() {
+    target = { l: pick(LEFT, target.l), r: pick(RIGHT, target.r) };
+    downL = 0; downR = 0;
+    renderTarget();
+  }
+
+  function clearTarget() {
+    target = { l: null, r: null };
+    downL = 0; downR = 0;
+    renderTarget();
+  }
+
+  function renderTarget() {
+    var on = !!(target.l && target.r);
+    if (on) elKeys.classList.remove('off'); else elKeys.classList.add('off');
+    elCapL.innerHTML = (on ? target.l.toUpperCase() : '·') + '<em>왼손 검지</em>';
+    elCapR.innerHTML = (on ? target.r.toUpperCase() : '·') + '<em>오른손 검지</em>';
+    if (downL) elCapL.classList.add('down'); else elCapL.classList.remove('down');
+    if (downR) elCapR.classList.add('down'); else elCapR.classList.remove('down');
+    if (elTap) elTap.textContent = on
+      ? '👐 ' + target.l.toUpperCase() + ' + ' + target.r.toUpperCase() + ' 대신 여기를 탭'
+      : '👐 채 털기 (터치)';
+  }
+
+  function flashKeys(cls) {
+    elKeys.classList.remove('hit', 'miss');
+    void elKeys.offsetWidth;
+    elKeys.classList.add(cls);
+    setTimeout(function () { elKeys.classList.remove(cls); }, cls === 'miss' ? 320 : 200);
+  }
+
+  function missKey() {
+    var now = Date.now();
+    if (now - lastMissAt < 160) return;
+    lastMissAt = now;
+    downL = 0; downR = 0;
+    renderTarget();
+    flashKeys('miss');
+    beep(110, 0.12, 'sawtooth', 0.035);
   }
 
   function tryPair() {
+    if (!downL || !downR) return;
+    if (Math.abs(downL - downR) > PAIR_WINDOW) { missKey(); return; }
     var now = Date.now();
-    var tl = latest(downL), tr = latest(downR);
-    if (!tl || !tr) return;
-    if (Math.abs(tl - tr) > PAIR_WINDOW) return;
     if (now - lastShakeAt < 70) return;
     lastShakeAt = now;
-    downL = {}; downR = {};
+    downL = 0; downR = 0;
+    flashKeys('hit');
     doShake();
   }
 
   document.addEventListener('keydown', function (e) {
-    var k = (e.key || '').toLowerCase();
+    var k = physKey(e);
 
     if (k === ' ' || e.code === 'Space') {
       e.preventDefault();
@@ -750,18 +848,20 @@
     }
     if (k === 'escape' && state === 'result') { closeRes(); return; }
 
-    if (state !== 'playing') return;
-    if (LEFT[k]) { downL[k] = Date.now(); tryPair(); }
-    else if (RIGHT[k]) { downR[k] = Date.now(); tryPair(); }
+    if (state !== 'playing' || !target.l) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (k === target.l) { downL = Date.now(); renderTarget(); tryPair(); }
+    else if (k === target.r) { downR = Date.now(); renderTarget(); tryPair(); }
+    else if (k.length === 1 && k >= 'a' && k <= 'z') { e.preventDefault(); missKey(); }
   });
 
   document.addEventListener('keyup', function (e) {
-    var k = (e.key || '').toLowerCase();
-    if (LEFT[k]) delete downL[k];
-    else if (RIGHT[k]) delete downR[k];
+    var k = physKey(e);
+    if (k === target.l) { downL = 0; renderTarget(); }
+    else if (k === target.r) { downR = 0; renderTarget(); }
   });
 
-  window.addEventListener('blur', function () { downL = {}; downR = {}; });
+  window.addEventListener('blur', function () { downL = 0; downR = 0; renderTarget(); });
 
   /* ───────── buttons ───────── */
   elMain.addEventListener('click', startRound);
@@ -788,7 +888,7 @@
 
   /* ───────── boot ───────── */
   applyRecharge();
-  renderWallet(); renderStats(); renderProg(); setHint(IDLE_HINT);
+  renderWallet(); renderStats(); renderProg(); renderTarget(); setHint(IDLE_HINT);
   setInterval(function () { applyRecharge(); renderWallet(); }, 1000);
 })();
 </script>
