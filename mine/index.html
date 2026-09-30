@@ -16,6 +16,7 @@
     --line: #eceae4; --card: #ffffff;
     --accent: #d6452a; --accent-soft: #fce7e0; --accent-dark: #b03721;
     --dirt: #a9764a; --dirt-dark: #7d5433; --dirt-light: #c8996c;
+    --skin: #f0bb92; --skin-d: #cf9468; --sleeve: #d6452a; --sleeve-d: #b03721;
     --sun: #f4a13a;
     --shadow: 0 1px 2px rgba(26,25,22,0.025), 0 4px 14px rgba(26,25,22,0.06);
   }
@@ -90,6 +91,13 @@
   }
   @media (max-width: 480px) { .stage { height: 210px; } }
 
+  .rig { animation: rigBreath 3.6s ease-in-out infinite; }
+  .rig.tense { animation-duration: 1.7s; }
+  @keyframes rigBreath {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
   .sieve { position: relative; transform-origin: 50% 20%; }
   .sieve.shake { animation: sieveShake .22s ease; }
   @keyframes sieveShake {
@@ -98,8 +106,22 @@
     60% { transform: rotate(6deg) translateX(9px); }
     100% { transform: rotate(0) translateX(0); }
   }
-  .sieve svg { display: block; width: 190px; height: auto; }
-  @media (max-width: 480px) { .sieve svg { width: 158px; } }
+  .sieve svg { display: block; width: 236px; height: auto; overflow: visible; }
+  @media (max-width: 480px) { .sieve svg { width: 196px; } }
+
+  /* ── 채를 잡은 두 손 ── */
+  .hand .grip {
+    transform-box: fill-box; transform-origin: 50% 50%;
+    transition: transform .12s ease;
+  }
+  .sieve.dnL #handL .grip, .sieve.dnR #handR .grip { transform: translate(3px, 5px); }
+  .sieve.shake .hand .grip { animation: gripPulse .22s ease; }
+  @keyframes gripPulse {
+    0% { transform: translate(0, 0) rotate(0); }
+    30% { transform: translate(0, 6px) rotate(-4deg); }
+    65% { transform: translate(0, -3px) rotate(3deg); }
+    100% { transform: translate(0, 0) rotate(0); }
+  }
 
   .dirt { position: absolute; border-radius: 50%; pointer-events: none; }
   @keyframes fall {
@@ -308,7 +330,7 @@
 <div class="wrap">
   <div class="eyebrow">Diamond Mine</div>
   <h1>다이아 채굴</h1>
-  <p class="lede">게임머니로 흙 한 포대를 사고, 화면에 뜬 두 글자를 양손 검지로 동시에 눌러 채를 텁니다. 2000원짜리 다이아몬드는 0.3%.</p>
+  <p class="lede">게임머니로 흙 한 포대를 사고, 화면에 뜬 두 글자를 양손 검지로 동시에 눌러 <b>두 손으로 채를 텁니다</b>. 2000원짜리 다이아몬드는 0.3%.</p>
 
   <div class="wallet">
     <div class="w-money">
@@ -325,8 +347,42 @@
 
   <div class="board">
     <div class="stage" id="stage">
+      <div class="rig" id="rig">
       <div class="sieve" id="sieve">
-        <svg viewBox="0 0 200 130" aria-hidden="true">
+        <svg viewBox="-32 0 264 132" aria-hidden="true">
+          <defs>
+            <!-- 채를 움켜쥔 한쪽 손 (원점 = 테를 쥔 지점) -->
+            <g id="handShape">
+              <!-- 테를 넘어 안쪽으로 감기는 네 손가락 -->
+              <g fill="none" stroke="var(--skin-d)" stroke-linecap="round">
+                <path d="M-8 -6 Q 2 -11 11 -5" stroke-width="9.5"/>
+                <path d="M-9 1 Q 2 -4 13 2" stroke-width="10"/>
+                <path d="M-9 8 Q 2 4 12 10" stroke-width="9.5"/>
+                <path d="M-8 15 Q 1 12 9 17" stroke-width="8.5"/>
+              </g>
+              <g fill="none" stroke="var(--skin)" stroke-linecap="round">
+                <path d="M-8 -6 Q 2 -11 11 -5" stroke-width="7.5"/>
+                <path d="M-9 1 Q 2 -4 13 2" stroke-width="8"/>
+                <path d="M-9 8 Q 2 4 12 10" stroke-width="7.5"/>
+                <path d="M-8 15 Q 1 12 9 17" stroke-width="6.5"/>
+              </g>
+              <!-- 손등 -->
+              <rect x="-28" y="-13" width="28" height="34" rx="14" fill="var(--skin)"/>
+              <path d="M-23 -7 q 9 -3 16 1" fill="none" stroke="var(--skin-d)"
+                    stroke-width="2" stroke-linecap="round" opacity=".45"/>
+              <!-- 테 아래를 받치는 엄지 -->
+              <path d="M-14 17 Q -2 25 8 19" fill="none" stroke="var(--skin-d)"
+                    stroke-width="10.5" stroke-linecap="round"/>
+              <path d="M-14 17 Q -2 25 8 19" fill="none" stroke="var(--skin)"
+                    stroke-width="8.5" stroke-linecap="round"/>
+              <!-- 손목 -->
+              <rect x="-41" y="-8" width="17" height="24" rx="8.5" fill="var(--skin)"/>
+              <!-- 걷어붙인 소매 -->
+              <rect x="-61" y="-11" width="25" height="30" rx="11" fill="var(--sleeve)"/>
+              <rect x="-42" y="-11" width="6" height="30" rx="3" fill="var(--sleeve-d)"/>
+            </g>
+          </defs>
+
           <ellipse cx="100" cy="112" rx="62" ry="9" fill="#1a1916" opacity=".07"/>
           <path d="M34 40 L48 96 a55 22 0 0 0 104 0 L166 40 Z" fill="#c8996c"/>
           <clipPath id="bowl"><path d="M34 40 L48 96 a55 22 0 0 0 104 0 L166 40 Z"/></clipPath>
@@ -341,7 +397,15 @@
           </g>
           <ellipse cx="100" cy="40" rx="66" ry="15" fill="none" stroke="#a9764a" stroke-width="9"/>
           <ellipse cx="100" cy="40" rx="66" ry="15" fill="none" stroke="#8d6440" stroke-width="2.5"/>
+
+          <g class="hand" id="handL" transform="translate(34,36)">
+            <g class="grip"><use href="#handShape"/></g>
+          </g>
+          <g class="hand" id="handR" transform="translate(166,36) scale(-1,1)">
+            <g class="grip"><use href="#handShape"/></g>
+          </g>
         </svg>
+      </div>
       </div>
     </div>
 
@@ -468,6 +532,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var elMoney = $('money'), elCharge = $('charge'), elChargeT = $('chargeT');
   var elStage = $('stage'), elSieve = $('sieve'), elMud = document.getElementById('mud');
+  var elRig = $('rig');
   var elBar = $('progBar'), elNum = $('progNum'), elHint = $('hint');
   var elKeys = $('keys'), elCapL = $('capL'), elCapR = $('capR');
   var elMain = $('mainBtn'), elTap = $('tapBtn');
@@ -799,6 +864,10 @@
     elCapR.innerHTML = (on ? target.r.toUpperCase() : '·') + '<em>오른손 검지</em>';
     if (downL) elCapL.classList.add('down'); else elCapL.classList.remove('down');
     if (downR) elCapR.classList.add('down'); else elCapR.classList.remove('down');
+    /* 키를 누르고 있는 동안 그쪽 손이 실제로 채를 누른다 */
+    if (downL) elSieve.classList.add('dnL'); else elSieve.classList.remove('dnL');
+    if (downR) elSieve.classList.add('dnR'); else elSieve.classList.remove('dnR');
+    if (elRig) { if (on) elRig.classList.add('tense'); else elRig.classList.remove('tense'); }
     if (elTap) elTap.textContent = on
       ? '👐 ' + target.l.toUpperCase() + ' + ' + target.r.toUpperCase() + ' 대신 여기를 탭'
       : '👐 채 털기 (터치)';
