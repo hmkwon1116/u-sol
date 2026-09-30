@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="다이아 채굴 — 게임머니로 흙을 사서 양손으로 채를 털어 광물을 캐는 뽑기 게임. 기록은 내 브라우저에만 저장됩니다.">
+<meta name="theme-color" content="#fbfaf7">
+<title>다이아 채굴 · U-SOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfaf7; --bg2: #fff6f2;
+    --ink: #1a1916; --muted: #8a8780;
+    --line: #eceae4; --card: #ffffff;
+    --accent: #d6452a; --accent-soft: #fce7e0; --accent-dark: #b03721;
+    --dirt: #a9764a; --dirt-dark: #7d5433; --dirt-light: #c8996c;
+    --sun: #f4a13a;
+    --shadow: 0 1px 2px rgba(26,25,22,0.025), 0 4px 14px rgba(26,25,22,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 0% 0%, #fff1ea 0%, transparent 48%),
+      radial-gradient(ellipse at 100% 0%, #fdf0e0 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg) 0%, #ffffff 60%, var(--bg2) 100%);
+    color: var(--ink);
+    font-family: 'Spline Sans', system-ui, -apple-system, sans-serif;
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .back {
+    position: fixed; top: 14px; left: 16px; z-index: 40;
+    color: var(--muted); text-decoration: none; font-size: 13.5px;
+    background: rgba(255,255,255,0.8); backdrop-filter: blur(6px);
+    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
+  }
+  .back:hover { color: var(--accent); border-color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 64px 18px 60px; }
+
+  .eyebrow {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+    font-size: 13.5px; letter-spacing: .04em; color: var(--accent);
+    text-align: center; margin-bottom: 4px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 900; text-align: center;
+    font-size: clamp(30px, 6.4vw, 44px); line-height: 1.05; letter-spacing: -0.02em;
+  }
+  .lede {
+    text-align: center; color: var(--muted); font-size: 13.5px;
+    max-width: 440px; margin: 10px auto 22px; word-break: keep-all;
+  }
+
+  /* ── wallet bar ── */
+  .wallet {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    padding: 14px 18px; box-shadow: var(--shadow); margin-bottom: 14px;
+  }
+  .w-money { display: flex; align-items: baseline; gap: 7px; }
+  .w-money .lbl { font-size: 11.5px; color: var(--muted); letter-spacing: .06em; }
+  .w-money .val {
+    font-family: 'Fraunces', serif; font-weight: 900; font-size: 30px;
+    letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+  }
+  .w-money .won { font-size: 15px; color: var(--muted); font-weight: 600; }
+  .w-charge { text-align: right; font-size: 11.5px; color: var(--muted); line-height: 1.45; }
+  .w-charge b { display: block; font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .w-charge.full b { color: var(--accent); }
+
+  /* ── board ── */
+  .board {
+    position: relative; overflow: hidden;
+    background: var(--card); border: 1px solid var(--line); border-radius: 24px;
+    box-shadow: var(--shadow); padding: 22px 20px 24px; text-align: center;
+  }
+  .board::before {
+    content: ""; position: absolute; inset: 0 0 auto; height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--sun), #5ec8e5);
+  }
+
+  .stage {
+    position: relative; height: 250px;
+    display: flex; align-items: center; justify-content: center;
+    user-select: none;
+  }
+  @media (max-width: 480px) { .stage { height: 210px; } }
+
+  .sieve { position: relative; transform-origin: 50% 20%; }
+  .sieve.shake { animation: sieveShake .22s ease; }
+  @keyframes sieveShake {
+    0% { transform: rotate(0) translateX(0); }
+    25% { transform: rotate(-7deg) translateX(-10px); }
+    60% { transform: rotate(6deg) translateX(9px); }
+    100% { transform: rotate(0) translateX(0); }
+  }
+  .sieve svg { display: block; width: 190px; height: auto; }
+  @media (max-width: 480px) { .sieve svg { width: 158px; } }
+
+  .dirt { position: absolute; border-radius: 50%; pointer-events: none; }
+  @keyframes fall {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.5); }
+  }
+
+  .hint {
+    font-size: 13px; color: var(--muted); margin-top: 2px; word-break: keep-all;
+    min-height: 40px; display: flex; align-items: center; justify-content: center;
+  }
+  .hint kbd {
+    font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--ink);
+    background: #f4f2ec; border: 1px solid var(--line); border-bottom-width: 2px;
+    border-radius: 6px; padding: 1px 6px; margin: 0 1px;
+  }
+
+  /* ── progress ── */
+  .prog-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .prog {
+    flex: 1; height: 12px; border-radius: 999px; background: #f1eee7;
+    overflow: hidden; border: 1px solid var(--line);
+  }
+  .prog i {
+    display: block; height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--dirt-dark), var(--dirt-light));
+    transition: width .18s ease;
+  }
+  .prog-num { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 62px; text-align: right; }
+
+  /* ── buttons ── */
+  .btn {
+    appearance: none; border: 0; cursor: pointer; font-family: inherit;
+    font-size: 15px; font-weight: 600; color: #fff; background: var(--accent);
+    padding: 13px 26px; border-radius: 999px; margin-top: 16px;
+    box-shadow: 0 4px 14px rgba(214,69,42,0.28); transition: transform .12s, box-shadow .12s, background .15s;
+  }
+  .btn:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { background: #d8d4cc; box-shadow: none; cursor: not-allowed; transform: none; color: #fff; }
+  .btn.ghost {
+    background: transparent; color: var(--muted); box-shadow: none;
+    border: 1px solid var(--line); font-size: 13px; padding: 9px 18px;
+  }
+  .btn.ghost:hover { color: var(--accent); border-color: var(--accent); background: transparent; }
+  .tapbtn {
+    display: none; margin-top: 10px; width: 100%;
+    background: #2f2b26; box-shadow: 0 4px 14px rgba(0,0,0,.18);
+  }
+  .tapbtn:hover { background: #46403a; }
+  body.touch .tapbtn { display: block; }
+
+  /* ── result overlay ── */
+  .veil {
+    position: fixed; inset: 0; z-index: 60; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(26,25,22,0.55); backdrop-filter: blur(4px);
+  }
+  .veil.on { display: flex; }
+  .res {
+    background: var(--card); border-radius: 26px; padding: 30px 26px 24px;
+    text-align: center; max-width: 340px; width: 100%;
+    box-shadow: 0 24px 70px rgba(0,0,0,.3);
+    animation: pop .38s cubic-bezier(.2,1.5,.4,1) both;
+  }
+  @keyframes pop { from { opacity: 0; transform: scale(.7) translateY(14px); } to { opacity: 1; transform: none; } }
+  .res .ic { display: block; margin: 0 auto 8px; }
+  .res .ic svg { display: block; }
+  .res .nm { font-family: 'Fraunces', serif; font-weight: 900; font-size: 32px; letter-spacing: -0.02em; }
+  .res .pay {
+    font-size: 22px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums;
+  }
+  .res .sub { font-size: 12.5px; color: var(--muted); margin-top: 8px; word-break: keep-all; }
+  .res .rate { font-size: 11px; color: #b5b0a6; margin-top: 4px; }
+  .res.rare .nm { animation: rareGlow 1.1s ease-in-out infinite alternate; }
+  @keyframes rareGlow { from { text-shadow: none; } to { text-shadow: 0 0 22px currentColor; } }
+  .res.rare .ic { animation: spinY 2.4s linear infinite; }
+  @keyframes spinY { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
+
+  .flash {
+    position: fixed; inset: 0; z-index: 70; pointer-events: none; opacity: 0;
+    background: #fff;
+  }
+  .flash.go { animation: flashA .7s ease-out; }
+  @keyframes flashA { 0% { opacity: .95; } 100% { opacity: 0; } }
+
+  .spark { position: fixed; z-index: 65; pointer-events: none; font-size: 18px; }
+  @keyframes sparkUp {
+    0% { opacity: 1; transform: translate(0,0) scale(.6) rotate(0); }
+    100% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(1.4) rotate(var(--sr)); }
+  }
+
+  /* ── mole ── */
+  .mole {
+    position: fixed; inset: 0; z-index: 80; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(40,26,14,0.72); backdrop-filter: blur(3px);
+  }
+  .mole.on { display: flex; }
+  .mole-box {
+    background: #fff7ec; border-radius: 26px; padding: 26px 24px 22px;
+    text-align: center; max-width: 360px; width: 100%;
+    box-shadow: 0 24px 70px rgba(0,0,0,.35); animation: pop .3s cubic-bezier(.2,1.5,.4,1) both;
+  }
+  .mole-box .face { display: block; margin: 0 auto 6px; animation: molePop .5s ease-in-out infinite alternate; }
+  @keyframes molePop { from { transform: translateY(4px) rotate(-3deg); } to { transform: translateY(-6px) rotate(3deg); } }
+  .mole-box h3 { font-family: 'Fraunces', serif; font-weight: 900; font-size: 26px; letter-spacing: -.02em; }
+  .mole-box p { font-size: 13.5px; color: #7a6249; margin-top: 4px; word-break: keep-all; }
+  .mole-bar { height: 10px; border-radius: 999px; background: #eadcc7; margin: 14px 0 10px; overflow: hidden; }
+  .mole-bar i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--accent), var(--sun)); }
+  .mole-count {
+    font-family: 'Fraunces', serif; font-weight: 900; font-size: 40px;
+    color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1;
+  }
+  .mole-count small { font-size: 16px; color: #a89377; font-weight: 600; }
+  .mole-space {
+    margin-top: 10px; font-size: 12px; color: #7a6249;
+    border: 1px dashed #d9c4a6; border-radius: 12px; padding: 8px;
+  }
+  .mole-box.hit { animation: nudge .12s ease; }
+  @keyframes nudge { 50% { transform: scale(1.03); } }
+
+  /* ── stats ── */
+  .sec-t {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px;
+    margin: 28px 0 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .sec-t span { flex: 1; height: 1px; background: var(--line); }
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  @media (min-width: 560px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  .stat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 13px 14px; box-shadow: var(--shadow);
+  }
+  .stat .k { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+  .stat .v {
+    font-family: 'Fraunces', serif; font-weight: 900; font-size: 21px;
+    letter-spacing: -.02em; margin-top: 1px; font-variant-numeric: tabular-nums;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .stat .v small { font-size: 12px; color: var(--muted); font-weight: 600; font-family: 'Spline Sans', sans-serif; }
+
+  .ores { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  @media (min-width: 560px) { .ores { grid-template-columns: repeat(4, 1fr); } }
+  .ore {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 9px 11px;
+  }
+  .ore.zero { opacity: .45; }
+  .ore .oi { flex: none; width: 26px; height: 26px; }
+  .ore .oi svg { display: block; width: 26px; height: 26px; }
+  .ore .on { font-size: 12.5px; font-weight: 600; line-height: 1.2; }
+  .ore .op { font-size: 10.5px; color: var(--muted); }
+  .ore .oc {
+    margin-left: auto; font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: 16px; font-variant-numeric: tabular-nums;
+  }
+
+  .foot { margin-top: 30px; text-align: center; font-size: 11.5px; color: #b5b0a6; line-height: 1.8; word-break: keep-all; }
+  .foot .row { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+  @media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<a class="back" href="/">← U-SOL</a>
+
+<div class="wrap">
+  <div class="eyebrow">Diamond Mine</div>
+  <h1>다이아 채굴</h1>
+  <p class="lede">게임머니로 흙 한 포대를 사고, 양손 검지로 채를 털어 광물을 걸러냅니다. 2000원짜리 다이아몬드는 0.3%.</p>
+
+  <div class="wallet">
+    <div class="w-money">
+      <div>
+        <div class="lbl">게임머니</div>
+        <div><span class="val" id="money">100</span><span class="won">원</span></div>
+      </div>
+    </div>
+    <div class="w-charge" id="charge">
+      다음 자동충전
+      <b id="chargeT">05:00</b>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="stage" id="stage">
+      <div class="sieve" id="sieve">
+        <svg viewBox="0 0 200 130" aria-hidden="true">
+          <ellipse cx="100" cy="112" rx="62" ry="9" fill="#1a1916" opacity=".07"/>
+          <path d="M34 40 L48 96 a55 22 0 0 0 104 0 L166 40 Z" fill="#c8996c"/>
+          <clipPath id="bowl"><path d="M34 40 L48 96 a55 22 0 0 0 104 0 L166 40 Z"/></clipPath>
+          <g clip-path="url(#bowl)" stroke="#8d6440" stroke-width="2" opacity=".55">
+            <path d="M45 30 L60 110 M62 30 L72 110 M79 30 L84 110 M96 30 L96 110 M113 30 L108 110 M130 30 L120 110 M147 30 L132 110"/>
+            <path d="M30 52 H170 M33 68 H167 M37 84 H163 M42 100 H158"/>
+          </g>
+          <g id="mud" clip-path="url(#bowl)">
+            <ellipse cx="100" cy="58" rx="62" ry="17" fill="#8d6440"/>
+            <ellipse cx="82" cy="52" rx="20" ry="8" fill="#a9764a"/>
+            <ellipse cx="122" cy="58" rx="16" ry="7" fill="#7d5433"/>
+          </g>
+          <ellipse cx="100" cy="40" rx="66" ry="15" fill="none" stroke="#a9764a" stroke-width="9"/>
+          <ellipse cx="100" cy="40" rx="66" ry="15" fill="none" stroke="#8d6440" stroke-width="2.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="prog-row">
+      <div class="prog"><i id="progBar"></i></div>
+      <div class="prog-num" id="progNum">0 / 25</div>
+    </div>
+
+    <div class="hint" id="hint">흙을 사면 시작합니다.</div>
+
+    <button class="btn" id="mainBtn">흙 한 포대 사기 · 10원</button>
+    <button class="btn tapbtn" id="tapBtn">👐 채 털기 (터치)</button>
+  </div>
+
+  <div class="sec-t">기록 <span></span></div>
+  <div class="stats">
+    <div class="stat"><div class="k">최고 등급</div><div class="v" id="sBest">—</div></div>
+    <div class="stat"><div class="k">누적 재산</div><div class="v" id="sEarn">0<small>원</small></div></div>
+    <div class="stat"><div class="k">총 털기</div><div class="v" id="sShake">0<small>회</small></div></div>
+    <div class="stat"><div class="k">캔 판 수</div><div class="v" id="sRound">0<small>판</small></div></div>
+  </div>
+
+  <div class="sec-t">광물 도감 <span></span></div>
+  <div class="ores" id="ores"></div>
+
+  <div class="foot">
+    <div class="row">
+      <button class="btn ghost" id="soundBtn" style="margin-top:0">🔊 소리 켬</button>
+      <button class="btn ghost" id="resetBtn" style="margin-top:0">기록 초기화</button>
+    </div>
+    게임머니는 현금과 무관한 놀이용 점수입니다. 환전·결제 기능은 없습니다.<br>
+    기록은 이 브라우저(localStorage)에만 저장됩니다.
+  </div>
+</div>
+
+<div class="veil" id="veil"><div class="res" id="res"></div></div>
+<div class="flash" id="flash"></div>
+
+<div class="mole" id="mole">
+  <div class="mole-box" id="moleBox">
+    <div class="face">
+      <svg width="96" height="86" viewBox="0 0 100 90" aria-hidden="true">
+        <ellipse cx="50" cy="82" rx="38" ry="7" fill="#1a1916" opacity=".14"/>
+        <ellipse cx="50" cy="50" rx="32" ry="30" fill="#7a6455"/>
+        <ellipse cx="50" cy="58" rx="20" ry="17" fill="#c9a98e"/>
+        <ellipse cx="22" cy="36" rx="9" ry="11" fill="#6b5648"/>
+        <ellipse cx="78" cy="36" rx="9" ry="11" fill="#6b5648"/>
+        <ellipse cx="39" cy="44" rx="4" ry="5" fill="#2b221c"/>
+        <ellipse cx="61" cy="44" rx="4" ry="5" fill="#2b221c"/>
+        <ellipse cx="40" cy="42" rx="1.4" ry="1.8" fill="#fff"/>
+        <ellipse cx="62" cy="42" rx="1.4" ry="1.8" fill="#fff"/>
+        <ellipse cx="50" cy="56" rx="7" ry="5.5" fill="#d6452a"/>
+        <path d="M44 66 q6 6 12 0" stroke="#8b6a52" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <rect x="46" y="64" width="3.5" height="7" rx="1.4" fill="#fff"/>
+        <rect x="50.5" y="64" width="3.5" height="7" rx="1.4" fill="#fff"/>
+      </svg>
+    </div>
+    <h3>두더지 출현!</h3>
+    <p>스페이스바를 <b>10번</b> 빠르게 눌러 쫓아내세요. 놓치면 캐던 걸 뺏깁니다.</p>
+    <div class="mole-count" id="moleCount">0<small> / 10</small></div>
+    <div class="mole-bar"><i id="moleBar"></i></div>
+    <div class="mole-space">스페이스바 연타! <span id="moleTime">3.0</span>초 남음</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ───────── config ───────── */
+  var COST = 10, SHAKES = 25, CAP = 100, RECHARGE_MS = 5 * 60 * 1000, RECHARGE_AMT = 10;
+  var MOLE_CHANCE = 0.15, MOLE_MS = 3000, MOLE_NEED = 10;
+  var PAIR_WINDOW = 100; // ms
+
+  var GRADES = [
+    { id: 'none',    name: '꽝',       p: 0.380, pay: 0,    tier: 0, color: '#9a958a' },
+    { id: 'stone',   name: '돌멩이',   p: 0.220, pay: 0,    tier: 0, color: '#8b8579' },
+    { id: 'quartz',  name: '석영',     p: 0.200, pay: 5,    tier: 1, color: '#8fa6b4' },
+    { id: 'iron',    name: '철',       p: 0.120, pay: 20,   tier: 1, color: '#6f727a' },
+    { id: 'copper',  name: '구리',     p: 0.050, pay: 45,   tier: 2, color: '#c07845' },
+    { id: 'silver',  name: '은',       p: 0.020, pay: 120,  tier: 3, color: '#8d98a6' },
+    { id: 'gold',    name: '금',       p: 0.007, pay: 400,  tier: 4, color: '#d99a16' },
+    { id: 'diamond', name: '다이아몬드', p: 0.003, pay: 2000, tier: 5, color: '#2eb5da' }
+  ];
+
+  function icon(id, s) {
+    var w = 'width="' + s + '" height="' + s + '" viewBox="0 0 64 64"';
+    switch (id) {
+      case 'none': return '<svg ' + w + '><g fill="#cfcabf"><circle cx="24" cy="36" r="11"/><circle cx="40" cy="34" r="9"/><circle cx="32" cy="26" r="8"/></g><g fill="#e6e2d8"><circle cx="22" cy="33" r="4"/><circle cx="41" cy="31" r="3"/></g></svg>';
+      case 'stone': return '<svg ' + w + '><path d="M14 40 L20 22 L38 16 L52 28 L48 45 L26 50 Z" fill="#9b968a"/><path d="M20 22 L38 16 L36 30 Z" fill="#b3ada0"/><path d="M36 30 L52 28 L48 45 Z" fill="#84806f"/></svg>';
+      case 'quartz': return '<svg ' + w + '><path d="M32 6 L46 24 L42 54 L22 54 L18 24 Z" fill="#cfe1ea"/><path d="M32 6 L46 24 L42 54 L32 54 Z" fill="#a9c6d6"/><path d="M32 6 L18 24 L26 24 Z" fill="#eef6fa"/><path d="M18 24 H46" stroke="#8fb0c3" stroke-width="1.5"/></svg>';
+      case 'iron': return '<svg ' + w + '><path d="M12 38 L18 20 L36 14 L54 26 L50 46 L28 52 Z" fill="#7a7d85"/><path d="M18 20 L36 14 L34 32 Z" fill="#9b9ea6"/><path d="M34 32 L54 26 L50 46 Z" fill="#5d6066"/><circle cx="24" cy="38" r="3" fill="#a8abb2"/><circle cx="40" cy="38" r="2" fill="#a8abb2"/></svg>';
+      case 'copper': return '<svg ' + w + '><path d="M13 36 Q14 18 32 14 Q52 15 52 34 Q52 50 32 51 Q14 50 13 36 Z" fill="#c07845"/><path d="M20 28 Q28 18 40 22 Q34 30 20 28 Z" fill="#e0a070"/><path d="M34 40 Q44 38 46 30 Q50 44 34 46 Z" fill="#96562c"/></svg>';
+      case 'silver': return '<svg ' + w + '><path d="M32 5 L54 22 L46 54 L18 54 L10 22 Z" fill="#c3cbd4"/><path d="M32 5 L54 22 L46 54 L32 54 Z" fill="#9aa5b2"/><path d="M32 5 L10 22 L22 22 Z" fill="#eef1f5"/><path d="M10 22 H54" stroke="#7f8a97" stroke-width="1.6"/><path d="M22 22 L32 54 L42 22" fill="none" stroke="#7f8a97" stroke-width="1.6"/></svg>';
+      case 'gold': return '<svg ' + w + '><path d="M11 38 Q12 17 32 13 Q54 15 53 35 Q53 52 32 52 Q12 51 11 38 Z" fill="#e6b027"/><path d="M19 27 Q28 16 41 21 Q33 30 19 27 Z" fill="#ffdd7a"/><path d="M35 41 Q46 38 47 29 Q52 45 35 47 Z" fill="#bd860c"/><circle cx="24" cy="40" r="2.6" fill="#fff0bb"/></svg>';
+      case 'diamond': return '<svg ' + w + '><path d="M16 12 H48 L60 26 L32 58 L4 26 Z" fill="#8fe0f3"/><path d="M32 58 L60 26 H44 Z" fill="#43bcdd"/><path d="M32 58 L4 26 H20 Z" fill="#b9eef9"/><path d="M20 26 H44 L32 58 Z" fill="#6ed1ea"/><path d="M16 12 L20 26 H4 Z" fill="#d6f6fd"/><path d="M48 12 L44 26 H60 Z" fill="#59c6e2"/><path d="M16 12 L24 26 L32 12 L40 26 L48 12" fill="none" stroke="#e8fbff" stroke-width="1.4"/><path d="M4 26 H60" stroke="#e8fbff" stroke-width="1.4"/></svg>';
+    }
+    return '';
+  }
+
+  /* ───────── storage ───────── */
+  var KEY = 'usol-mine-v1';
+  var S = {
+    money: CAP, lastTick: Date.now(), earned: 0, shakes: 0, rounds: 0,
+    best: null, counts: {}, sound: true
+  };
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (raw) {
+      var o = JSON.parse(raw);
+      for (var k in S) if (o[k] !== undefined && o[k] !== null) S[k] = o[k];
+      if (typeof S.counts !== 'object' || !S.counts) S.counts = {};
+    }
+  } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+  /* ───────── dom ───────── */
+  var $ = function (id) { return document.getElementById(id); };
+  var elMoney = $('money'), elCharge = $('charge'), elChargeT = $('chargeT');
+  var elStage = $('stage'), elSieve = $('sieve'), elMud = document.getElementById('mud');
+  var elBar = $('progBar'), elNum = $('progNum'), elHint = $('hint');
+  var elMain = $('mainBtn'), elTap = $('tapBtn');
+  var elVeil = $('veil'), elRes = $('res'), elFlash = $('flash');
+  var elMole = $('mole'), elMoleBox = $('moleBox'), elMoleCount = $('moleCount'),
+      elMoleBar = $('moleBar'), elMoleTime = $('moleTime');
+
+  if (('ontouchstart' in window) || navigator.maxTouchPoints > 0) document.body.classList.add('touch');
+
+  /* ───────── sound ───────── */
+  var actx = null;
+  function beep(freq, dur, type, vol) {
+    if (!S.sound) return;
+    try {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === 'suspended') actx.resume();
+      var o = actx.createOscillator(), g = actx.createGain();
+      o.type = type || 'triangle'; o.frequency.value = freq;
+      g.gain.setValueAtTime(vol || 0.05, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(); o.stop(actx.currentTime + dur);
+    } catch (e) {}
+  }
+  function chime(tier) {
+    if (!S.sound) return;
+    var notes = tier >= 5 ? [523, 659, 784, 1047, 1319] : tier >= 4 ? [523, 659, 784, 1047] : [523, 784];
+    notes.forEach(function (n, i) { setTimeout(function () { beep(n, 0.34, 'sine', 0.07); }, i * 110); });
+  }
+
+  /* ───────── wallet ───────── */
+  function fmt(n) { return n.toLocaleString('ko-KR'); }
+
+  function applyRecharge() {
+    var now = Date.now();
+    if (S.money >= CAP) { S.lastTick = now; return; }
+    if (!S.lastTick || S.lastTick > now) S.lastTick = now;
+    var ticks = Math.floor((now - S.lastTick) / RECHARGE_MS);
+    if (ticks > 0) {
+      var before = S.money;
+      S.money = Math.min(CAP, S.money + ticks * RECHARGE_AMT);
+      S.lastTick += ticks * RECHARGE_MS;
+      if (S.money >= CAP) S.lastTick = now;
+      if (S.money !== before) save();
+    }
+  }
+  function renderWallet() {
+    elMoney.textContent = fmt(S.money);
+    if (S.money >= CAP) {
+      elCharge.classList.add('full');
+      elCharge.innerHTML = '자동충전<b>가득 참</b>';
+    } else {
+      elCharge.classList.remove('full');
+      var left = Math.max(0, RECHARGE_MS - (Date.now() - S.lastTick));
+      var m = Math.floor(left / 60000), s = Math.floor((left % 60000) / 1000);
+      elCharge.innerHTML = '다음 +' + RECHARGE_AMT + '원까지<b>' +
+        (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s + '</b>';
+    }
+    syncBtn();
+  }
+
+  /* ───────── stats render ───────── */
+  function renderStats() {
+    var b = null;
+    if (S.best) { for (var i = 0; i < GRADES.length; i++) if (GRADES[i].id === S.best) b = GRADES[i]; }
+    $('sBest').innerHTML = b ? icon(b.id, 20) + '<span style="font-size:17px">' + b.name + '</span>' : '—';
+    $('sEarn').innerHTML = fmt(S.earned) + '<small>원</small>';
+    $('sShake').innerHTML = fmt(S.shakes) + '<small>회</small>';
+    $('sRound').innerHTML = fmt(S.rounds) + '<small>판</small>';
+
+    var html = '';
+    GRADES.forEach(function (g) {
+      var c = S.counts[g.id] || 0;
+      html += '<div class="ore' + (c ? '' : ' zero') + '">' +
+        '<div class="oi">' + icon(g.id, 26) + '</div>' +
+        '<div><div class="on">' + g.name + '</div><div class="op">' +
+        (g.pay ? fmt(g.pay) + '원 · ' : '') + (g.p * 100).toFixed(g.p < 0.01 ? 1 : 0) + '%</div></div>' +
+        '<div class="oc">' + c + '</div></div>';
+    });
+    $('ores').innerHTML = html;
+  }
+
+  /* ───────── game state ───────── */
+  var state = 'idle'; // idle | playing | mole | result
+  var count = 0, moleAt = -1, moleDone = false;
+
+  function renderProg() {
+    elBar.style.width = (count / SHAKES * 100) + '%';
+    elNum.textContent = count + ' / ' + SHAKES;
+    if (elMud) {
+      var left = 1 - count / SHAKES;
+      elMud.style.opacity = (0.25 + left * 0.75).toFixed(2);
+      elMud.style.transform = 'scaleY(' + (0.3 + left * 0.7).toFixed(2) + ')';
+      elMud.style.transformOrigin = '50% 100%';
+    }
+  }
+
+  function syncBtn() {
+    if (state === 'idle') {
+      elMain.disabled = S.money < COST;
+      elMain.textContent = S.money < COST
+        ? '게임머니 부족 · 충전 대기중'
+        : '흙 한 포대 사기 · ' + COST + '원';
+    } else if (state === 'playing') {
+      elMain.disabled = true;
+      elMain.textContent = '채 터는 중… ' + (SHAKES - count) + '번 남음';
+    }
+  }
+
+  function setHint(h) { elHint.innerHTML = h; }
+
+  var IDLE_HINT = '흙을 사면 시작합니다. 시작 후 <kbd>Enter</kbd>로도 구매돼요.';
+  var PLAY_HINT = '왼손 <kbd>R T F G V B C D E</kbd> 중 하나와<br>오른손 <kbd>Y U H J N M K I O</kbd> 중 하나를 <b>동시에</b> 눌러 채를 터세요.';
+
+  /* ───────── dirt particles ───────── */
+  function spray() {
+    var rect = elSieve.getBoundingClientRect(), host = elStage.getBoundingClientRect();
+    var cx = rect.left - host.left + rect.width / 2;
+    var cy = rect.top - host.top + rect.height * 0.62;
+    for (var i = 0; i < 9; i++) {
+      var d = document.createElement('div');
+      d.className = 'dirt';
+      var sz = 3 + Math.random() * 5;
+      var tone = ['#8d6440', '#a9764a', '#7d5433', '#c8996c'][(Math.random() * 4) | 0];
+      d.style.cssText = 'width:' + sz + 'px;height:' + sz + 'px;background:' + tone +
+        ';left:' + (cx + (Math.random() - 0.5) * 70) + 'px;top:' + cy + 'px;' +
+        '--dx:' + ((Math.random() - 0.5) * 90).toFixed(0) + 'px;--dy:' + (40 + Math.random() * 70).toFixed(0) + 'px;' +
+        'animation:fall ' + (0.5 + Math.random() * 0.4).toFixed(2) + 's ease-in forwards';
+      elStage.appendChild(d);
+      (function (n) { setTimeout(function () { if (n.parentNode) n.parentNode.removeChild(n); }, 1000); })(d);
+    }
+  }
+
+  /* ───────── round flow ───────── */
+  function startRound() {
+    if (state !== 'idle' || S.money < COST) return;
+    S.money -= COST; save();
+    count = 0; moleDone = false;
+    moleAt = Math.random() < MOLE_CHANCE ? 4 + ((Math.random() * (SHAKES - 7)) | 0) : -1;
+    state = 'playing';
+    renderProg(); renderWallet(); setHint(PLAY_HINT);
+    beep(300, 0.1, 'square', 0.04);
+  }
+
+  function doShake() {
+    if (state !== 'playing') return;
+    count++;
+    S.shakes++;
+    elSieve.classList.remove('shake');
+    void elSieve.offsetWidth;
+    elSieve.classList.add('shake');
+    spray();
+    beep(180 + Math.random() * 90, 0.06, 'square', 0.035);
+    renderProg(); syncBtn();
+
+    if (count >= SHAKES) { state = 'result'; save(); setTimeout(function () { finish(false); }, 320); return; }
+    if (!moleDone && moleAt === count) { save(); setTimeout(startMole, 220); return; }
+    if (S.shakes % 5 === 0) save();
+  }
+
+  function draw() {
+    var r = Math.random(), acc = 0;
+    for (var i = 0; i < GRADES.length; i++) {
+      acc += GRADES[i].p;
+      if (r < acc) return GRADES[i];
+    }
+    return GRADES[0];
+  }
+
+  function finish(stolen) {
+    state = 'result';
+    var g = stolen ? GRADES[0] : draw();
+    var pay = stolen ? 0 : g.pay;
+
+    S.rounds++;
+    S.counts[g.id] = (S.counts[g.id] || 0) + 1;
+    if (pay > 0) { S.money += pay; S.earned += pay; }
+    var bestTier = -1;
+    if (S.best) for (var i = 0; i < GRADES.length; i++) if (GRADES[i].id === S.best) bestTier = GRADES[i].tier;
+    if (!stolen && g.pay > 0 && g.tier > bestTier) S.best = g.id;
+    save();
+
+    var big = g.tier >= 4 ? 132 : g.tier >= 2 ? 112 : 96;
+    var sub = stolen
+      ? '두더지가 채를 통째로 들고 도망쳤습니다…'
+      : g.tier === 0 ? '아무것도 안 나왔습니다. 다음 포대에 기대를.'
+      : g.tier >= 5 ? '전설의 원석! 0.3%를 뚫었습니다.'
+      : g.tier >= 4 ? '순금 덩어리! 채가 묵직합니다.'
+      : g.tier >= 3 ? '은빛이 반짝입니다.'
+      : '쓸만한 광물을 건졌습니다.';
+
+    elRes.className = 'res' + (g.tier >= 3 ? ' rare' : '');
+    elRes.innerHTML =
+      '<div class="ic" style="width:' + big + 'px;height:' + big + 'px">' + icon(g.id, big) + '</div>' +
+      '<div class="nm" style="color:' + g.color + '">' + (stolen ? '도둑맞음' : g.name) + '</div>' +
+      '<div class="pay" style="color:' + (pay ? 'var(--accent)' : '#b5b0a6') + '">' +
+        (pay ? '+' + fmt(pay) + '원' : '0원') + '</div>' +
+      '<div class="sub">' + sub + '</div>' +
+      '<div class="rate">' + (stolen ? '두더지 실패 · 결과 몰수' : '확률 ' + (g.p * 100).toFixed(g.p < 0.01 ? 1 : 0) + '%') + '</div>' +
+      '<button class="btn" id="againBtn">' + (S.money >= COST ? '한 포대 더 · ' + COST + '원' : '닫기') + '</button>';
+    elVeil.classList.add('on');
+    document.getElementById('againBtn').addEventListener('click', closeRes);
+
+    if (g.tier >= 3 && !stolen) {
+      elFlash.classList.remove('go'); void elFlash.offsetWidth; elFlash.classList.add('go');
+      sparkle(g.tier);
+      chime(g.tier);
+    } else if (pay > 0) {
+      beep(660, 0.18, 'sine', 0.05);
+    } else {
+      beep(150, 0.25, 'sawtooth', 0.03);
+    }
+
+    renderWallet(); renderStats();
+  }
+
+  function sparkle(tier) {
+    var n = tier >= 5 ? 34 : tier >= 4 ? 22 : 14;
+    var chars = tier >= 5 ? ['💎', '✨', '⭐'] : tier >= 4 ? ['✨', '🌟'] : ['✨'];
+    for (var i = 0; i < n; i++) {
+      (function (i) {
+        setTimeout(function () {
+          var s = document.createElement('div');
+          s.className = 'spark';
+          s.textContent = chars[(Math.random() * chars.length) | 0];
+          s.style.cssText = 'left:' + (window.innerWidth / 2) + 'px;top:' + (window.innerHeight / 2) + 'px;' +
+            '--sx:' + ((Math.random() - 0.5) * window.innerWidth) + 'px;' +
+            '--sy:' + ((Math.random() - 0.5) * window.innerHeight) + 'px;' +
+            '--sr:' + ((Math.random() - 0.5) * 720) + 'deg;' +
+            'animation:sparkUp ' + (0.9 + Math.random() * 0.8).toFixed(2) + 's ease-out forwards';
+          document.body.appendChild(s);
+          setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 2000);
+        }, i * 34);
+      })(i);
+    }
+  }
+
+  function closeRes() {
+    elVeil.classList.remove('on');
+    state = 'idle'; count = 0;
+    renderProg(); setHint(IDLE_HINT); renderWallet();
+  }
+
+  /* ───────── mole ───────── */
+  var moleHits = 0, moleTimer = null, moleRAF = null, moleEnd = 0;
+
+  function startMole() {
+    state = 'mole'; moleHits = 0; moleDone = true;
+    moleEnd = Date.now() + MOLE_MS;
+    elMoleCount.innerHTML = '0<small> / ' + MOLE_NEED + '</small>';
+    elMoleBar.style.width = '100%';
+    elMole.classList.add('on');
+    beep(120, 0.3, 'sawtooth', 0.06);
+    (function tick() {
+      var left = moleEnd - Date.now();
+      if (left <= 0) { elMoleBar.style.width = '0%'; elMoleTime.textContent = '0.0'; endMole(false); return; }
+      elMoleBar.style.width = (left / MOLE_MS * 100) + '%';
+      elMoleTime.textContent = (left / 1000).toFixed(1);
+      moleRAF = requestAnimationFrame(tick);
+    })();
+  }
+
+  function moleHit() {
+    if (state !== 'mole') return;
+    moleHits++;
+    elMoleCount.innerHTML = moleHits + '<small> / ' + MOLE_NEED + '</small>';
+    elMoleBox.classList.remove('hit'); void elMoleBox.offsetWidth; elMoleBox.classList.add('hit');
+    beep(400 + moleHits * 40, 0.05, 'square', 0.04);
+    if (moleHits >= MOLE_NEED) endMole(true);
+  }
+
+  function endMole(ok) {
+    if (state !== 'mole') return;
+    if (moleRAF) cancelAnimationFrame(moleRAF);
+    if (moleTimer) clearTimeout(moleTimer);
+    elMole.classList.remove('on');
+    if (ok) {
+      state = 'playing';
+      setHint('두더지를 쫓아냈습니다! 계속 터세요.<br>' + PLAY_HINT);
+      beep(880, 0.2, 'sine', 0.06);
+      syncBtn();
+    } else {
+      state = 'result';
+      count = SHAKES;
+      renderProg();
+      setTimeout(function () { finish(true); }, 200);
+    }
+  }
+
+  /* ───────── keyboard ───────── */
+  var LEFT = { r:1, t:1, f:1, g:1, v:1, b:1, c:1, d:1, e:1 };
+  var RIGHT = { y:1, u:1, h:1, j:1, n:1, m:1, k:1, i:1, o:1 };
+  var downL = {}, downR = {}, lastShakeAt = 0;
+
+  function latest(map) {
+    var t = 0;
+    for (var k in map) if (map[k] > t) t = map[k];
+    return t;
+  }
+
+  function tryPair() {
+    var now = Date.now();
+    var tl = latest(downL), tr = latest(downR);
+    if (!tl || !tr) return;
+    if (Math.abs(tl - tr) > PAIR_WINDOW) return;
+    if (now - lastShakeAt < 70) return;
+    lastShakeAt = now;
+    downL = {}; downR = {};
+    doShake();
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase();
+
+    if (k === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      if (state === 'mole') { if (!e.repeat) moleHit(); }
+      return;
+    }
+    if (e.repeat) return;
+
+    if (k === 'enter') {
+      if (state === 'result') { e.preventDefault(); closeRes(); if (S.money >= COST) startRound(); return; }
+      if (state === 'idle') { e.preventDefault(); startRound(); return; }
+    }
+    if (k === 'escape' && state === 'result') { closeRes(); return; }
+
+    if (state !== 'playing') return;
+    if (LEFT[k]) { downL[k] = Date.now(); tryPair(); }
+    else if (RIGHT[k]) { downR[k] = Date.now(); tryPair(); }
+  });
+
+  document.addEventListener('keyup', function (e) {
+    var k = (e.key || '').toLowerCase();
+    if (LEFT[k]) delete downL[k];
+    else if (RIGHT[k]) delete downR[k];
+  });
+
+  window.addEventListener('blur', function () { downL = {}; downR = {}; });
+
+  /* ───────── buttons ───────── */
+  elMain.addEventListener('click', startRound);
+  elTap.addEventListener('click', function () {
+    if (state === 'mole') { moleHit(); return; }
+    if (state === 'playing') doShake();
+  });
+  elVeil.addEventListener('click', function (e) { if (e.target === elVeil) closeRes(); });
+
+  $('soundBtn').addEventListener('click', function () {
+    S.sound = !S.sound; save();
+    this.textContent = S.sound ? '🔊 소리 켬' : '🔇 소리 끔';
+    if (S.sound) beep(660, 0.12, 'sine', 0.05);
+  });
+  $('soundBtn').textContent = S.sound ? '🔊 소리 켬' : '🔇 소리 끔';
+
+  $('resetBtn').addEventListener('click', function () {
+    if (state !== 'idle') return;
+    if (!confirm('기록과 게임머니를 모두 초기화할까요?')) return;
+    S.money = CAP; S.lastTick = Date.now(); S.earned = 0; S.shakes = 0;
+    S.rounds = 0; S.best = null; S.counts = {};
+    save(); renderWallet(); renderStats();
+  });
+
+  /* ───────── boot ───────── */
+  applyRecharge();
+  renderWallet(); renderStats(); renderProg(); setHint(IDLE_HINT);
+  setInterval(function () { applyRecharge(); renderWallet(); }, 1000);
+})();
+</script>
+</body>
+</html>
