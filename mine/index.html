@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="다이아 채굴 — 게임머니로 흙을 사서 양손으로 채를 털어 광물을 캐는 뽑기 게임. 기록은 내 브라우저에만 저장됩니다.">
+<meta name="description" content="다이아 채굴 — 흙 포대 열 자루 중 하나를 골라 양손으로 채를 털어 광물을 캐는 뽑기 게임. 기록은 내 브라우저에만 저장됩니다.">
 <meta name="theme-color" content="#fbfaf7">
 <title>다이아 채굴 · U-SOL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -139,6 +139,50 @@
     border-radius: 6px; padding: 1px 6px; margin: 0 1px;
   }
 
+  /* ── 포대 고르기 ── */
+  .picker {
+    display: none; width: 100%;
+    flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  }
+  .stage.picking { height: auto; min-height: 250px; padding: 8px 0; }
+  .stage.picking .picker { display: flex; }
+  .stage.picking .rig { display: none; }
+  .picker .ptitle {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px;
+  }
+  .picker .ptitle b { color: var(--accent); font-weight: 900; }
+  .sacks {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 8px; width: 100%; max-width: 430px;
+  }
+  .sack {
+    appearance: none; font-family: inherit; cursor: pointer;
+    border: 1px solid var(--line); background: #fffdf8;
+    border-radius: 14px; padding: 6px 3px 3px;
+    box-shadow: var(--shadow);
+    transition: transform .14s, border-color .14s, background .14s;
+    animation: sackIn .34s cubic-bezier(.2,1.5,.4,1) both;
+  }
+  .sack svg { display: block; width: 100%; height: auto; }
+  .sack:hover { transform: translateY(-6px); border-color: var(--accent); background: #fff; }
+  .sack:active { transform: translateY(-2px); }
+  .sacks.locked .sack { pointer-events: none; }
+  .sack.chosen { animation: sackPick .52s ease-in forwards; border-color: var(--accent); }
+  .sack.gone { animation: sackGone .3s ease forwards; }
+  @keyframes sackIn { from { opacity: 0; transform: translateY(18px) scale(.8); } }
+  @keyframes sackPick {
+    0% { transform: none; }
+    30% { transform: translateY(-16px) scale(1.2) rotate(-5deg); }
+    100% { transform: translateY(6px) scale(.9) rotate(16deg); opacity: 0; }
+  }
+  @keyframes sackGone { to { opacity: 0; transform: scale(.8); } }
+  @media (max-width: 480px) {
+    .stage.picking { min-height: 210px; padding: 4px 0; }
+    .sacks { gap: 5px; }
+    .sack { border-radius: 11px; padding: 4px 2px 2px; }
+    .picker .ptitle { font-size: 13.5px; }
+  }
+
   /* ── key targets ── */
   .keys {
     display: flex; align-items: center; justify-content: center; gap: 14px;
@@ -234,6 +278,16 @@
   }
   .res .sub { font-size: 12.5px; color: var(--muted); margin-top: 8px; word-break: keep-all; }
   .res .rate { font-size: 11px; color: #b5b0a6; margin-top: 4px; }
+  .res .othT { font-size: 11px; color: var(--muted); margin-top: 16px; letter-spacing: .03em; }
+  .res .others { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 6px; }
+  .res .oth {
+    border: 1px solid var(--line); border-radius: 9px; padding: 4px 1px 2px;
+    background: #fdfcf9;
+  }
+  .res .oth.me { border-color: var(--accent); background: var(--accent-soft); }
+  .res .oth svg { display: block; margin: 0 auto; }
+  .res .oth b { display: block; font-size: 8.5px; font-weight: 600; color: var(--muted); margin-top: 1px; }
+  .res .oth.me b { color: var(--accent); }
   .res.rare .nm { animation: rareGlow 1.1s ease-in-out infinite alternate; }
   @keyframes rareGlow { from { text-shadow: none; } to { text-shadow: 0 0 22px currentColor; } }
   .res.rare .ic { animation: spinY 2.4s linear infinite; }
@@ -330,7 +384,7 @@
 <div class="wrap">
   <div class="eyebrow">Diamond Mine</div>
   <h1>다이아 채굴</h1>
-  <p class="lede">게임머니로 흙 한 포대를 사고, 화면에 뜬 두 글자를 양손 검지로 동시에 눌러 <b>두 손으로 채를 텁니다</b>. 2000원짜리 다이아몬드는 0.3%.</p>
+  <p class="lede">게임머니를 내면 흙 포대 <b>열 자루</b>가 쏟아집니다. 그중 한 자루를 골라 채에 붓고, 화면에 뜬 두 글자를 양손 검지로 동시에 눌러 텁니다. 2000원짜리 다이아몬드는 0.3%.</p>
 
   <div class="wallet">
     <div class="w-money">
@@ -407,6 +461,11 @@
         </svg>
       </div>
       </div>
+
+      <div class="picker" id="picker">
+        <div class="ptitle">흙 포대 <b>10자루</b> 중 하나를 고르세요</div>
+        <div class="sacks" id="sacks"></div>
+      </div>
     </div>
 
     <div class="keys off" id="keys">
@@ -422,7 +481,7 @@
 
     <div class="hint" id="hint">흙을 사면 시작합니다.</div>
 
-    <button class="btn" id="mainBtn">흙 한 포대 사기 · 10원</button>
+    <button class="btn" id="mainBtn">흙 열 자루 받기 · 10원</button>
     <button class="btn tapbtn" id="tapBtn">👐 채 털기 (터치)</button>
   </div>
 
@@ -485,6 +544,7 @@
   var COST = 10, SHAKES = 25, CAP = 100, RECHARGE_MS = 5 * 60 * 1000, RECHARGE_AMT = 10;
   var MOLE_CHANCE = 0.15, MOLE_MS = 3000, MOLE_NEED = 10;
   var PAIR_WINDOW = 100; // ms
+  var SACKS = 10;
 
   var GRADES = [
     { id: 'none',    name: '꽝',       p: 0.380, pay: 0,    tier: 0, color: '#9a958a' },
@@ -512,6 +572,22 @@
     return '';
   }
 
+  function sackSVG(n) {
+    return '<svg viewBox="0 0 64 78" aria-hidden="true">' +
+      '<ellipse cx="32" cy="72" rx="21" ry="4.5" fill="#1a1916" opacity=".09"/>' +
+      '<path d="M23 21 L18 9 L25 14 L28 5 L32 13 L36 5 L39 14 L46 9 L41 21 Z" fill="#a9764a"/>' +
+      '<path d="M14 41 Q12 71 32 71 Q52 71 50 41 Q48 24 32 24 Q16 24 14 41 Z" fill="#c8996c"/>' +
+      '<path d="M32 24 Q16 24 14 41 Q12 71 32 71 Z" fill="#d7ab7e" opacity=".6"/>' +
+      '<path d="M21 23 q11 7 22 0 l-2 6 q-9 5 -18 0 Z" fill="#a9764a"/>' +
+      '<path d="M20 22 q12 8 24 0" fill="none" stroke="#7d5433" stroke-width="3.2" stroke-linecap="round"/>' +
+      '<g fill="none" stroke="#b1834f" stroke-width="1.3" opacity=".55">' +
+        '<path d="M21 38 q11 5 22 0 M19 62 q13 6 26 0"/></g>' +
+      '<circle cx="32" cy="51" r="11" fill="#fffdf8" opacity=".92"/>' +
+      '<text x="32" y="56.5" text-anchor="middle" font-family="Fraunces,serif" ' +
+        'font-weight="900" font-size="15" fill="#7d5433">' + n + '</text>' +
+      '</svg>';
+  }
+
   /* ───────── storage ───────── */
   var KEY = 'usol-mine-v1';
   var S = {
@@ -532,6 +608,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var elMoney = $('money'), elCharge = $('charge'), elChargeT = $('chargeT');
   var elStage = $('stage'), elSieve = $('sieve'), elMud = document.getElementById('mud');
+  var elPicker = $('picker'), elSacks = $('sacks');
   var elRig = $('rig');
   var elBar = $('progBar'), elNum = $('progNum'), elHint = $('hint');
   var elKeys = $('keys'), elCapL = $('capL'), elCapR = $('capR');
@@ -616,8 +693,9 @@
   }
 
   /* ───────── game state ───────── */
-  var state = 'idle'; // idle | playing | mole | result
+  var state = 'idle'; // idle | picking | playing | mole | result
   var count = 0, moleAt = -1, moleDone = false;
+  var sacks = [], picked = -1;
   var target = { l: null, r: null }; // 이번 털기에 지정된 양손 검지 키
 
   function renderProg() {
@@ -636,7 +714,10 @@
       elMain.disabled = S.money < COST;
       elMain.textContent = S.money < COST
         ? '게임머니 부족 · 충전 대기중'
-        : '흙 한 포대 사기 · ' + COST + '원';
+        : '흙 열 자루 받기 · ' + COST + '원';
+    } else if (state === 'picking') {
+      elMain.disabled = true;
+      elMain.textContent = '포대 고르는 중…';
     } else if (state === 'playing') {
       elMain.disabled = true;
       elMain.textContent = '채 터는 중… ' + (SHAKES - count) + '번 남음';
@@ -645,7 +726,8 @@
 
   function setHint(h) { elHint.innerHTML = h; }
 
-  var IDLE_HINT = '흙을 사면 시작합니다. 시작 후 <kbd>Enter</kbd>로도 구매돼요.';
+  var IDLE_HINT = '흙을 사면 포대 10자루가 도착합니다. <kbd>Enter</kbd>로도 구매돼요.';
+  var PICK_HINT = '자루마다 담긴 흙이 다릅니다. 하나만 골라 채에 부을 수 있어요.<br><kbd>1</kbd>~<kbd>9</kbd> <kbd>0</kbd> 키로도 고를 수 있습니다.';
   var PLAY_HINT = '지정된 <b>두 글자만</b> 통합니다. 왼손·오른손 검지로 <b>동시에</b> 누르세요.<br>다른 키를 누르면 헛손질이 됩니다.';
 
   /* ───────── dirt particles ───────── */
@@ -671,11 +753,52 @@
   function startRound() {
     if (state !== 'idle' || S.money < COST) return;
     S.money -= COST; save();
+    count = 0; moleDone = false; picked = -1;
+    sacks = [];
+    for (var i = 0; i < SACKS; i++) sacks.push(draw());
+    state = 'picking';
+    clearTarget();
+    renderSacks();
+    elStage.classList.add('picking');
+    renderProg(); renderWallet(); syncBtn(); setHint(PICK_HINT);
+    beep(260, 0.09, 'square', 0.04);
+  }
+
+  function renderSacks() {
+    var html = '';
+    for (var i = 0; i < SACKS; i++) {
+      html += '<button class="sack" type="button" data-i="' + i + '" ' +
+        'style="animation-delay:' + (i * 42) + 'ms" ' +
+        'aria-label="' + (i + 1) + '번 포대 고르기">' + sackSVG(i + 1) + '</button>';
+    }
+    elSacks.className = 'sacks';
+    elSacks.innerHTML = html;
+  }
+
+  function pickSack(i) {
+    if (state !== 'picking' || picked >= 0) return;
+    if (i < 0 || i >= SACKS) return;
+    picked = i;
+    elSacks.classList.add('locked');
+    var nodes = elSacks.children;
+    for (var j = 0; j < nodes.length; j++) {
+      nodes[j].style.animationDelay = '0ms';
+      nodes[j].classList.add(j === i ? 'chosen' : 'gone');
+    }
+    setHint((i + 1) + '번 자루를 채에 붓습니다…');
+    beep(520, 0.1, 'sine', 0.05);
+    setTimeout(function () { beep(150, 0.22, 'sawtooth', 0.04); }, 240);
+    setTimeout(beginShake, 560);
+  }
+
+  function beginShake() {
+    if (state !== 'picking') return;
+    elStage.classList.remove('picking');
     count = 0; moleDone = false;
     moleAt = Math.random() < MOLE_CHANCE ? 4 + ((Math.random() * (SHAKES - 7)) | 0) : -1;
     state = 'playing';
     newTarget();
-    renderProg(); renderWallet(); setHint(PLAY_HINT);
+    renderProg(); syncBtn(); setHint(PLAY_HINT);
     beep(300, 0.1, 'square', 0.04);
   }
 
@@ -707,7 +830,8 @@
 
   function finish(stolen) {
     state = 'result';
-    var g = stolen ? GRADES[0] : draw();
+    var mine = (picked >= 0 && sacks[picked]) ? sacks[picked] : draw();
+    var g = stolen ? GRADES[0] : mine;
     var pay = stolen ? 0 : g.pay;
 
     S.rounds++;
@@ -735,6 +859,7 @@
         (pay ? '+' + fmt(pay) + '원' : '0원') + '</div>' +
       '<div class="sub">' + sub + '</div>' +
       '<div class="rate">' + (stolen ? '두더지 실패 · 결과 몰수' : '확률 ' + (g.p * 100).toFixed(g.p < 0.01 ? 1 : 0) + '%') + '</div>' +
+      othersHTML() +
       '<button class="btn" id="againBtn">' + (S.money >= COST ? '한 포대 더 · ' + COST + '원' : '닫기') + '</button>';
     elVeil.classList.add('on');
     document.getElementById('againBtn').addEventListener('click', closeRes);
@@ -750,6 +875,16 @@
     }
 
     renderWallet(); renderStats();
+  }
+
+  function othersHTML() {
+    if (!sacks.length || picked < 0) return '';
+    var h = '<div class="othT">10자루 안에 들어 있던 것</div><div class="others">';
+    for (var i = 0; i < sacks.length; i++) {
+      h += '<div class="oth' + (i === picked ? ' me' : '') + '">' + icon(sacks[i].id, 20) +
+        '<b>' + (i === picked ? '내 선택' : (i + 1)) + '</b></div>';
+    }
+    return h + '</div>';
   }
 
   function sparkle(tier) {
@@ -776,6 +911,9 @@
   function closeRes() {
     elVeil.classList.remove('on');
     state = 'idle'; count = 0;
+    sacks = []; picked = -1;
+    elStage.classList.remove('picking');
+    elSacks.innerHTML = '';
     clearTarget();
     renderProg(); setHint(IDLE_HINT); renderWallet();
   }
@@ -868,7 +1006,7 @@
     if (downL) elSieve.classList.add('dnL'); else elSieve.classList.remove('dnL');
     if (downR) elSieve.classList.add('dnR'); else elSieve.classList.remove('dnR');
     if (elRig) { if (on) elRig.classList.add('tense'); else elRig.classList.remove('tense'); }
-    if (elTap) elTap.textContent = on
+      if (elTap) elTap.textContent = on
       ? '👐 ' + target.l.toUpperCase() + ' + ' + target.r.toUpperCase() + ' 대신 여기를 탭'
       : '👐 채 털기 (터치)';
   }
@@ -917,6 +1055,12 @@
     }
     if (k === 'escape' && state === 'result') { closeRes(); return; }
 
+    if (state === 'picking') {
+      var d = /^[0-9]$/.test(k) ? k : (/^Digit[0-9]$/.test(e.code || '') ? e.code.charAt(5) : '');
+      if (d) { e.preventDefault(); pickSack(d === '0' ? 9 : parseInt(d, 10) - 1); }
+      return;
+    }
+
     if (state !== 'playing' || !target.l) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (k === target.l) { downL = Date.now(); renderTarget(); tryPair(); }
@@ -934,6 +1078,11 @@
 
   /* ───────── buttons ───────── */
   elMain.addEventListener('click', startRound);
+  elSacks.addEventListener('click', function (e) {
+    var t = e.target;
+    while (t && t !== elSacks && !t.classList.contains('sack')) t = t.parentNode;
+    if (t && t.classList && t.classList.contains('sack')) pickSack(+t.getAttribute('data-i'));
+  });
   elTap.addEventListener('click', function () {
     if (state === 'mole') { moleHit(); return; }
     if (state === 'playing') doShake();
